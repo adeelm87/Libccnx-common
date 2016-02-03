@@ -12,7 +12,6 @@ set(TestsExpectedToPass
   test_ccnx_Interest
   test_ccnx_InterestPayloadId
   test_ccnx_InterestReturn
-  test_ccnx_Json
   test_ccnx_KeyLocator
   test_ccnx_KeystoreUtilities
   test_ccnx_Link
