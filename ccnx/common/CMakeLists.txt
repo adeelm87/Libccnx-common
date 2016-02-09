@@ -83,9 +83,6 @@ set(SCHEMAV1_HDRS
 
 set(COMMON_HDRS 
 	libccnxCommon_About.h 
-    ccnx_BufferChunker.h 
-    ccnx_FileChunker.h 
-    ccnx_Chunker.h 
     ccnx_ContentObject.h 
 	ccnx_Interest.h 
 	ccnx_InterestReturn.h 
@@ -158,9 +155,6 @@ set(CODEC_SRCS
 
 set(CORE_SRCS   
 	libccnxCommon_About.c 
-    ccnx_BufferChunker.c 
-    ccnx_FileChunker.c 
-    ccnx_Chunker.c 
     ccnx_ContentObject.c 
 	ccnx_Interest.c 
 	ccnx_InterestReturn.c 
