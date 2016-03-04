@@ -145,9 +145,8 @@ LONGBOW_TEST_FIXTURE(Local)
     LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_HomeDirectoryFromPasswd);
 
     LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Missing);
-    // Disable tests that writes in home directory
-	//LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile);
-    //LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile);
+    LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile);
+    LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Local)
@@ -209,10 +208,6 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Missing)
 
 
 /**
- *
- * XXX: Disable this test.  We should not write to a users home directory in a
- * test.
- *  
  * Create a keystore with the old default name in the old location
  */
 LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile)
@@ -222,12 +217,12 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile)
     mkdir(ccnxdir, 0700);
     char *path = ccnxKeystoreUtilities_ConstructPath(ccnxdir, ".ccnx_keystore");
 
-    bool success = parcPublicKeySignerPkcs12Store_CreateFile(path, "1234", "ccnxuser", 1024, 365);
-    assertTrue(success, "parcPublicKeySignerPkcs12Store_CreateFile() failed.");
+    bool success = parcPkcs12KeyStore_CreateFile(path, "1234", "ccnxuser", 1024, 365);
+    assertTrue(success, "parcPkcs12KeyStore_CreateFile() failed.");
 
-    PARCSigner *signer = ccnxKeystoreUtilities_OpenFromHomeDirectory("1234");
+    KeystoreParams *signer = ccnxKeystoreUtilities_OpenFromHomeDirectory("1234");
     assertNotNull(signer, "Signer should be non-null opening from a file we just created");
-    parcSigner_Release(&signer);
+    keystoreParams_Destroy(&signer);
 
     parcMemory_Deallocate((void **) &path);
     parcMemory_Deallocate((void **) &ccnxdir);
@@ -235,10 +230,6 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile)
 }
 
 /**
- *
- * XXX: Disable this test.  We should not write to a users home directory in a
- * test.
- *  
  * Create a keystore with the new default name in the old location
  */
 LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile)
@@ -248,12 +239,12 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile)
     mkdir(ccnxdir, 0700);
     char *path = ccnxKeystoreUtilities_ConstructPath(ccnxdir, ".ccnx_keystore.p12");
 
-    bool success = parcPublicKeySignerPkcs12Store_CreateFile(path, "1234", "ccnxuser", 1024, 365);
-    assertTrue(success, "parcPublicKeySignerPkcs12Store_CreateFile() failed.");
+    bool success = parcPkcs12KeyStore_CreateFile(path, "1234", "ccnxuser", 1024, 365);
+    assertTrue(success, "parcPkcs12KeyStore_CreateFile() failed.");
 
-    PARCSigner *signer = ccnxKeystoreUtilities_OpenFromHomeDirectory("1234");
+    KeystoreParams *signer = ccnxKeystoreUtilities_OpenFromHomeDirectory("1234");
     assertNotNull(signer, "Signer should be non-null opening from a file we just created");
-    parcSigner_Release(&signer);
+    keystoreParams_Destroy(&signer);
 
     parcMemory_Deallocate((void **) &path);
     parcMemory_Deallocate((void **) &ccnxdir);

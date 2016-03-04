@@ -276,7 +276,8 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
     parcBuffer_Release(&secretKey);
 
     // this was breaking the signature
-    const PARCCryptoHash *secretHash = parcSigner_GetVerifierKeyDigest(signer);
+    PARCKeyStore *keyStore = parcSigner_GetKeyStore(signer);
+    const PARCCryptoHash *secretHash = parcKeyStore_GetVerifierKeyDigest(keyStore);
     const PARCBuffer *keyid = parcCryptoHash_GetDigest(secretHash);
     ccnxValidationHmacSha256_Set(obj, keyid);
 
