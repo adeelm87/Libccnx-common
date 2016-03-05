@@ -3,6 +3,7 @@ VERSION
 .project
 *.plist
 libccnx*.tar.gz
+.idea/
 
 LongBow
 include
