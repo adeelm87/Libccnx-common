@@ -33,6 +33,7 @@
 #include "../ccnx_KeystoreUtilities.c"
 #include <LongBow/unit-test.h>
 #include <parc/algol/parc_SafeMemory.h>
+#include <parc/security/parc_Security.h>
 
 #include <errno.h>
 #include <ftw.h>
@@ -122,6 +123,9 @@ LONGBOW_TEST_FIXTURE(Global)
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
 {
+    parcMemory_SetInterface(&PARCSafeMemoryAsPARCMemory);
+    parcSecurity_Init();
+
     TestData *data = commonSetup(longBowTestCase_GetName(testCase));
     longBowTestCase_SetClipBoardData(testCase, data);
     return LONGBOW_STATUS_SUCCEEDED;
@@ -131,6 +135,8 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 {
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
     commonTeardown(&data);
+    parcSecurity_Fini();
+
     if (parcSafeMemory_ReportAllocation(STDOUT_FILENO) != 0) {
         printf("('%s' leaks memory by %d (allocs - frees)) ", longBowTestCase_GetName(testCase), parcMemory_Outstanding());
         return LONGBOW_STATUS_MEMORYLEAK;
@@ -217,6 +223,8 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile)
     mkdir(ccnxdir, 0700);
     char *path = ccnxKeystoreUtilities_ConstructPath(ccnxdir, ".ccnx_keystore");
 
+    parcSecurity_Init();
+
     bool success = parcPkcs12KeyStore_CreateFile(path, "1234", "ccnxuser", 1024, 365);
     assertTrue(success, "parcPkcs12KeyStore_CreateFile() failed.");
 
@@ -227,6 +235,8 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile)
     parcMemory_Deallocate((void **) &path);
     parcMemory_Deallocate((void **) &ccnxdir);
     parcMemory_Deallocate((void **) &homedir);
+
+    parcSecurity_Fini();
 }
 
 /**
@@ -239,6 +249,8 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile)
     mkdir(ccnxdir, 0700);
     char *path = ccnxKeystoreUtilities_ConstructPath(ccnxdir, ".ccnx_keystore.p12");
 
+    parcSecurity_Init();
+
     bool success = parcPkcs12KeyStore_CreateFile(path, "1234", "ccnxuser", 1024, 365);
     assertTrue(success, "parcPkcs12KeyStore_CreateFile() failed.");
 
@@ -249,6 +261,8 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile)
     parcMemory_Deallocate((void **) &path);
     parcMemory_Deallocate((void **) &ccnxdir);
     parcMemory_Deallocate((void **) &homedir);
+
+    parcSecurity_Fini();
 }
 
 int

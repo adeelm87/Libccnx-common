@@ -96,16 +96,11 @@ ccnxValidationHmacSha256_Test(const CCNxTlvDictionary *message)
 PARCSigner *
 ccnxValidationHmacSha256_CreateSigner(PARCBuffer *secretKey)
 {
-    // stores the elasticKey by reference, does not acquire it
     PARCSymmetricKeyStore *keyStore = parcSymmetricKeyStore_Create(secretKey);
     PARCSymmetricKeySigner *signer = parcSymmetricKeySigner_Create(keyStore, PARC_HASH_SHA256);
+    parcSymmetricKeyStore_Release(&keyStore);
 
-    // TODO: symmetric key signer
     return parcSigner_Create(signer, PARCSymmetricKeySignerAsSigner);
-
-//    PARCSigningInterface *interface = parcSymmetricSignerFileStore_Create(secretKey, PARC_HASH_SHA256);
-//
-//    return parcSigner_Create(interface);
 }
 
 PARCVerifier *

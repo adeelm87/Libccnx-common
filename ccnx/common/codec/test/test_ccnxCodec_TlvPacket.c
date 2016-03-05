@@ -295,6 +295,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
     ccnxCodecNetworkBufferIoVec_Release(&iovec);
     parcSigner_Release(&signer);
     ccnxContentObject_Release(&obj);
+    parcCryptoHash_Release(&secretHash);
 }
 
 static uint8_t testDataV1_Interest_AllFields[] = {
