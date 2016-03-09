@@ -99,6 +99,7 @@ LONGBOW_TEST_FIXTURE(Global)
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
 {
+    parcMemory_SetInterface(&PARCSafeMemoryAsPARCMemory);
     return LONGBOW_STATUS_SUCCEEDED;
 }
 
@@ -260,6 +261,11 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_Decode_VFF)
     parcBuffer_Release(&packetBuffer);
 }
 
+static PARCBuffer *
+_bufferFromString(size_t length, const char string[length])
+{
+    return parcBuffer_Flip(parcBuffer_PutArray(parcBuffer_Allocate(length), length, (const uint8_t *) string));
+}
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
 {
@@ -269,13 +275,10 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
     ccnxName_Release(&name);
     parcBuffer_Release(&payload);
 
-    PARCBuffer *secretKey = parcBuffer_WrapCString("abcdefghijklmnopqrstuvwxyx");
+    char *secretKeyString = "abcdefghijklmnopqrstuvwxyx";
+    PARCBuffer *secretKey = _bufferFromString(strlen(secretKeyString), secretKeyString);
     PARCSigner *signer = ccnxValidationHmacSha256_CreateSigner(secretKey);
 
-    // should really scrub the memory
-    parcBuffer_Release(&secretKey);
-
-    // this was breaking the signature
     PARCKeyStore *keyStore = parcSigner_GetKeyStore(signer);
     const PARCCryptoHash *secretHash = parcKeyStore_GetVerifierKeyDigest(keyStore);
     const PARCBuffer *keyid = parcCryptoHash_GetDigest(secretHash);
@@ -295,6 +298,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
     ccnxCodecNetworkBufferIoVec_Release(&iovec);
     parcSigner_Release(&signer);
     ccnxContentObject_Release(&obj);
+    parcBuffer_Release(&secretKey);
     parcCryptoHash_Release(&secretHash);
 }
 
