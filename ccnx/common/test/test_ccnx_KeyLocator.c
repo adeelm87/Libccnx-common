@@ -90,7 +90,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxKeyLocator_Copy)
 {
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 
@@ -123,7 +123,7 @@ LONGBOW_TEST_CASE(Global, ccnxKeyLocator_Copy)
 
 LONGBOW_TEST_CASE(Global, ccnxKeyLocator_Destroy)
 {
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 
@@ -155,7 +155,7 @@ LONGBOW_TEST_CASE(Global, ccnxKeyLocator_Equals)
     parcBuffer_Release(&keyBuffer2);
     parcKeyId_Release(&keyId2);
 
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     CCNxKeyLocator *keyLocatorDiff = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 
@@ -197,7 +197,7 @@ LONGBOW_TEST_CASE(Global, ccnxKeyLocator_FromKey)
 
 LONGBOW_TEST_CASE(Global, ccnxKeyLocator_FromKeyLink)
 {
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 
@@ -230,7 +230,7 @@ LONGBOW_TEST_CASE(Global, ccnxKeyLocator_GetKey)
 
 LONGBOW_TEST_CASE(Global, ccnxKeyLocator_GetKeyName)
 {
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name/test");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name/test");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 
@@ -262,7 +262,7 @@ LONGBOW_TEST_CASE(Global, ccnxKeyLocator_GetType)
     parcKey_Release(&key);
 
     // Try KeyName
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name/test");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name/test");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 
@@ -296,7 +296,7 @@ LONGBOW_TEST_CASE(Global, ccnxKeyLocator_IsKey)
 
 LONGBOW_TEST_CASE(Global, ccnxKeyLocator_IsKeyName)
 {
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name/test");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name/test");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 
@@ -311,7 +311,7 @@ LONGBOW_TEST_CASE(Global, ccnxKeyLocator_IsKeyName)
 
 LONGBOW_TEST_CASE(Global, ccnxKeyLocator_ToString)
 {
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name/test");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name/test");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 
@@ -350,7 +350,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Local)
 
 LONGBOW_TEST_CASE(Local, ccnxKeyLocator_Create)
 {
-    CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name");
+    CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name");
     CCNxLink *keyLink = ccnxLink_Create(keyURIName, NULL, NULL);
     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyLink);
 

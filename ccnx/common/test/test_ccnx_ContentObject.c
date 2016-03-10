@@ -57,7 +57,7 @@ _commonSetup(void)
 {
     TestData *data = parcMemory_AllocateAndClear(sizeof(TestData));
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/default/testData/content");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/default/testData/content");
     PARCBuffer *payload = parcBuffer_WrapCString("hello");
 
     data->impl = CCNxContentObjectFacadeV1_Implementation;
@@ -137,7 +137,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_CreateWithDataPayload)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -151,7 +151,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_CreateWithDataPayload)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_Equals)
 {
-    CCNxName *nameA = ccnxName_CreateFromURI("lci:/foo/bar/A");
+    CCNxName *nameA = ccnxName_CreateFromCString("lci:/foo/bar/A");
     PARCBuffer *payloadA = parcBuffer_Allocate(100);
 
     CCNxContentObject *objectA = ccnxContentObject_CreateWithDataPayload(nameA, payloadA);
@@ -164,7 +164,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_Equals)
 
     assertTrue(ccnxContentObject_Equals(objectA, objectA2), "Expected ContentObject with same payload and name to be equal");
 
-    CCNxName *nameB = ccnxName_CreateFromURI("lci:/foo/bar/B");
+    CCNxName *nameB = ccnxName_CreateFromCString("lci:/foo/bar/B");
     CCNxContentObject *objectB = ccnxContentObject_CreateWithDataPayload(nameB, payloadA);
     ccnxContentObject_AssertValid(objectB);
 
@@ -181,7 +181,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_Equals)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_AcquireRelease)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -208,7 +208,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_AcquireRelease)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_HasFinalChunkNumber)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -226,7 +226,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_HasFinalChunkNumber)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_GetSetFinalChunkNumber)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -246,7 +246,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_GetSetFinalChunkNumber)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_GetName)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/baz");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/baz");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -263,7 +263,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_GetName)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_GetPayload)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -280,7 +280,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_GetPayload)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_GetPayloadType)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxPayloadType types[] = {
@@ -307,7 +307,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_GetPayloadType)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_SetSignature)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/hello/dolly");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/hello/dolly");
     PARCBuffer *payload = parcBuffer_WrapCString("hello");
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -328,7 +328,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_SetSignature)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_GetKeyId)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/hello/dolly");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/hello/dolly");
     PARCBuffer *payload = parcBuffer_WrapCString("hello");
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -355,7 +355,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_GetKeyId)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_HasExpiryTime)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/hello/dolly");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/hello/dolly");
     PARCBuffer *payload = parcBuffer_WrapCString("hello");
 
     // Use a V1 ContentObject, as V0 doesn't support ExpiryTime
@@ -373,7 +373,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_HasExpiryTime)
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_SetGetExpiryTime)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/hello/dolly");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/hello/dolly");
     PARCBuffer *payload = parcBuffer_WrapCString("hello");
 
     // Use a V1 ContentObject, as V0 doesn't support ExpiryTime
@@ -397,7 +397,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_SetGetExpiryTime)
 
 LONGBOW_TEST_CASE_EXPECTS(Global, ccnxContentObject_GetExpiryTimeWithNoExpiryTime, .event = &LongBowTrapUnexpectedStateEvent)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/hello/dolly");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/hello/dolly");
     PARCBuffer *payload = parcBuffer_WrapCString("hello");
 
     // Use a V1 ContentObject, as V0 doesn't support ExpiryTime
@@ -415,7 +415,7 @@ LONGBOW_TEST_CASE_EXPECTS(Global, ccnxContentObject_GetExpiryTimeWithNoExpiryTim
 
 LONGBOW_TEST_CASE(Global, ccnxContentObject_Display)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/hello/dolly");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/hello/dolly");
     PARCBuffer *payload = parcBuffer_WrapCString("hello");
 
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);

@@ -88,7 +88,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_Create_Full)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = parcBuffer_Allocate(10);
     PARCBuffer *contentObjectHash = parcBuffer_Allocate(10);
 
@@ -105,7 +105,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Create_Full)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_Create_EmptyKeyID)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = NULL;
     PARCBuffer *contentObjectHash = parcBuffer_Allocate(10);
 
@@ -121,7 +121,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Create_EmptyKeyID)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_Create_EmptyContentObjectHash)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = parcBuffer_Allocate(10);
     PARCBuffer *contentObjectHash = NULL;
 
@@ -137,7 +137,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Create_EmptyContentObjectHash)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_Create_EmptyBoth)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = NULL;
     PARCBuffer *contentObjectHash = NULL;
 
@@ -152,7 +152,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Create_EmptyBoth)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_AcquireRelease)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = parcBuffer_Allocate(10);
     PARCBuffer *contentObjectHash = parcBuffer_Allocate(10);
 
@@ -168,7 +168,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_AcquireRelease)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_GetName)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = parcBuffer_Allocate(10);
     PARCBuffer *contentObjectHash = parcBuffer_Allocate(10);
 
@@ -187,7 +187,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_GetName)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_GetKeyID)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = parcBuffer_Allocate(10);
     PARCBuffer *contentObjectHash = parcBuffer_Allocate(20);
 
@@ -206,7 +206,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_GetKeyID)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_GetContentObjectHash)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = parcBuffer_Allocate(10);
     PARCBuffer *contentObjectHash = parcBuffer_Allocate(20);
 
@@ -225,7 +225,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_GetContentObjectHash)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_Equals)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = parcBuffer_Allocate(10);
     PARCBuffer *contentObjectHash = parcBuffer_Allocate(20);
     CCNxLink *x = ccnxLink_Create(name, keyId, contentObjectHash);
@@ -233,7 +233,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Equals)
     parcBuffer_Release(&keyId);
     parcBuffer_Release(&contentObjectHash);
 
-    name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     keyId = parcBuffer_Allocate(10);
     contentObjectHash = parcBuffer_Allocate(20);
     CCNxLink *y = ccnxLink_Create(name, keyId, contentObjectHash);
@@ -241,7 +241,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Equals)
     parcBuffer_Release(&keyId);
     parcBuffer_Release(&contentObjectHash);
 
-    name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     keyId = parcBuffer_Allocate(10);
     contentObjectHash = parcBuffer_Allocate(20);
     CCNxLink *z = ccnxLink_Create(name, keyId, contentObjectHash);
@@ -249,7 +249,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Equals)
     parcBuffer_Release(&keyId);
     parcBuffer_Release(&contentObjectHash);
 
-    name = ccnxName_CreateFromURI("lci:/foo/bar/othername");
+    name = ccnxName_CreateFromCString("lci:/foo/bar/othername");
     keyId = parcBuffer_Allocate(10);
     contentObjectHash = parcBuffer_Allocate(20);
     CCNxLink *unequal1 = ccnxLink_Create(name, keyId, contentObjectHash);
@@ -257,14 +257,14 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Equals)
     parcBuffer_Release(&keyId);
     parcBuffer_Release(&contentObjectHash);
 
-    name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     keyId = NULL;
     contentObjectHash = parcBuffer_Allocate(20);
     CCNxLink *unequal2 = ccnxLink_Create(name, keyId, contentObjectHash);
     ccnxName_Release(&name);
     parcBuffer_Release(&contentObjectHash);
 
-    name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     keyId = parcBuffer_Allocate(10);
     contentObjectHash = NULL;
     CCNxLink *unequal3 = ccnxLink_Create(name, keyId, contentObjectHash);
@@ -283,7 +283,7 @@ LONGBOW_TEST_CASE(Global, ccnxLink_Equals)
 
 LONGBOW_TEST_CASE(Global, ccnxLink_Create_ToString)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/name");
     PARCBuffer *keyId = parcBuffer_Allocate(10);
     PARCBuffer *contentObjectHash = parcBuffer_Allocate(20);
     CCNxLink *object = ccnxLink_Create(name, keyId, contentObjectHash);

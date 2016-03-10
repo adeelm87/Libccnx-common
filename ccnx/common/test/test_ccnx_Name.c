@@ -58,11 +58,11 @@ LONGBOW_TEST_RUNNER_TEARDOWN(ccnx_Name)
 
 LONGBOW_TEST_FIXTURE(Global)
 {
-    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromURI);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromURI_Root);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromURI_BadScheme);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromURI_NoScheme);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromURI_ZeroComponents);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromCString);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromCString_Root);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromCString_BadScheme);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromCString_NoScheme);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromCString_ZeroComponents);
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateFromBuffer);
 
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_IsValid_True);
@@ -76,6 +76,7 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_ToString);
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_ToString_Root);
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_ToString_NoPath);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxName_ToString_LCI);
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_Copy_Zero);
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_Copy_NonZero);
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_CreateAndDestroy);
@@ -120,8 +121,8 @@ LONGBOW_TEST_CASE(Global, ccnxName_ComposeNAME)
 {
     char *string = "lci:/a/b/c";
 
-    CCNxName *basename = ccnxName_CreateFromURI("lci:/a/b");
-    CCNxName *expected = ccnxName_CreateFromURI(string);
+    CCNxName *basename = ccnxName_CreateFromCString("lci:/a/b");
+    CCNxName *expected = ccnxName_CreateFromCString(string);
 
     CCNxName *actual = ccnxName_ComposeNAME(basename, "c");
     assertTrue(ccnxName_Equals(expected, actual), "Failed.");
@@ -134,7 +135,7 @@ LONGBOW_TEST_CASE(Global, ccnxName_ComposeNAME)
 LONGBOW_TEST_CASE(Global, ccnxName_IsValid_True)
 {
     char *string = "lci:/a/b/c";
-    CCNxName *name = ccnxName_CreateFromURI(string);
+    CCNxName *name = ccnxName_CreateFromCString(string);
     assertTrue(ccnxName_IsValid(name), "Expected %s to be a valid CCNxName.", string);
     ccnxName_Release(&name);
 }
@@ -146,11 +147,11 @@ LONGBOW_TEST_CASE(Global, ccnxName_IsValid_False)
 
 LONGBOW_TEST_CASE(Global, ccnxName_Equals)
 {
-    CCNxName *x = ccnxName_CreateFromURI("lci:/a/b/c");
-    CCNxName *y = ccnxName_CreateFromURI("lci:/a/b/c");
-    CCNxName *z = ccnxName_CreateFromURI("lci:/a/b/c");
-    CCNxName *u1 = ccnxName_CreateFromURI("lci:/a/b");
-    CCNxName *u2 = ccnxName_CreateFromURI("lci:/a/b/d");
+    CCNxName *x = ccnxName_CreateFromCString("lci:/a/b/c");
+    CCNxName *y = ccnxName_CreateFromCString("lci:/a/b/c");
+    CCNxName *z = ccnxName_CreateFromCString("lci:/a/b/c");
+    CCNxName *u1 = ccnxName_CreateFromCString("lci:/a/b");
+    CCNxName *u2 = ccnxName_CreateFromCString("lci:/a/b/d");
 
     assertEqualsContract(ccnxName_Equals, x, y, z, u1, u2);
 
@@ -163,9 +164,9 @@ LONGBOW_TEST_CASE(Global, ccnxName_Equals)
 
 LONGBOW_TEST_CASE(Global, ccnxName_ToString_Root)
 {
-    const char *expected = "lci:/";
+    const char *expected = "ccnx:/";
 
-    CCNxName *name = ccnxName_CreateFromURI(expected);
+    CCNxName *name = ccnxName_CreateFromCString(expected);
 
     char *actual = ccnxName_ToString(name);
 
@@ -174,8 +175,7 @@ LONGBOW_TEST_CASE(Global, ccnxName_ToString_Root)
 
     ccnxName_Release(&name);
 
-
-    name = ccnxName_CreateFromURI("lci:");
+    name = ccnxName_CreateFromCString("ccnx:");
     actual = ccnxName_ToString(name);
 
     assertTrue(strcmp(expected, actual) == 0, "Expected '%s' actual '%s'", expected, actual);
@@ -186,9 +186,9 @@ LONGBOW_TEST_CASE(Global, ccnxName_ToString_Root)
 
 LONGBOW_TEST_CASE(Global, ccnxName_ToString_NoPath)
 {
-    const char *expected = "lci:/";
+    const char *expected = "ccnx:/";
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:");
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:");
 
     char *actual = ccnxName_ToString(name);
 
@@ -200,11 +200,11 @@ LONGBOW_TEST_CASE(Global, ccnxName_ToString_NoPath)
 
 LONGBOW_TEST_CASE(Global, ccnxName_Trim)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/a/b/c");
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/a/b/c");
 
     ccnxName_Trim(name, 1);
 
-    const char *expected = "lci:/a/b";
+    const char *expected = "ccnx:/a/b";
     char *actual = ccnxName_ToString(name);
 
     assertTrue(strcmp(expected, actual) == 0, "Expected '%s' actual '%s'", expected, actual);
@@ -216,11 +216,11 @@ LONGBOW_TEST_CASE(Global, ccnxName_Trim)
 
 LONGBOW_TEST_CASE(Global, ccnxName_Trim_MAXINT)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/a/b/c");
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/a/b/c");
 
     ccnxName_Trim(name, INT_MAX);
 
-    const char *expected = "lci:/";
+    const char *expected = "ccnx:/";
     char *actual = ccnxName_ToString(name);
 
     assertTrue(strcmp(expected, actual) == 0, "Expected '%s' actual '%s'", expected, actual);
@@ -232,9 +232,9 @@ LONGBOW_TEST_CASE(Global, ccnxName_Trim_MAXINT)
 
 LONGBOW_TEST_CASE(Global, ccnxName_Copy_Zero)
 {
-    const char *uri = "lci:/"; // A Name with 1 zero-length segment
+    const char *uri = "ccnx:/"; // A Name with 1 zero-length segment
 
-    CCNxName *name = ccnxName_CreateFromURI(uri);
+    CCNxName *name = ccnxName_CreateFromCString(uri);
 
     CCNxName *copy = ccnxName_Copy(name);
     assertNotNull(copy, "Expect non-null result.");
@@ -252,9 +252,9 @@ LONGBOW_TEST_CASE(Global, ccnxName_Copy_Zero)
 
 LONGBOW_TEST_CASE(Global, ccnxName_Copy_NonZero)
 {
-    const char *uri = "lci:/a/b/c/d/e";
+    const char *uri = "ccnx:/a/b/c/d/e";
 
-    CCNxName *name = ccnxName_CreateFromURI(uri);
+    CCNxName *name = ccnxName_CreateFromCString(uri);
 
     CCNxName *copy = ccnxName_Copy(name);
     assertNotNull(copy, "Expect non-null result.");
@@ -275,8 +275,8 @@ LONGBOW_TEST_CASE(Global, ccnxName_HashCode)
     const char *uriA = "lci:/a/b/c/d/e/";
     const char *uriB = "lci:/a/b/c/d/e/";
 
-    CCNxName *nameA = ccnxName_CreateFromURI(uriA);
-    CCNxName *nameB = ccnxName_CreateFromURI(uriB);
+    CCNxName *nameA = ccnxName_CreateFromCString(uriA);
+    CCNxName *nameB = ccnxName_CreateFromCString(uriB);
 
     PARCHashCode codeA = ccnxName_HashCode(nameA);
     PARCHashCode codeB = ccnxName_HashCode(nameB);
@@ -292,8 +292,8 @@ LONGBOW_TEST_CASE(Global, ccnxName_HashCode_LeftMostHashCode)
     const char *uriA = "lci:/a/b/c/d/e/";
     const char *uriB = "lci:/a/b/c/d/e/";
 
-    CCNxName *nameA = ccnxName_CreateFromURI(uriA);
-    CCNxName *nameB = ccnxName_CreateFromURI(uriB);
+    CCNxName *nameA = ccnxName_CreateFromCString(uriA);
+    CCNxName *nameB = ccnxName_CreateFromCString(uriB);
 
     PARCHashCode codeA = ccnxName_HashCode(nameA);
     PARCHashCode codeB = ccnxName_HashCode(nameB);
@@ -313,8 +313,8 @@ LONGBOW_TEST_CASE(Global, ccnxName_LeftMostHashCode)
     const char *uriA = "lci:/a/b/c/d/e/";
     const char *uriB = "lci:/a/b/c/d/e/";
 
-    CCNxName *nameA = ccnxName_CreateFromURI(uriA);
-    CCNxName *nameB = ccnxName_CreateFromURI(uriB);
+    CCNxName *nameA = ccnxName_CreateFromCString(uriA);
+    CCNxName *nameB = ccnxName_CreateFromCString(uriB);
 
     PARCHashCode codeA = ccnxName_LeftMostHashCode(nameA, 2);
     PARCHashCode codeB = ccnxName_LeftMostHashCode(nameB, 2);
@@ -333,11 +333,11 @@ LONGBOW_TEST_CASE(Global, ccnxName_CreateAndDestroy)
     assertNull(name, "Expected null");
 }
 
-LONGBOW_TEST_CASE(Global, ccnxName_CreateFromURI)
+LONGBOW_TEST_CASE(Global, ccnxName_CreateFromCString)
 {
     const char *uri = "lci:/CCN-Python-Test";
 
-    CCNxName *name = ccnxName_CreateFromURI(uri);
+    CCNxName *name = ccnxName_CreateFromCString(uri);
     ccnxName_Display(name, 0);
     assertNotNull(name, "Expected non-null");
 
@@ -349,28 +349,28 @@ LONGBOW_TEST_CASE(Global, ccnxName_CreateFromURI)
     ccnxName_Release(&name);
 }
 
-LONGBOW_TEST_CASE(Global, ccnxName_CreateFromURI_BadScheme)
+LONGBOW_TEST_CASE(Global, ccnxName_CreateFromCString_BadScheme)
 {
     const char *uri = "abcd:/CCN-Python-Test/Echo";
 
-    CCNxName *name = ccnxName_CreateFromURI(uri);
+    CCNxName *name = ccnxName_CreateFromCString(uri);
     assertNull(name, "Expected null");
 }
 
-LONGBOW_TEST_CASE(Global, ccnxName_CreateFromURI_NoScheme)
+LONGBOW_TEST_CASE(Global, ccnxName_CreateFromCString_NoScheme)
 {
     const char *uri = "/paravion";
 
-    CCNxName *name = ccnxName_CreateFromURI(uri);
+    CCNxName *name = ccnxName_CreateFromCString(uri);
     assertNull(name, "Expected null");
 }
 
-LONGBOW_TEST_CASE(Global, ccnxName_CreateFromURI_ZeroComponents)
+LONGBOW_TEST_CASE(Global, ccnxName_CreateFromCString_ZeroComponents)
 {
     const char *uri = "lci:";
 
-    CCNxName *name = ccnxName_CreateFromURI(uri);
-    assertNotNull(name, "Expected non-null result from ccnxName_CreateFromURI");
+    CCNxName *name = ccnxName_CreateFromCString(uri);
+    assertNotNull(name, "Expected non-null result from ccnxName_CreateFromCString");
 
     size_t expected = 0;
     size_t actual = ccnxName_GetSegmentCount(name);
@@ -380,11 +380,11 @@ LONGBOW_TEST_CASE(Global, ccnxName_CreateFromURI_ZeroComponents)
     ccnxName_Release(&name);
 }
 
-LONGBOW_TEST_CASE(Global, ccnxName_CreateFromURI_Root)
+LONGBOW_TEST_CASE(Global, ccnxName_CreateFromCString_Root)
 {
     const char *uri = "lci:/";
 
-    CCNxName *name = ccnxName_CreateFromURI(uri);
+    CCNxName *name = ccnxName_CreateFromCString(uri);
     assertNotNull(name, "Expected non-null");
 
     size_t expected = 1;
@@ -415,11 +415,32 @@ LONGBOW_TEST_CASE(Global, ccnxName_CreateFromBuffer)
     parcBuffer_Release(&buffer);
 }
 
+LONGBOW_TEST_CASE(Global, ccnxName_ToString_LCI)
+{
+    const char *lci = "lci:/a/b";
+    const char *expectedURI = "ccnx:/a/b";
+    
+    CCNxName *name = ccnxName_CreateFromCString(lci);
+    
+    size_t expected = 2;
+    size_t actual = ccnxName_GetSegmentCount(name);
+    
+    assertTrue(expected == actual,
+               "Expected %zd segments, actual %zd", expected, actual);
+    
+    char *string = ccnxName_ToString(name);
+    assertTrue(strcmp(expectedURI, string) == 0,
+               "Expected '%s' actual '%s'", expectedURI, string);
+    parcMemory_Deallocate((void **) &string);
+    
+    ccnxName_Release(&name);
+}
+
 LONGBOW_TEST_CASE(Global, ccnxName_ToString)
 {
-    const char *uri = "lci:/a/b";
+    const char *uri = "ccnx:/a/b";
 
-    CCNxName *name = ccnxName_CreateFromURI(uri);
+    CCNxName *name = ccnxName_CreateFromCString(uri);
 
     size_t expected = 2;
     size_t actual = ccnxName_GetSegmentCount(name);
@@ -437,24 +458,24 @@ LONGBOW_TEST_CASE(Global, ccnxName_ToString)
 
 LONGBOW_TEST_CASE(Global, ccnxName_Compare)
 {
-    CCNxName *value = ccnxName_CreateFromURI("lci:/a/b/c");
-    CCNxName *equal1 = ccnxName_CreateFromURI("lci:/a/b/c");
+    CCNxName *value = ccnxName_CreateFromCString("lci:/a/b/c");
+    CCNxName *equal1 = ccnxName_CreateFromCString("lci:/a/b/c");
 
     CCNxName **equivalents = (CCNxName *[]) {
         equal1,
         NULL
     };
 
-    CCNxName *lesser1 = ccnxName_CreateFromURI("lci:/a/b");
-    CCNxName *lesser2 = ccnxName_CreateFromURI("lci:/a/b/b");
+    CCNxName *lesser1 = ccnxName_CreateFromCString("lci:/a/b");
+    CCNxName *lesser2 = ccnxName_CreateFromCString("lci:/a/b/b");
     CCNxName **lesser = (CCNxName *[]) {
         lesser1,
         lesser2,
         NULL
     };
 
-    CCNxName *greater1 = ccnxName_CreateFromURI("lci:/a/b/d");
-    CCNxName *greater2 = ccnxName_CreateFromURI("lci:/a/b/c/d");
+    CCNxName *greater1 = ccnxName_CreateFromCString("lci:/a/b/d");
+    CCNxName *greater2 = ccnxName_CreateFromCString("lci:/a/b/c/d");
     CCNxName **greater = (CCNxName *[]) {
         greater1,
         greater2,
@@ -480,8 +501,8 @@ LONGBOW_TEST_CASE(Global, ccnxName_StartsWith_True)
     const char *uriA = "lci:/a/b/c/d/e/";
     const char *uriB = "lci:/a/b/c/d/e/";
 
-    CCNxName *nameA = ccnxName_CreateFromURI(uriA);
-    CCNxName *nameB = ccnxName_CreateFromURI(uriB);
+    CCNxName *nameA = ccnxName_CreateFromCString(uriA);
+    CCNxName *nameB = ccnxName_CreateFromCString(uriB);
 
     bool actual = ccnxName_StartsWith(nameA, nameA);
 
@@ -496,8 +517,8 @@ LONGBOW_TEST_CASE(Global, ccnxName_StartsWith_FalseShorterPrefix)
     const char *uriA = "lci:/a/b/c/d/e";
     const char *prefix = "lci:/a/b/d";
 
-    CCNxName *nameA = ccnxName_CreateFromURI(uriA);
-    CCNxName *nameB = ccnxName_CreateFromURI(prefix);
+    CCNxName *nameA = ccnxName_CreateFromCString(uriA);
+    CCNxName *nameB = ccnxName_CreateFromCString(prefix);
 
     bool actual = ccnxName_StartsWith(nameA, nameB);
 
@@ -512,8 +533,8 @@ LONGBOW_TEST_CASE(Global, ccnxName_StartsWith_FalseLongerPrefix)
     const char *uriA = "lci:/a/b/c/d/e";
     const char *prefix = "lci:/a/b/c/d/e/f";
 
-    CCNxName *nameA = ccnxName_CreateFromURI(uriA);
-    CCNxName *nameB = ccnxName_CreateFromURI(prefix);
+    CCNxName *nameA = ccnxName_CreateFromCString(uriA);
+    CCNxName *nameB = ccnxName_CreateFromCString(prefix);
 
     bool actual = ccnxName_StartsWith(nameA, nameB);
 
@@ -561,8 +582,8 @@ LONGBOW_TEST_CASE(Global, MemoryProblem)
 
 LONGBOW_TEST_CASE(Global, ParseTest1)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/" CCNxNameLabel_Name "=foot/3=toe/4=nail");
-    assertNotNull(name, "Expected non-null value from ccnxName_CreateFromURI");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/" CCNxNameLabel_Name "=foot/3=toe/4=nail");
+    assertNotNull(name, "Expected non-null value from ccnxName_CreateFromCString");
 
     ccnxName_Display(name, 0);
 

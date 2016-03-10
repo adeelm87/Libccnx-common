@@ -369,7 +369,7 @@ LONGBOW_TEST_CASE(EncodeAlg, _encodeKeyName)
 
     CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/2=apple/2=pie");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/2=apple/2=pie");
     CCNxLink *link = ccnxLink_Create(name, keyid, hash);
 
     CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateContentObject();

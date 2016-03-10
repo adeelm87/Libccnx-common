@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
+ * Copyright (c) 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  */
 /**
  * @author Glenn Scott, Palo Alto Research Center (Xerox PARC)
- * @copyright 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
+ * @copyright 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
  */
 #include <config.h>
 
@@ -40,32 +40,41 @@
 
 #include <parc/algol/parc_Hash.h>
 #include <parc/algol/parc_Memory.h>
-#include <parc/algol/parc_ArrayList.h>
+#include <parc/algol/parc_LinkedList.h>
 #include <parc/algol/parc_URI.h>
 #include <parc/algol/parc_URIPath.h>
 #include <parc/algol/parc_DisplayIndented.h>
 #include <parc/algol/parc_Object.h>
 
 struct ccnx_name {
-    PARCArrayList *segments;
+    PARCLinkedList *segments;
 };
 
-static void
-_destroy(CCNxName **pointer)
+static bool
+_ccnxName_Destructor(CCNxName **pointer)
 {
     CCNxName *name = *pointer;
-
-    parcArrayList_Destroy(&name->segments);
+    
+    parcLinkedList_Release(&name->segments);
+    return true;
 }
 
-parcObject_ExtendPARCObject(CCNxName, _destroy, ccnxName_Copy, ccnxName_ToString, ccnxName_Equals, ccnxName_Compare, ccnxName_HashCode, NULL);
-
+parcObject_Override(CCNxName, PARCObject,
+                    .destructor = (PARCObjectDestructor *) _ccnxName_Destructor,
+                    .copy       = (PARCObjectCopy *) ccnxName_Copy,
+                    .equals     = (PARCObjectEquals *) ccnxName_Equals,
+                    .compare    = (PARCObjectCompare *) ccnxName_Compare,
+                    .hashCode   = (PARCObjectHashCode *) ccnxName_HashCode,
+                    .toString   = (PARCObjectToString *) ccnxName_ToString,
+                    .display    = (PARCObjectDisplay *) ccnxName_Display);
 CCNxName *
 ccnxName_Create(void)
 {
     CCNxName *result = parcObject_CreateInstance(CCNxName);
 
-    result->segments = parcArrayList_Create((void (*)(void **))ccnxNameSegment_Release);
+    if (result != NULL) {
+        result->segments = parcLinkedList_Create();
+    }
 
     return result;
 }
@@ -86,14 +95,7 @@ ccnxName_IsValid(const CCNxName *name)
     bool result = false;
 
     if (name != NULL) {
-        result = true;
-        for (size_t i = 0; i < parcArrayList_Size(name->segments); i++) {
-            CCNxNameSegment *segment = (CCNxNameSegment *)parcArrayList_Get(name->segments, i);
-            if (ccnxNameSegment_IsValid(segment) == false) {
-                result = false;
-                break;
-            }
-        }
+        result = parcLinkedList_IsValid(name->segments);
     }
 
     return result;
@@ -127,14 +129,20 @@ ccnxName_Equals(const CCNxName *a, const CCNxName *b)
     if (a == NULL || b == NULL) {
         return false;
     }
+//#if 1
     if (ccnxName_GetSegmentCount(a) == ccnxName_GetSegmentCount(b)) {
-        for (int i = 0; i < ccnxName_GetSegmentCount(a); i++) {
-            if (!ccnxNameSegment_Equals(ccnxName_GetSegment(a, i), ccnxName_GetSegment(b, i))) {
-                return false;
-            }
-        }
-        return true;
+        return parcLinkedList_Equals(a->segments, b->segments);
     }
+//#else
+//    if (ccnxName_GetSegmentCount(a) == ccnxName_GetSegmentCount(b)) {
+//        for (int i = 0; i < ccnxName_GetSegmentCount(a); i++) {
+//            if (!ccnxNameSegment_Equals(ccnxName_GetSegment(a, i), ccnxName_GetSegment(b, i))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+//#endif
     return false;
 }
 
@@ -146,14 +154,14 @@ ccnxName_CreateFormatString(const char *restrict format, ...)
 
     PARCURI *uri = parcURI_CreateFromValist(format, argList);
 
-    CCNxName *result = ccnxName_FromLCIURI(uri);
+    CCNxName *result = ccnxName_FromURI(uri);
     parcURI_Release(&uri);
 
     return result;
 }
 
 CCNxName *
-ccnxName_FromLCIURI(const PARCURI *uri)
+ccnxName_FromURI(const PARCURI *uri)
 {
     CCNxName *result = NULL;
 
@@ -167,7 +175,9 @@ ccnxName_FromLCIURI(const PARCURI *uri)
                 ccnxName_Release(&result);
                 break;
             }
-            parcArrayList_Add(result->segments, segment);
+            parcLinkedList_Append(result->segments, segment);
+            ccnxNameSegment_Release(&segment);
+//            parcArrayList_Add(result->segments, segment);
         }
     }
 
@@ -175,16 +185,15 @@ ccnxName_FromLCIURI(const PARCURI *uri)
 }
 
 CCNxName *
-ccnxName_CreateFromURI(const char *uri)
+ccnxName_CreateFromCString(const char *uri)
 {
     CCNxName *result = NULL;
 
     PARCURI *parcURI = parcURI_Parse(uri);
     if (parcURI != NULL) {
-        if (strcmp("lci", parcURI_GetScheme(parcURI)) == 0) {
-            result = ccnxName_FromLCIURI(parcURI);
-        } else {
-            result = NULL;
+        const char *scheme = parcURI_GetScheme(parcURI);
+        if (strcmp("lci", scheme) == 0 || strcmp("ccnx", scheme) == 0) {
+            result = ccnxName_FromURI(parcURI);
         }
         parcURI_Release(&parcURI);
     }
@@ -195,7 +204,9 @@ ccnxName_CreateFromURI(const char *uri)
 CCNxName *
 ccnxName_CreateFromBuffer(const PARCBuffer *buffer)
 {
-    CCNxName *result = ccnxName_CreateFromURI(parcBuffer_Overlay((PARCBuffer *) buffer, 0));
+    char *string = parcBuffer_ToString(buffer);
+    CCNxName *result = ccnxName_CreateFromCString(string);
+    parcMemory_Deallocate(&string);
 
     return result;
 }
@@ -217,7 +228,8 @@ ccnxName_Append(CCNxName *name, const CCNxNameSegment *segment)
     ccnxName_OptionalAssertValid(name);
     ccnxNameSegment_OptionalAssertValid(segment);
 
-    parcArrayList_Add(name->segments, (PARCObject *)ccnxNameSegment_Acquire(segment));
+    parcLinkedList_Append(name->segments, segment);
+//    parcArrayList_Add(name->segments, (PARCObject *)ccnxNameSegment_Acquire(segment));
 
     return name;
 }
@@ -225,7 +237,7 @@ ccnxName_Append(CCNxName *name, const CCNxNameSegment *segment)
 PARCBufferComposer *
 ccnxName_BuildString(const CCNxName *name, PARCBufferComposer *composer)
 {
-    parcBufferComposer_PutString(composer, "lci:");
+    parcBufferComposer_PutString(composer, "ccnx:");
 
     size_t count = ccnxName_GetSegmentCount(name);
     if (count == 0) {
@@ -260,13 +272,15 @@ ccnxName_ToString(const CCNxName *name)
 CCNxNameSegment *
 ccnxName_GetSegment(const CCNxName *name, size_t index)
 {
-    return (CCNxNameSegment *)parcArrayList_Get(name->segments, index);
+    return parcLinkedList_GetAtIndex(name->segments, index);
+//    return (CCNxNameSegment *)parcArrayList_Get(name->segments, index);
 }
 
 size_t
 ccnxName_GetSegmentCount(const CCNxName *name)
 {
-    return parcArrayList_Size(name->segments);
+    return parcLinkedList_Size(name->segments);
+//    return parcArrayList_Size(name->segments);
 }
 
 int
@@ -359,10 +373,17 @@ ccnxName_Trim(CCNxName *name, size_t numberToRemove)
         numberToRemove = ccnxName_GetSegmentCount(name);
     }
 
+#if 1    
+    for (int i = 0; i < numberToRemove; i++) {
+        CCNxNameSegment *segment = parcLinkedList_RemoveLast(name->segments);
+        ccnxNameSegment_Release(&segment);
+    }
+#else
     for (int i = 0; i < numberToRemove; i++) {
         size_t lastItem = parcArrayList_Size(name->segments);
         parcArrayList_RemoveAndDestroyAtIndex(name->segments, lastItem - 1);
     }
+#endif
     return name;
 }
 
@@ -395,4 +416,25 @@ ccnxName_Display(const CCNxName *name, int indentation)
         }
     }
     parcDisplayIndented_PrintLine(indentation, "}");
+}
+
+CCNxName *
+ccnxName_ComposeFormatString(CCNxName *baseName, const char *restrict format, ...)
+{
+    va_list argList;
+    va_start(argList, format);
+    
+    char *baseString = ccnxName_ToString(baseName);
+    
+    char *suffix;
+    vasprintf(&suffix, format, argList);
+    
+    char *uri;
+    asprintf(&uri, "%s/%s", baseString, suffix);
+    free(suffix);
+    
+    CCNxName *result = ccnxName_CreateFromCString(uri);
+    free(uri);
+    
+    return result;
 }
