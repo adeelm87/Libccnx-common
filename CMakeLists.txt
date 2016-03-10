@@ -5,6 +5,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 if( UNIX )
   link_libraries(m)
 endif( UNIX )
@@ -46,6 +48,7 @@ macro(AddTest testFile)
   target_link_libraries(${ARGV0} ${OPENSSL_LIBRARIES})
   target_link_libraries(${ARGV0} ${CMAKE_THREAD_LIBS_INIT})
   add_test(${ARGV0} ${ARGV0})
+  set_target_properties(${ARGV0} PROPERTIES FOLDER Test)
 endmacro(AddTest)
 
 
