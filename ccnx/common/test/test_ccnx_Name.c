@@ -91,6 +91,7 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxName_ComposeNAME);
 
     LONGBOW_RUN_TEST_CASE(Global, ParseTest1);
+    LONGBOW_RUN_TEST_CASE(Global, ParseTest2);
 
     LONGBOW_RUN_TEST_CASE(Global, MemoryProblem);
 }
@@ -587,6 +588,26 @@ LONGBOW_TEST_CASE(Global, ParseTest1)
 
     ccnxName_Display(name, 0);
 
+    ccnxName_Release(&name);
+}
+
+LONGBOW_TEST_CASE(Global, ParseTest2)
+{
+    CCNxName *a = ccnxName_CreateFromCString("lci:/a/b/c");
+    CCNxName *b = ccnxName_CreateFromCString("lci:/Name=a/Name=b/Name=c");
+    assertTrue(ccnxName_Equals(a, b), "Expected to be equal");
+    ccnxName_Release(&a);
+    ccnxName_Release(&b);
+    
+    CCNxName *name = ccnxName_CreateFromCString("lci:/test/Name=MiISAg%3D%3D");
+    assertNotNull(name, "Expected non-null value from ccnxName_CreateFromCString");
+    char *string = ccnxName_ToString(name);
+    printf("%s\n", string);
+    parcMemory_Deallocate(&string);
+    
+    
+    ccnxName_Display(name, 0);
+    
     ccnxName_Release(&name);
 }
 
