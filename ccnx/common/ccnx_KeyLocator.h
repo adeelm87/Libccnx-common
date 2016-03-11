@@ -95,7 +95,7 @@ CCNxKeyLocator *ccnxKeyLocator_CreateFromKey(PARCKey *key);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci//name");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci//name");
  *     CCNxLink *keyURILink = ccnxLink_Create(name, NULL, NULL);
  *
  *     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyURILink);
@@ -120,7 +120,7 @@ CCNxKeyLocator *ccnxKeyLocator_CreateFromKeyLink(CCNxLink *keyLink);
  * @code
  * {
  *     CCNxName *name = ccnxLink_Create("lci//name");
- *     CCNxLink *keyURILink = ccnxName_CreateFromURI(name, NULL, NULL);
+ *     CCNxLink *keyURILink = ccnxName_CreateFromCString(name, NULL, NULL);
  *
  *     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyURILink);
  *     CCNxKeyLocatorType locatorType = ccnxKeyLocator_GetType(keyLocator);
@@ -163,7 +163,7 @@ bool ccnxKeyLocator_IsKey(const CCNxKeyLocator *keyLocator);
  * @code
  * {
  *     ...
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/name");
  *     CCNxLink *keyURILink = ccnxLink_Create(name, NULL, NULL);
  *     CCNxKeyLocator *keyLocator = ccnxKeyLocator_CreateFromKeyLink(keyURILink);
  *     bool isKeyNameType = ccnxKeyLocator_IsKeyLink(keyLocator);
@@ -187,7 +187,7 @@ bool ccnxKeyLocator_IsKeyLink(const CCNxKeyLocator *keyLocator);
  * @code
  * {
  *     ...
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/name");
  *     CCNxKeyLocator *keyLocator = ccnxKeyLocator_FromKeyName(name);
  *     char *stringRep = ccnxKeyLocator_ToString(keyLocator);
  * }
@@ -269,12 +269,12 @@ PARCKey *ccnxKeyLocator_GetKey(const CCNxKeyLocator *keyLocator);
  * @code
  * {
  *     CCNxName *name1 = ccnxLink_Create("lci//name");
- *     CCNxLink *keyURILink1 = ccnxName_CreateFromURI(name1, NULL, NULL);
+ *     CCNxLink *keyURILink1 = ccnxName_CreateFromCString(name1, NULL, NULL);
  *
  *     CCNxKeyLocator *keyLocator1 = ccnxKeyLocator_FromKeyName(keyURILink1);
  *
  *     CCNxName *name2 = ccnxLink_Create("lci//name");
- *     CCNxLink *keyURILink2 = ccnxName_CreateFromURI(name2, NULL, NULL);
+ *     CCNxLink *keyURILink2 = ccnxName_CreateFromCString(name2, NULL, NULL);
  *
  *     CCNxKeyLocator *keyLocator2 = ccnxKeyLocator_FromKeyName(keyURILink2);
  *
@@ -302,7 +302,7 @@ bool ccnxKeyLocator_Equals(const CCNxKeyLocator *a, const CCNxKeyLocator *b);
  * @code
  * {
  *     ...
- *     CCNxName *keyURIName = ccnxName_CreateFromURI("lci://name");
+ *     CCNxName *keyURIName = ccnxName_CreateFromCString("lci://name");
  *     CCNxKeyLocator *keyLocator = ccnxKeyLocator_FromKeyName(keyURIName);
  *     CCNxKeyLocator *copy = ccnxKeyLocator_Copy(keyLocator);
  *     // use the copied instance

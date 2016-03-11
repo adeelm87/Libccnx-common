@@ -56,7 +56,7 @@ _commonSetup(void)
     TestData *data = parcMemory_AllocateAndClear(sizeof(TestData));
     assertNotNull(data, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(TestData));
 
-    data->name = ccnxName_CreateFromURI("lci:/foo/bar");
+    data->name = ccnxName_CreateFromCString("lci:/foo/bar");
     data->payloadType = CCNxPayloadType_DATA;
 
     data->payload = parcBuffer_Flip(parcBuffer_PutArray(parcBuffer_Allocate(20), 7, (uint8_t *) "payload"));
@@ -313,7 +313,7 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_SetExpiryTime)
 
 LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_SetSignature)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/baz");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/baz");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxTlvDictionary *contentObject = _ccnxContentObjectFacadeV1_CreateWithPayload(name, CCNxPayloadType_DATA, payload);
@@ -337,7 +337,7 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_SetSignature)
 
 LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_GetKeyId)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/baz");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/baz");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
     CCNxTlvDictionary *contentObject = _ccnxContentObjectFacadeV1_CreateWithPayload(name, CCNxPayloadType_DATA, payload);

@@ -32,7 +32,7 @@
  *
  * @code
  * {
- *    CCNxName *name = ccnxName_CreateFromURI("lci:/foo");
+ *    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
  *    CCNxContentObject *object = ccnxContentObject_CreateWithDataPayload(name, NULL);
  *    ccnxName_Release(&name);
  *    // generate the KeyId
@@ -294,7 +294,7 @@ uint64_t ccnxValidationFacadeV1_GetSigningTime(const CCNxTlvDictionary *message)
  * Example:
  * @code
  * {
- *    CCNxName *name = ccnxName_CreateFromURI("lci:/foo");
+ *    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
  *    CCNxContentObject *object = ccnxContentObject_CreateWithDataPayload(name, NULL);
  *    ccnxName_Release(&name);
  *
@@ -363,7 +363,7 @@ bool ccnxValidationFacadeV1_SetKeyName(CCNxTlvDictionary *message, const CCNxLin
  * Example:
  * @code
  * {
- *    CCNxName *name = ccnxName_CreateFromURI("lci:/foo");
+ *    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
  *    CCNxContentObject *object = ccnxContentObject_CreateWithDataPayload(name, NULL);
  *    ccnxName_Release(&name);
  *
@@ -393,7 +393,7 @@ bool ccnxValidationFacadeV1_SetPublicKey(CCNxTlvDictionary *message, const PARCB
  * Example:
  * @code
  * {
- *    CCNxName *name = ccnxName_CreateFromURI("lci:/foo");
+ *    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
  *    CCNxContentObject *object = ccnxContentObject_CreateWithDataPayload(name, NULL);
  *    ccnxName_Release(&name);
  *

@@ -67,7 +67,7 @@ testData_Create(void)
     data->keyid = bufferFromString(sizeof(keyidString), keyidString);
     data->key = bufferFromString(sizeof(keyString), keyString);
     data->cert = bufferFromString(sizeof(certString), certString);
-    data->keyname = ccnxName_CreateFromURI("lci:/lazy/dog");
+    data->keyname = ccnxName_CreateFromCString("lci:/lazy/dog");
 
     PARCBuffer *bb_id = parcBuffer_Wrap("choo choo", 9, 0, 9);
     PARCKeyId *keyid = parcKeyId_Create(bb_id);
@@ -121,7 +121,7 @@ commonTeardown(TestData *data)
 void
 testValidationSetV1_NoParam(TestData *data, bool (*set)(CCNxTlvDictionary *message), bool (*test)(const CCNxTlvDictionary *message))
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/parc/validation/test");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/parc/validation/test");
     CCNxTlvDictionary *packetV1 = ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
                                                                              name,
                                                                              CCNxPayloadType_DATA,
@@ -139,7 +139,7 @@ testValidationSetV1_NoParam(TestData *data, bool (*set)(CCNxTlvDictionary *messa
 void
 testValidationSetV1_KeyId_Null(TestData *data, bool (*set)(CCNxTlvDictionary *message, const PARCBuffer *keyid), bool (*test)(const CCNxTlvDictionary *message))
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/parc/validation/test");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/parc/validation/test");
     CCNxTlvDictionary *packetV1 = ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
                                                                              name,
                                                                              CCNxPayloadType_DATA,
@@ -157,7 +157,7 @@ testValidationSetV1_KeyId_Null(TestData *data, bool (*set)(CCNxTlvDictionary *me
 void
 testValidationSetV1_KeyId_KeyId(TestData *data, bool (*set)(CCNxTlvDictionary *message, const PARCBuffer *keyid), bool (*test)(const CCNxTlvDictionary *message))
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/parc/validation/test");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/parc/validation/test");
     CCNxTlvDictionary *packetV1 = ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
                                                                              name,
                                                                              CCNxPayloadType_DATA,
@@ -181,7 +181,7 @@ testValidationSetV1_KeyId_KeyLocator_Null_Null(TestData *data,
                                                            const CCNxKeyLocator *keyLocator),
                                                bool (*test)(const CCNxTlvDictionary *message))
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/parc/validation/test");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/parc/validation/test");
     CCNxTlvDictionary *packetV1 = ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
                                                                              name,
                                                                              CCNxPayloadType_DATA,
@@ -202,7 +202,7 @@ testValidationSetV1_KeyId_KeyLocator_KeyId_Null(TestData *data,
                                                             const CCNxKeyLocator *keyLocator),
                                                 bool (*test)(const CCNxTlvDictionary *message))
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/parc/validation/test");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/parc/validation/test");
     CCNxTlvDictionary *packetV1 = ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
                                                                              name,
                                                                              CCNxPayloadType_DATA,
@@ -226,7 +226,7 @@ testValidationSetV1_KeyId_KeyLocator_KeyId_Key(TestData *data,
                                                            const CCNxKeyLocator *keyLocator),
                                                bool (*test)(const CCNxTlvDictionary *message))
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/parc/validation/test");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/parc/validation/test");
     CCNxTlvDictionary *packetV1 = ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
                                                                              name,
                                                                              CCNxPayloadType_DATA,
@@ -253,7 +253,7 @@ testValidationSetV1_KeyId_KeyLocator_KeyId_KeyName(TestData *data,
                                                                const CCNxKeyLocator *keyLocator),
                                                    bool (*test)(const CCNxTlvDictionary *message))
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/parc/validation/test");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/parc/validation/test");
     CCNxTlvDictionary *packetV1 = ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
                                                                              name,
                                                                              CCNxPayloadType_DATA,

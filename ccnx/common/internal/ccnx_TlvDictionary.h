@@ -317,7 +317,7 @@ uint64_t ccnxTlvDictionary_GetInteger(const CCNxTlvDictionary *dictionary, uint3
  *     ...
  *
  *     CCNxTlvDictionary *dict = ccnxTlvDictionary_Create(5, 3);
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     bool success = ccnxTlvDictionary_PutName(dict, 2, name);
  *     // success will be true since key 2 was UNSET
  * }
@@ -342,7 +342,7 @@ bool ccnxTlvDictionary_PutName(CCNxTlvDictionary *dictionary, uint32_t key, cons
  *     ...
  *
  *     CCNxTlvDictionary *dict = ccnxTlvDictionary_Create(5, 3);
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     ccnxTlvDictionary_PutName(dict, 2, name);
  *     bool truthy = ccnxTlvDictionary_IsValueName(dict, 2);
  *     // truthy will be true since a name was inserted with key=2
@@ -369,7 +369,7 @@ bool ccnxTlvDictionary_IsValueName(const CCNxTlvDictionary *dictionary, uint32_t
  *     ...
  *
  *     CCNxTlvDictionary *dict = ccnxTlvDictionary_Create(5, 3);
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     ccnxTlvDictionary_PutName(dict, 2, name);
  *     CCNxName *copy = ccnxTlvDictionary_GetName(dict, 2);
  *     // do something with copy
