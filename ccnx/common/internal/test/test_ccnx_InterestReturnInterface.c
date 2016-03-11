@@ -86,7 +86,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxInterestReturnInterface_GetImplementation)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/boose/roo/pie");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/boose/roo/pie");
 
     CCNxInterest *interestV1 =
         ccnxInterest_CreateWithImpl(&CCNxInterestFacadeV1_Implementation,

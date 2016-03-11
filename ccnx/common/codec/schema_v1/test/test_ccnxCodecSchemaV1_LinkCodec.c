@@ -82,7 +82,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_NameOnly)
 {
-    CCNxName *truth = ccnxName_CreateFromURI("lci:/2=rope");
+    CCNxName *truth = ccnxName_CreateFromCString("lci:/2=rope");
 
     uint8_t encoded[] = {
         0x00, 0x00, 0x00, 8,
@@ -118,7 +118,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_NameOnly)
 
 LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_AllFields)
 {
-    CCNxName *truth = ccnxName_CreateFromURI("lci:/2=rope");
+    CCNxName *truth = ccnxName_CreateFromCString("lci:/2=rope");
 
     uint8_t encoded[] = {
         // -- name
@@ -417,7 +417,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
         0xbc, 0xbd, 0xbe, 0xbf,
     };
 
-    CCNxName *trueName = ccnxName_CreateFromURI("lci:/2=rope");
+    CCNxName *trueName = ccnxName_CreateFromCString("lci:/2=rope");
     PARCBuffer *trueKeyId = parcBuffer_Wrap(encoded, sizeof(encoded), 16, 24);
     PARCBuffer *trueHash = parcBuffer_Wrap(encoded, sizeof(encoded), 28, 44);
     PARCBuffer *trueEncoding = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));

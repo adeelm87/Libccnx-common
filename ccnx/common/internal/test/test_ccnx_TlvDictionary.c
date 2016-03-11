@@ -88,7 +88,7 @@ _commonSetup(void)
     ccnxTlvDictionary_PutJson(data->dictionary, SchemaJson, json);
     parcJSON_Release(&json);
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/great/gatsby");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/great/gatsby");
     ccnxTlvDictionary_PutName(data->dictionary, SchemaName, name);
     ccnxName_Release(&name);
 
@@ -1128,12 +1128,12 @@ LONGBOW_TEST_CASE(Local, _rtaTlvEntry_Equals_Name)
 
     for (int i = 0; i < 3; i++) {
         array[i].entryType = ENTRY_NAME;
-        array[i]._entry.name = ccnxName_CreateFromURI(apple);
+        array[i]._entry.name = ccnxName_CreateFromCString(apple);
     }
 
     array[3].entryType = ENTRY_JSON;
     array[4].entryType = ENTRY_NAME;
-    array[4]._entry.name = ccnxName_CreateFromURI(bananna);
+    array[4]._entry.name = ccnxName_CreateFromCString(bananna);
     assertRtaTlvEntryEquals(5, array);
 
     for (int i = 0; i < 5; i++) {
