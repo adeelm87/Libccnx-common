@@ -38,7 +38,6 @@
 
 #include <ccnx/common/ccnx_Name.h>
 
-#include <parc/algol/parc_Hash.h>
 #include <parc/algol/parc_Memory.h>
 #include <parc/algol/parc_LinkedList.h>
 #include <parc/algol/parc_URI.h>
@@ -54,7 +53,7 @@ static bool
 _ccnxName_Destructor(CCNxName **pointer)
 {
     CCNxName *name = *pointer;
-    
+
     parcLinkedList_Release(&name->segments);
     return true;
 }
@@ -129,20 +128,10 @@ ccnxName_Equals(const CCNxName *a, const CCNxName *b)
     if (a == NULL || b == NULL) {
         return false;
     }
-//#if 1
+
     if (ccnxName_GetSegmentCount(a) == ccnxName_GetSegmentCount(b)) {
         return parcLinkedList_Equals(a->segments, b->segments);
     }
-//#else
-//    if (ccnxName_GetSegmentCount(a) == ccnxName_GetSegmentCount(b)) {
-//        for (int i = 0; i < ccnxName_GetSegmentCount(a); i++) {
-//            if (!ccnxNameSegment_Equals(ccnxName_GetSegment(a, i), ccnxName_GetSegment(b, i))) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//#endif
     return false;
 }
 
@@ -177,7 +166,6 @@ ccnxName_FromURI(const PARCURI *uri)
             }
             parcLinkedList_Append(result->segments, segment);
             ccnxNameSegment_Release(&segment);
-//            parcArrayList_Add(result->segments, segment);
         }
     }
 
@@ -229,7 +217,6 @@ ccnxName_Append(CCNxName *name, const CCNxNameSegment *segment)
     ccnxNameSegment_OptionalAssertValid(segment);
 
     parcLinkedList_Append(name->segments, segment);
-//    parcArrayList_Add(name->segments, (PARCObject *)ccnxNameSegment_Acquire(segment));
 
     return name;
 }
@@ -273,14 +260,12 @@ CCNxNameSegment *
 ccnxName_GetSegment(const CCNxName *name, size_t index)
 {
     return parcLinkedList_GetAtIndex(name->segments, index);
-//    return (CCNxNameSegment *)parcArrayList_Get(name->segments, index);
 }
 
 size_t
 ccnxName_GetSegmentCount(const CCNxName *name)
 {
     return parcLinkedList_Size(name->segments);
-//    return parcArrayList_Size(name->segments);
 }
 
 int
@@ -355,17 +340,6 @@ ccnxName_LeftMostHashCode(const CCNxName *name, size_t count)
     return result;
 }
 
-/**
- * Trim `numberToRemove` components from the end of the name.
- * If `numberToRemove` is greater than the number of components in the name,
- * all components are removed.  If `numberToRemove` is 0, nothing happens.
- * The name components are destroyed.
- *
- * Example:
- * @code
- * <#example#>
- * @endcode
- */
 CCNxName *
 ccnxName_Trim(CCNxName *name, size_t numberToRemove)
 {
@@ -373,17 +347,11 @@ ccnxName_Trim(CCNxName *name, size_t numberToRemove)
         numberToRemove = ccnxName_GetSegmentCount(name);
     }
 
-#if 1    
     for (int i = 0; i < numberToRemove; i++) {
         CCNxNameSegment *segment = parcLinkedList_RemoveLast(name->segments);
         ccnxNameSegment_Release(&segment);
     }
-#else
-    for (int i = 0; i < numberToRemove; i++) {
-        size_t lastItem = parcArrayList_Size(name->segments);
-        parcArrayList_RemoveAndDestroyAtIndex(name->segments, lastItem - 1);
-    }
-#endif
+
     return name;
 }
 
@@ -419,22 +387,44 @@ ccnxName_Display(const CCNxName *name, int indentation)
 }
 
 CCNxName *
-ccnxName_ComposeFormatString(CCNxName *baseName, const char *restrict format, ...)
+ccnxName_ComposeFormatString(const CCNxName *baseName, const char *restrict format, ...)
 {
     va_list argList;
     va_start(argList, format);
-    
+
     char *baseString = ccnxName_ToString(baseName);
-    
+
     char *suffix;
     vasprintf(&suffix, format, argList);
-    
+
     char *uri;
     asprintf(&uri, "%s/%s", baseString, suffix);
     free(suffix);
-    
+
     CCNxName *result = ccnxName_CreateFromCString(uri);
     free(uri);
+
+    return result;
+}
+
+CCNxName *
+ccnxName_CreatePrefix(const CCNxName *name, size_t length)
+{
+    CCNxName *result = ccnxName_Create();
+    
+    if (result != NULL) {
+        if (length > 0) {
+            size_t numberOfSegmentsAvailable = parcLinkedList_Size(name->segments);
+            
+            if (length > numberOfSegmentsAvailable) {
+                length = numberOfSegmentsAvailable;
+            }
+            
+            for (size_t i = 0; i < length; i++) {
+                ccnxName_Append(result, ccnxName_GetSegment(name, i));
+            }
+        }
+    }
     
     return result;
 }

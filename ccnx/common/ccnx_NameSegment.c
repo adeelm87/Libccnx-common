@@ -50,18 +50,24 @@ struct ccnx_name_segment {
     PARCBuffer *value;
 };
 
-static void
-_ccnxNameSegment_destroy(CCNxNameSegment **segmentP)
+static bool
+_ccnxNameSegment_destructor(CCNxNameSegment **segmentP)
 {
     assertNotNull(segmentP, "Parameter must be a non-null pointer to a CCNxNameSegment pointer.");
 
     CCNxNameSegment *segment = *segmentP;
     ccnxNameLabel_Release((CCNxNameLabel **) &(segment->label));
     parcBuffer_Release(&segment->value);
+    return true;
 }
 
-parcObject_ExtendPARCObject(CCNxNameSegment, _ccnxNameSegment_destroy, ccnxNameSegment_Copy, ccnxNameSegment_ToString,
-                            ccnxNameSegment_Equals, ccnxNameSegment_Compare, ccnxNameSegment_HashCode, NULL);
+parcObject_Override(CCNxNameSegment, PARCObject,
+                    .destructor = (PARCObjectDestructor *) _ccnxNameSegment_destructor,
+                    .copy       = (PARCObjectCopy *) ccnxNameSegment_Copy,
+                    .equals     = (PARCObjectEquals *) ccnxNameSegment_Equals,
+                    .compare    = (PARCObjectCompare *) ccnxNameSegment_Compare,
+                    .hashCode   = (PARCObjectHashCode *) ccnxNameSegment_HashCode,
+                    .toString   = (PARCObjectToString *) ccnxNameSegment_ToString);
 
 parcObject_ImplementAcquire(ccnxNameSegment, CCNxNameSegment);
 
@@ -208,10 +214,37 @@ ccnxNameSegment_GetValue(const CCNxNameSegment *segment)
     return segment->value;
 }
 
+static inline char *
+_ccnxNameSegment_IsEscapable(const char c)
+{
+    return (c == 0 || index("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~", c) == NULL);
+}
+
+static inline bool
+_ccnxNameSegmentValue_IsEscaped(const PARCBuffer *value)
+{
+    bool result = false;
+
+    size_t length = parcBuffer_Remaining(value);
+
+    for (size_t i = 0; i < length; i++) {
+        if (_ccnxNameSegment_IsEscapable(parcBuffer_GetAtIndex(value, i))) {
+            result = true;
+            break;
+        }
+    }
+    
+    return result;
+}
+
 PARCBufferComposer *
 ccnxNameSegment_BuildString(const CCNxNameSegment *segment, PARCBufferComposer *composer)
 {
-    ccnxNameLabel_BuildString(segment->label, composer);
+    // Insert the label.  However, in the case of an unescaped Name value, the Name lable portion can be left off.
+    
+    if (ccnxNameLabel_GetType(segment->label) != CCNxNameLabelType_NAME || _ccnxNameSegmentValue_IsEscaped(segment->value)) {
+        ccnxNameLabel_BuildString(segment->label, composer);
+    }
 
     if (ccnxNameSegment_Length(segment) > 0) {
         PARCURISegment *uriSegment = parcURISegment_CreateFromBuffer(ccnxNameSegment_GetValue(segment));
