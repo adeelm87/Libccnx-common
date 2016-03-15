@@ -39,6 +39,7 @@
 #include <ccnx/common/ccnx_Name.h>
 
 #include <ccnx/common/internal/ccnx_TlvDictionary.h>
+#include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_TlvDictionary.h>
 
 #include <LongBow/runtime.h>
 
@@ -164,7 +165,7 @@ struct ccnx_tlv_dictionary {
     CCNxMessageInterface *messageInterface;
 
     // will be allocated as part of the ccnx_tlv_dictionary
-    _CCNxTlvDictionaryEntry directArray[];
+    _CCNxTlvDictionaryEntry directArray[CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END];
 };
 
 static _CCNxTlvDictionaryListEntry *
@@ -271,8 +272,10 @@ _ccnxTlvDictionary_GetTimeOfDay(struct timeval *outputTime)
 CCNxTlvDictionary *
 ccnxTlvDictionary_Create(size_t bufferCount, size_t listCount)
 {
-    size_t allocation = sizeof(CCNxTlvDictionary) + sizeof(_CCNxTlvDictionaryEntry) * bufferCount;
-    CCNxTlvDictionary *dictionary = (CCNxTlvDictionary *)parcObject_CreateAndClearInstanceImpl(allocation, &parcObject_DescriptorName(CCNxTlvDictionary));
+//    size_t allocation = sizeof(CCNxTlvDictionary) + sizeof(_CCNxTlvDictionaryEntry) * bufferCount;
+//    CCNxTlvDictionary *dictionary = (CCNxTlvDictionary *)parcObject_CreateAndClearInstanceImpl(allocation, &parcObject_DescriptorName(CCNxTlvDictionary));
+    
+    CCNxTlvDictionary *dictionary = (CCNxTlvDictionary *) parcObject_CreateAndClearInstance(CCNxTlvDictionary);
 
     if (dictionary != NULL) {
         _ccnxTlvDictionary_GetTimeOfDay(&dictionary->creationTime);
