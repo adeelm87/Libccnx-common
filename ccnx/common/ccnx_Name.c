@@ -54,7 +54,7 @@ static bool
 _ccnxName_Destructor(CCNxName **pointer)
 {
     CCNxName *name = *pointer;
-    
+
     parcLinkedList_Release(&name->segments);
     return true;
 }
@@ -349,7 +349,7 @@ ccnxName_LeftMostHashCode(const CCNxName *name, size_t count)
     PARCHashCode result = 0;
     for (int i = 0; i < count; i++) {
         PARCHashCode hashCode = ccnxNameSegment_HashCode(ccnxName_GetSegment(name, i));
-        parcHashCode_HashHashCode(result, hashCode);
+        result = parcHashCode_HashHashCode(result, hashCode);
     }
 
     return result;
@@ -373,7 +373,7 @@ ccnxName_Trim(CCNxName *name, size_t numberToRemove)
         numberToRemove = ccnxName_GetSegmentCount(name);
     }
 
-#if 1    
+#if 1
     for (int i = 0; i < numberToRemove; i++) {
         CCNxNameSegment *segment = parcLinkedList_RemoveLast(name->segments);
         ccnxNameSegment_Release(&segment);
@@ -423,18 +423,18 @@ ccnxName_ComposeFormatString(CCNxName *baseName, const char *restrict format, ..
 {
     va_list argList;
     va_start(argList, format);
-    
+
     char *baseString = ccnxName_ToString(baseName);
-    
+
     char *suffix;
     vasprintf(&suffix, format, argList);
-    
+
     char *uri;
     asprintf(&uri, "%s/%s", baseString, suffix);
     free(suffix);
-    
+
     CCNxName *result = ccnxName_CreateFromCString(uri);
     free(uri);
-    
+
     return result;
 }

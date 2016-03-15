@@ -282,6 +282,9 @@ LONGBOW_TEST_CASE(Global, ccnxName_HashCode)
     PARCHashCode codeA = ccnxName_HashCode(nameA);
     PARCHashCode codeB = ccnxName_HashCode(nameB);
 
+    // We know the hashcode of uriA is not zero
+    assertTrue(codeA != 0, "Expected a non-zero hash code");
+
     assertTrue(codeA == codeB, "Expected %" PRIPARCHashCode " == %" PRIPARCHashCode, codeA, codeB);
 
     ccnxName_Release(&nameA);
@@ -300,6 +303,9 @@ LONGBOW_TEST_CASE(Global, ccnxName_HashCode_LeftMostHashCode)
     PARCHashCode codeB = ccnxName_HashCode(nameB);
     PARCHashCode leftMostCodeA = ccnxName_LeftMostHashCode(nameA, INT_MAX);
     PARCHashCode leftMostCodeB = ccnxName_LeftMostHashCode(nameB, INT_MAX);
+
+    // We know the hashcode of uriA is not zero
+    assertTrue(codeA != 0, "Expected a non-zero hash code");
 
     assertTrue(codeA == codeB, "Expected %" PRIPARCHashCode " == %" PRIPARCHashCode, codeA, codeB);
     assertTrue(codeA == leftMostCodeA, "Expected %" PRIPARCHashCode " == %" PRIPARCHashCode, codeA, leftMostCodeA);
@@ -420,20 +426,20 @@ LONGBOW_TEST_CASE(Global, ccnxName_ToString_LCI)
 {
     const char *lci = "lci:/a/b";
     const char *expectedURI = "ccnx:/a/b";
-    
+
     CCNxName *name = ccnxName_CreateFromCString(lci);
-    
+
     size_t expected = 2;
     size_t actual = ccnxName_GetSegmentCount(name);
-    
+
     assertTrue(expected == actual,
                "Expected %zd segments, actual %zd", expected, actual);
-    
+
     char *string = ccnxName_ToString(name);
     assertTrue(strcmp(expectedURI, string) == 0,
                "Expected '%s' actual '%s'", expectedURI, string);
     parcMemory_Deallocate((void **) &string);
-    
+
     ccnxName_Release(&name);
 }
 
@@ -598,16 +604,16 @@ LONGBOW_TEST_CASE(Global, ParseTest2)
     assertTrue(ccnxName_Equals(a, b), "Expected to be equal");
     ccnxName_Release(&a);
     ccnxName_Release(&b);
-    
+
     CCNxName *name = ccnxName_CreateFromCString("lci:/test/Name=MiISAg%3D%3D");
     assertNotNull(name, "Expected non-null value from ccnxName_CreateFromCString");
     char *string = ccnxName_ToString(name);
     printf("%s\n", string);
     parcMemory_Deallocate(&string);
-    
-    
+
+
     ccnxName_Display(name, 0);
-    
+
     ccnxName_Release(&name);
 }
 
