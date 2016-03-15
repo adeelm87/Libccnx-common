@@ -282,6 +282,9 @@ LONGBOW_TEST_CASE(Global, ccnxName_HashCode)
     PARCHashCode codeA = ccnxName_HashCode(nameA);
     PARCHashCode codeB = ccnxName_HashCode(nameB);
 
+    // We know the hashcode of uriA is not zero
+    assertTrue(codeA != 0, "Expected a non-zero hash code");
+
     assertTrue(codeA == codeB, "Expected %" PRIPARCHashCode " == %" PRIPARCHashCode, codeA, codeB);
 
     ccnxName_Release(&nameA);
@@ -300,6 +303,9 @@ LONGBOW_TEST_CASE(Global, ccnxName_HashCode_LeftMostHashCode)
     PARCHashCode codeB = ccnxName_HashCode(nameB);
     PARCHashCode leftMostCodeA = ccnxName_LeftMostHashCode(nameA, INT_MAX);
     PARCHashCode leftMostCodeB = ccnxName_LeftMostHashCode(nameB, INT_MAX);
+
+    // We know the hashcode of uriA is not zero
+    assertTrue(codeA != 0, "Expected a non-zero hash code");
 
     assertTrue(codeA == codeB, "Expected %" PRIPARCHashCode " == %" PRIPARCHashCode, codeA, codeB);
     assertTrue(codeA == leftMostCodeA, "Expected %" PRIPARCHashCode " == %" PRIPARCHashCode, codeA, leftMostCodeA);
