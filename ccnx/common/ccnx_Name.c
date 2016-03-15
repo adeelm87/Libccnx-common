@@ -60,12 +60,12 @@ _ccnxName_Destructor(CCNxName **pointer)
 
 parcObject_Override(CCNxName, PARCObject,
                     .destructor = (PARCObjectDestructor *) _ccnxName_Destructor,
-                    .copy       = (PARCObjectCopy *) ccnxName_Copy,
-                    .equals     = (PARCObjectEquals *) ccnxName_Equals,
-                    .compare    = (PARCObjectCompare *) ccnxName_Compare,
-                    .hashCode   = (PARCObjectHashCode *) ccnxName_HashCode,
-                    .toString   = (PARCObjectToString *) ccnxName_ToString,
-                    .display    = (PARCObjectDisplay *) ccnxName_Display);
+                    .copy = (PARCObjectCopy *) ccnxName_Copy,
+                    .equals = (PARCObjectEquals *) ccnxName_Equals,
+                    .compare = (PARCObjectCompare *) ccnxName_Compare,
+                    .hashCode = (PARCObjectHashCode *) ccnxName_HashCode,
+                    .toString = (PARCObjectToString *) ccnxName_ToString,
+                    .display = (PARCObjectDisplay *) ccnxName_Display);
 CCNxName *
 ccnxName_Create(void)
 {
@@ -334,7 +334,7 @@ ccnxName_LeftMostHashCode(const CCNxName *name, size_t count)
     PARCHashCode result = 0;
     for (int i = 0; i < count; i++) {
         PARCHashCode hashCode = ccnxNameSegment_HashCode(ccnxName_GetSegment(name, i));
-        parcHashCode_HashHashCode(result, hashCode);
+        result = parcHashCode_HashHashCode(result, hashCode);
     }
 
     return result;
@@ -411,20 +411,20 @@ CCNxName *
 ccnxName_CreatePrefix(const CCNxName *name, size_t length)
 {
     CCNxName *result = ccnxName_Create();
-    
+
     if (result != NULL) {
         if (length > 0) {
             size_t numberOfSegmentsAvailable = parcLinkedList_Size(name->segments);
-            
+
             if (length > numberOfSegmentsAvailable) {
                 length = numberOfSegmentsAvailable;
             }
-            
+
             for (size_t i = 0; i < length; i++) {
                 ccnxName_Append(result, ccnxName_GetSegment(name, i));
             }
         }
     }
-    
+
     return result;
 }

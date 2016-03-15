@@ -117,7 +117,7 @@ CCNxName *ccnxName_FromURI(const PARCURI *uri);
  * }
  * @endcode
  */
-CCNxName *ccnxName_CreateFormatString(const char * restrict format, ...);
+CCNxName *ccnxName_CreateFormatString(const char *restrict format, ...);
 
 /**
  * Create a new instance of `CCNxName`, initialized from a string representation of a LCI URI contained in the given PARCBuffer,
@@ -748,5 +748,4 @@ CCNxName *ccnxName_ComposeFormatString(const CCNxName *baseName, const char *res
  * @endcode
  */
 CCNxName *ccnxName_CreatePrefix(const CCNxName *name, size_t length);
-
 #endif // libccnx_ccnx_Name_h
