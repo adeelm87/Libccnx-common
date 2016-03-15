@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
+ * Copyright (c) 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,11 +37,12 @@
  * such as `"/parc/csl/version=7"` and `"/parc/csl/page=7"`.
  *
  * @author Glenn Scott, Palo Alto Research Center (Xerox PARC)
- * @copyright 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
+ * @copyright 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
  */
 #ifndef libccnx_ccnx_Name_h
 #define libccnx_ccnx_Name_h
 
+#include <parc/algol/parc_HashCode.h>
 #include <ccnx/common/ccnx_NameSegment.h>
 
 struct ccnx_name;
@@ -717,6 +718,35 @@ uint64_t ccnxName_GetSegmentNumber(const CCNxName *name);
  * }
  * @endcode
  */
-CCNxName *ccnxName_ComposeFormatString(CCNxName *baseName, const char *restrict format, ...);
+CCNxName *ccnxName_ComposeFormatString(const CCNxName *baseName, const char *restrict format, ...);
+
+/**
+ * Create a CCNxName that is a prefix of another.
+ *
+ * If the specified length is greater than the number of segments available,
+ * the result is a new name that is a copy of the old name.
+ *
+ * @param [in] name A pointer to a valid `CCNxName` instance.
+ * @param [in] length The number of `CCNxNameSegments` the prefix must include.
+ *
+ * @return non-NULL A pointer to a valid CCNxName.
+ * @return NULL An error occurred.
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxName *a = ccnxName_CreateFromCString("ccnx:/a/b/c");
+ *
+ *     CCNxName *prefix = ccnxName_CreatePrefix(a, 1);
+ *
+ *     // prefix is equal to the name "ccnx:/a"
+ *
+ *     ccnxName_Release(&a);
+ *     ccnxName_Release(&prefix);
+ *     ccnxName_Release(&actual);
+ * }
+ * @endcode
+ */
+CCNxName *ccnxName_CreatePrefix(const CCNxName *name, size_t length);
 
 #endif // libccnx_ccnx_Name_h

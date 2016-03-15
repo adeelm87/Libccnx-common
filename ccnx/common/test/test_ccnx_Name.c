@@ -42,6 +42,7 @@ LONGBOW_TEST_RUNNER(ccnx_Name)
 {
     LONGBOW_RUN_TEST_FIXTURE(Local);
     LONGBOW_RUN_TEST_FIXTURE(Global);
+    LONGBOW_RUN_TEST_FIXTURE(Specialization);
     LONGBOW_RUN_TEST_FIXTURE(Performance);
 }
 
@@ -599,12 +600,13 @@ LONGBOW_TEST_CASE(Global, ParseTest2)
     ccnxName_Release(&a);
     ccnxName_Release(&b);
     
-    CCNxName *name = ccnxName_CreateFromCString("lci:/test/Name=MiISAg%3D%3D");
+    char *expected = "ccnx:/test/Name=MiISAg%3D%3D";
+    CCNxName *name = ccnxName_CreateFromCString(expected);
     assertNotNull(name, "Expected non-null value from ccnxName_CreateFromCString");
-    char *string = ccnxName_ToString(name);
-    printf("%s\n", string);
-    parcMemory_Deallocate(&string);
-    
+    char *actual = ccnxName_ToString(name);
+    printf("%s\n", actual);
+    assertTrue(strcmp(expected, actual) == 0, "Expected '%s' actual '%s'", expected, actual);
+    parcMemory_Deallocate(&actual);
     
     ccnxName_Display(name, 0);
     
@@ -628,6 +630,70 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Local)
         return LONGBOW_STATUS_MEMORYLEAK;
     }
     return LONGBOW_STATUS_SUCCEEDED;
+}
+
+LONGBOW_TEST_FIXTURE(Specialization)
+{
+    LONGBOW_RUN_TEST_CASE(Specialization, ccnxName_Prefix);
+    LONGBOW_RUN_TEST_CASE(Specialization, ccnxName_Prefix_Excess);
+    LONGBOW_RUN_TEST_CASE(Specialization, ccnxName_Prefix_0);
+}
+
+LONGBOW_TEST_FIXTURE_SETUP(Specialization)
+{
+    return LONGBOW_STATUS_SUCCEEDED;
+}
+
+LONGBOW_TEST_FIXTURE_TEARDOWN(Specialization)
+{
+    uint32_t outstandingAllocations = parcSafeMemory_ReportAllocation(STDERR_FILENO);
+    if (outstandingAllocations != 0) {
+        printf("%s leaks memory by %d allocations\n", longBowTestCase_GetName(testCase), outstandingAllocations);
+        return LONGBOW_STATUS_MEMORYLEAK;
+    }
+    return LONGBOW_STATUS_SUCCEEDED;
+}
+
+LONGBOW_TEST_CASE(Specialization, ccnxName_Prefix)
+{
+    CCNxName *a = ccnxName_CreateFromCString("ccnx:/a/b/c");
+    CCNxName *expected = ccnxName_CreateFromCString("ccnx:/a");
+    
+    CCNxName *actual = ccnxName_CreatePrefix(a, 1);
+    
+    assertTrue(ccnxName_Equals(expected, actual), "Mismatched results.");
+
+    ccnxName_Release(&a);
+    ccnxName_Release(&expected);
+    ccnxName_Release(&actual);
+}
+
+LONGBOW_TEST_CASE(Specialization, ccnxName_Prefix_Excess)
+{
+    CCNxName *a = ccnxName_CreateFromCString("ccnx:/a/b/c");
+    CCNxName *expected = ccnxName_CreateFromCString("ccnx:/a/b/c");
+    
+    CCNxName *actual = ccnxName_CreatePrefix(a, 100);
+    
+    assertTrue(ccnxName_Equals(expected, actual), "Mismatched results.");
+    
+    ccnxName_Release(&a);
+    ccnxName_Release(&expected);
+    ccnxName_Release(&actual);
+}
+
+LONGBOW_TEST_CASE(Specialization, ccnxName_Prefix_0)
+{
+    CCNxName *a = ccnxName_CreateFromCString("ccnx:/a/b/c");
+    CCNxName *expected = ccnxName_CreateFromCString("ccnx:");
+    
+    CCNxName *actual = ccnxName_CreatePrefix(a, 0);
+    
+    assertTrue(ccnxName_Equals(expected, actual), "Mismatched results.");
+    
+    ccnxName_Release(&a);
+    ccnxName_Release(&expected);
+    ccnxName_Release(&actual);
 }
 
 LONGBOW_TEST_FIXTURE_OPTIONS(Performance, .enabled = false)
