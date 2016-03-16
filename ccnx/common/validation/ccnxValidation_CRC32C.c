@@ -53,42 +53,44 @@ typedef struct crc32_signer {
 // ==================================================
 // CRC32C Prototypes PARCSigner
 
-static PARCSigner      *_crc32cSignerInterface_Create(void);
-static void                  _crc32cSignerInterface_Destroy(void **interfaceContextPtr);
-static PARCSignature        *_crc32cSignerInterface_SignDigest(void *interfaceContext, const PARCCryptoHash *cryptoHash);
-static PARCSigningAlgorithm  _crc32cSignerInterface_GetSigningAlgorithm(void *interfaceContext);
-static PARCCryptoHashType    _crc32cSignerInterface_GetCryptoHashType(void *interfaceContext);
-static PARCCryptoHasher     *_crc32cSignerInterface_GetCryptoHasher(void *interfaceContext);
+static PARCSigningInterface      *crc32cSignerInterface_Create(void);
+static void                  crc32cSignerInterface_Destroy(struct ccnx_signer_interface **interfaceContextPtr);
+static PARCSignature        *crc32cSignerInterface_SignDigest(void *interfaceContext, const PARCCryptoHash *cryptoHash);
+static PARCSigningAlgorithm  crc32cSignerInterface_GetSigningAlgorithm(void *interfaceContext);
+static PARCCryptoHashType    crc32cSignerInterface_GetCryptoHashType(void *interfaceContext);
+static PARCCryptoHasher     *crc32cSignerInterface_GetCryptoHasher(void *interfaceContext);
 
-static PARCSigningInterface crc32c_signerinterface_template = {
-        .Release                  = (void (*)(void **)) _crc32cSignerInterface_Destroy,
-        .GetCryptoHasher          = _crc32cSignerInterface_GetCryptoHasher,
-        .SignDigest               = _crc32cSignerInterface_SignDigest,
-        .GetSigningAlgorithm      = _crc32cSignerInterface_GetSigningAlgorithm,
-        .GetCryptoHashType        = _crc32cSignerInterface_GetCryptoHashType
+static const PARCSigningInterface crc32c_signerinterface_template = {
+    .interfaceContext         = NULL,
+    .Destroy                  = crc32cSignerInterface_Destroy,
+    .GetVerifierKeyDigest     = NULL,
+    .GetCertificateDigest     = NULL,
+    .GetDEREncodedCertificate = NULL,
+    .GetDEREncodedPublicKey   = NULL,
+    .GetCryptoHasher          = crc32cSignerInterface_GetCryptoHasher,
+    .SignDigest               = crc32cSignerInterface_SignDigest,
+    .GetSigningAlgorithm      = crc32cSignerInterface_GetSigningAlgorithm,
+    .GetCryptoHashType        = crc32cSignerInterface_GetCryptoHashType
 };
 
 // ==================================================
 // CRC32C Prototypes PARCVerifier
 
-static PARCVerifierInterface *_crc32cVerifierInterface_Create(void);
-static PARCCryptoHasher *_crc32cVerifierInterface_GetCryptoHasher(void *interfaceContext, PARCKeyId *keyid,
-                                                                  PARCCryptoHashType hashType);
-static bool              _crc32cVerifierInterface_VerifyDigest(void *interfaceContext, PARCKeyId *keyid,
-                                                               PARCCryptoHash *locallyComputedHash,
-                                                               PARCCryptoSuite suite, PARCSignature *signatureToVerify);
-static bool              _crc32cVerifierInterface_AllowedCryptoSuite(void *interfaceContext, PARCKeyId *keyid,
-                                                                     PARCCryptoSuite suite);
-static void              _crc32cVerifierInterface_Destroy(struct parc_verifier_interface **interfaceContextPtr);
+static PARCVerifierInterface *crc32cVerifierInterface_Create(void);
+static PARCCryptoHasher *crc32cVerifierInterface_GetCryptoHasher(void *interfaceContext, PARCKeyId *keyid, PARCCryptoHashType hashType);
+static bool              crc32cVerifierInterface_VerifyDigest(void *interfaceContext, PARCKeyId *keyid, PARCCryptoHash *locallyComputedHash,
+                                                              PARCCryptoSuite suite, PARCSignature *signatureToVerify);
+static bool              crc32cVerifierInterface_AllowedCryptoSuite(void *interfaceContext, PARCKeyId *keyid, PARCCryptoSuite suite);
+static void              crc32cVerifierInterface_Destroy(struct parc_verifier_interface **interfaceContextPtr);
 
 static const PARCVerifierInterface crc32c_verifierinterface_template = {
-        .interfaceContext   = NULL,
-        .GetCryptoHasher    = _crc32cVerifierInterface_GetCryptoHasher,
-        .VerifyDigest       = _crc32cVerifierInterface_VerifyDigest,
-        .AddKey             = NULL,
-        .RemoveKeyId        = NULL,
-        .AllowedCryptoSuite = _crc32cVerifierInterface_AllowedCryptoSuite,
-        .Destroy            = _crc32cVerifierInterface_Destroy,
+    .interfaceContext   = NULL,
+    .GetCryptoHasher    = crc32cVerifierInterface_GetCryptoHasher,
+    .VerifyDigest       = crc32cVerifierInterface_VerifyDigest,
+    .AddKey             = NULL,
+    .RemoveKeyId        = NULL,
+    .AllowedCryptoSuite = crc32cVerifierInterface_AllowedCryptoSuite,
+    .Destroy            = crc32cVerifierInterface_Destroy,
 };
 
 // ========================================================================================
@@ -96,34 +98,15 @@ static const PARCVerifierInterface crc32c_verifierinterface_template = {
 bool
 ccnxValidationCRC32C_Set(CCNxTlvDictionary *message)
 {
-    bool success = true;
-    switch (ccnxTlvDictionary_GetSchemaVersion(message)) {
-        case CCNxTlvDictionary_SchemaVersion_V1: {
-            success &= ccnxTlvDictionary_PutInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE, PARCCryptoSuite_NULL_CRC32C);
-
-            break;
-        }
-
-        default:
-        trapIllegalValue(message, "Unknown schema version: %d", ccnxTlvDictionary_GetSchemaVersion(message));
-    }
-    return success;
+    return ccnxTlvDictionary_PutInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE, PARCCryptoSuite_NULL_CRC32C);
 }
 
 bool
 ccnxValidationCRC32C_Test(const CCNxTlvDictionary *message)
 {
-    switch (ccnxTlvDictionary_GetSchemaVersion(message)) {
-        case CCNxTlvDictionary_SchemaVersion_V1: {
-            if (ccnxTlvDictionary_IsValueInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE)) {
-                uint64_t cryptosuite = ccnxTlvDictionary_GetInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE);
-                return (cryptosuite == PARCCryptoSuite_NULL_CRC32C);
-            }
-            return false;
-        }
-
-        default:
-        trapIllegalValue(message, "Unknown schema version: %d", ccnxTlvDictionary_GetSchemaVersion(message));
+    if (ccnxTlvDictionary_IsValueInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE)) {
+       uint64_t cryptosuite = ccnxTlvDictionary_GetInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE);
+       return (cryptosuite == PARCCryptoSuite_NULL_CRC32C);
     }
     return false;
 }
@@ -131,64 +114,70 @@ ccnxValidationCRC32C_Test(const CCNxTlvDictionary *message)
 PARCSigner *
 ccnxValidationCRC32C_CreateSigner(void)
 {
-    return _crc32cSignerInterface_Create();
+    PARCSigner *signer = parcSigner_Create(crc32cSignerInterface_Create());
+    return signer;
 }
 
 PARCVerifier *
 ccnxValidationCRC32C_CreateVerifier(void)
 {
-    PARCVerifier *verifier = parcVerifier_Create(_crc32cVerifierInterface_Create());
+    PARCVerifier *verifier = parcVerifier_Create(crc32cVerifierInterface_Create());
     return verifier;
 }
 
 // ==================================================
 // CRC32C Implementation PARCSigner
 
-static PARCSigner *
-_crc32cSignerInterface_Create(void)
+static PARCSigningInterface *
+crc32cSignerInterface_Create(void)
 {
     CRC32CSigner *crc32Signer = parcMemory_AllocateAndClear(sizeof(CRC32CSigner));
     assertNotNull(crc32Signer, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(CRC32CSigner));
     crc32Signer->hasher = parcCryptoHasher_Create(PARC_HASH_CRC32C);
 
-    PARCSigner *signer = parcSigner_Create(crc32Signer, &crc32c_signerinterface_template);
-
-    return signer;
+    PARCSigningInterface *interface = parcMemory_AllocateAndClear(sizeof(PARCSigningInterface));
+    assertNotNull(interface, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(PARCSigningInterface));
+    *interface = crc32c_signerinterface_template;
+    interface->interfaceContext = crc32Signer;
+    return interface;
 }
 
 static void
-_crc32cSignerInterface_Destroy(void **interfaceContextPtr)
+crc32cSignerInterface_Destroy(struct ccnx_signer_interface **interfaceContextPtr)
 {
-    CRC32CSigner *signer = (CRC32CSigner *) *interfaceContextPtr;
+    PARCSigningInterface *interface = (PARCSigningInterface *) *interfaceContextPtr;
+
+    CRC32CSigner *signer = interface->interfaceContext;
 
     parcCryptoHasher_Release(&(signer->hasher));
 
     parcMemory_Deallocate((void **) &signer);
+    parcMemory_Deallocate((void **) &interface);
     *interfaceContextPtr = NULL;
 }
 
 static PARCSignature *
-_crc32cSignerInterface_SignDigest(void *interfaceContext, const PARCCryptoHash *cryptoHash)
+crc32cSignerInterface_SignDigest(void *interfaceContext, const PARCCryptoHash *cryptoHash)
 {
     PARCSignature *signature =
-            parcSignature_Create(PARCSigningAlgortihm_NULL, PARC_HASH_CRC32C, parcCryptoHash_GetDigest(cryptoHash));
+        parcSignature_Create(PARCSigningAlgortihm_NULL, PARC_HASH_CRC32C, parcCryptoHash_GetDigest(cryptoHash));
     return signature;
 }
 
 static PARCSigningAlgorithm
-_crc32cSignerInterface_GetSigningAlgorithm(void *interfaceContext)
+crc32cSignerInterface_GetSigningAlgorithm(void *interfaceContext)
 {
     return PARCSigningAlgortihm_NULL;
 }
 
 static PARCCryptoHashType
-_crc32cSignerInterface_GetCryptoHashType(void *interfaceContext)
+crc32cSignerInterface_GetCryptoHashType(void *interfaceContext)
 {
     return PARC_HASH_CRC32C;
 }
 
 static PARCCryptoHasher *
-_crc32cSignerInterface_GetCryptoHasher(void *interfaceContext)
+crc32cSignerInterface_GetCryptoHasher(void *interfaceContext)
 {
     CRC32CSigner *signer = interfaceContext;
     return signer->hasher;
@@ -198,7 +187,7 @@ _crc32cSignerInterface_GetCryptoHasher(void *interfaceContext)
 // CRC32C Implementation PARCVerifierInterface
 
 static PARCVerifierInterface *
-_crc32cVerifierInterface_Create(void)
+crc32cVerifierInterface_Create(void)
 {
     CRC32CSigner *crc32Signer = parcMemory_AllocateAndClear(sizeof(CRC32CSigner));
     assertNotNull(crc32Signer, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(CRC32CSigner));
@@ -211,8 +200,8 @@ _crc32cVerifierInterface_Create(void)
     return interface;
 }
 
-static PARCCryptoHasher *
-_crc32cVerifierInterface_GetCryptoHasher(void *interfaceContext, PARCKeyId *keyid, PARCCryptoHashType hashType)
+static PARCCryptoHasher*
+crc32cVerifierInterface_GetCryptoHasher(void *interfaceContext, PARCKeyId *keyid, PARCCryptoHashType hashType)
 {
     assertTrue(hashType == PARC_HASH_CRC32C, "Only supports PARC_HASH_CRC32C, got request for %s", parcCryptoHashType_ToString(hashType));
 
@@ -221,8 +210,8 @@ _crc32cVerifierInterface_GetCryptoHasher(void *interfaceContext, PARCKeyId *keyi
 }
 
 static bool
-_crc32cVerifierInterface_VerifyDigest(void *interfaceContext, PARCKeyId *keyid, PARCCryptoHash *locallyComputedHash,
-                                      PARCCryptoSuite suite, PARCSignature *signatureToVerify)
+crc32cVerifierInterface_VerifyDigest(void *interfaceContext, PARCKeyId *keyid, PARCCryptoHash *locallyComputedHash,
+                                     PARCCryptoSuite suite, PARCSignature *signatureToVerify)
 {
     assertTrue(suite == PARCCryptoSuite_NULL_CRC32C, "Only supports PARC_SUITE_NULL_CRC32C, got request for %d", suite);
 
@@ -235,13 +224,13 @@ _crc32cVerifierInterface_VerifyDigest(void *interfaceContext, PARCKeyId *keyid, 
 }
 
 static bool
-_crc32cVerifierInterface_AllowedCryptoSuite(void *interfaceContext, PARCKeyId *keyid, PARCCryptoSuite suite)
+crc32cVerifierInterface_AllowedCryptoSuite(void *interfaceContext, PARCKeyId *keyid, PARCCryptoSuite suite)
 {
     return (suite == PARCCryptoSuite_NULL_CRC32C);
 }
 
 static void
-_crc32cVerifierInterface_Destroy(struct parc_verifier_interface **interfaceContextPtr)
+crc32cVerifierInterface_Destroy(struct parc_verifier_interface **interfaceContextPtr)
 {
     PARCVerifierInterface *interface = (PARCVerifierInterface *) *interfaceContextPtr;
 

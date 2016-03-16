@@ -40,9 +40,8 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 
+#include <parc/security/parc_PublicKeySignerPkcs12Store.h>
 #include <parc/security/parc_Security.h>
-#include <parc/security/parc_Pkcs12KeyStore.h>
-#include <parc/security/parc_PublicKeySigner.h>
 
 typedef struct test_data {
     CCNxCodecNetworkBuffer *buffer;
@@ -188,12 +187,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecNetworkBuffer_ComputeSignature)
 {
     parcSecurity_Init();
 
-    PARCPkcs12KeyStore *publicKeyStore = parcPkcs12KeyStore_Open("test_rsa.p12", "blueberry", PARC_HASH_SHA256);
-    PARCKeyStore *keyStore = parcKeyStore_Create(publicKeyStore, PARCPkcs12KeyStoreAsKeyStore);
-    PARCPublicKeySigner *publicKeySigner = parcPublicKeySigner_Create(keyStore, PARCSigningAlgorithm_RSA, PARC_HASH_SHA256);
-    PARCSigner *signer = parcSigner_Create(publicKeySigner, PARCPublicKeySignerAsSigner);
-
-    parcKeyStore_Release(&keyStore);
+    PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("test_rsa.p12", "blueberry", PARC_HASH_SHA256));
     assertNotNull(signer, "Got null result from opening openssl pkcs12 file");
 
     // read the buffer to sign

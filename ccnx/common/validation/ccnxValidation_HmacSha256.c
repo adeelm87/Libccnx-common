@@ -35,8 +35,7 @@
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_TlvDictionary.h>
 
 #include <parc/security/parc_Verifier.h>
-#include <parc/security/parc_SymmetricKeyStore.h>
-#include <parc/security/parc_SymmetricKeySigner.h>
+#include <parc/security/parc_SymmetricSignerFileStore.h>
 
 /**
  * Sets the Validation algorithm to HMAC with SHA-256 hash
@@ -70,7 +69,7 @@ ccnxValidationHmacSha256_Set(CCNxTlvDictionary *message, const PARCBuffer *keyid
         }
 
         default:
-        trapIllegalValue(message, "Unknown schema version: %d", ccnxTlvDictionary_GetSchemaVersion(message));
+            trapIllegalValue(message, "Unknown schema version: %d", ccnxTlvDictionary_GetSchemaVersion(message));
     }
     return success;
 }
@@ -78,17 +77,9 @@ ccnxValidationHmacSha256_Set(CCNxTlvDictionary *message, const PARCBuffer *keyid
 bool
 ccnxValidationHmacSha256_Test(const CCNxTlvDictionary *message)
 {
-    switch (ccnxTlvDictionary_GetSchemaVersion(message)) {
-        case CCNxTlvDictionary_SchemaVersion_V1: {
-            if (ccnxTlvDictionary_IsValueInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE)) {
-                uint64_t cryptosuite = ccnxTlvDictionary_GetInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE);
-                return (cryptosuite == PARCCryptoSuite_HMAC_SHA256);
-            }
-            return false;
-        }
-
-        default:
-        trapIllegalValue(message, "Unknown schema version: %d", ccnxTlvDictionary_GetSchemaVersion(message));
+    if (ccnxTlvDictionary_IsValueInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE)) {
+        uint64_t cryptosuite = ccnxTlvDictionary_GetInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE);
+        return (cryptosuite == PARCCryptoSuite_HMAC_SHA256);
     }
     return false;
 }
@@ -96,11 +87,10 @@ ccnxValidationHmacSha256_Test(const CCNxTlvDictionary *message)
 PARCSigner *
 ccnxValidationHmacSha256_CreateSigner(PARCBuffer *secretKey)
 {
-    PARCSymmetricKeyStore *keyStore = parcSymmetricKeyStore_Create(secretKey);
-    PARCSymmetricKeySigner *signer = parcSymmetricKeySigner_Create(keyStore, PARC_HASH_SHA256);
-    parcSymmetricKeyStore_Release(&keyStore);
+    // stores the elasticKey by reference, does not acquire it
+    PARCSigningInterface *interface = parcSymmetricSignerFileStore_Create(secretKey, PARC_HASH_SHA256);
 
-    return parcSigner_Create(signer, PARCSymmetricKeySignerAsSigner);
+    return parcSigner_Create(interface);
 }
 
 PARCVerifier *
