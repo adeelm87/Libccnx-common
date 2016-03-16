@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * @file ccnx_TlvDictionary_SchemaV1.h
+ * @file ccnxCodecSchemaV1_TlvDictionary.h
  * @brief <#Brief Description#>
  *
  * Used as keys to the CCNxTlvDictionary for the version 1 schema
