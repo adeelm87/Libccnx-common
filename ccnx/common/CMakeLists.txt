@@ -245,7 +245,6 @@ set(libccnx_commonLibraries
 foreach(lib ${libccnx_commonLibraries})
   install(TARGETS ${lib} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
   set_property(TARGET ${lib} PROPERTY C_STANDARD 99)
-  set_property(TARGET ${lib} PROPERTY INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 endforeach()
 
 install(FILES ${CORE_HDRS}               DESTINATION include/ccnx/common )
