@@ -59,7 +59,7 @@ _commonSetup(void)
 {
     TestData *data = parcMemory_AllocateAndClear(sizeof(TestData));
     assertNotNull(data, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(TestData));
-    data->name = ccnxName_CreateFromURI("lci:/once/upon/a/time");
+    data->name = ccnxName_CreateFromCString("lci:/once/upon/a/time");
 
     for (int i = 0; i < 32; i++) {
         data->keyidArray[i] = i * 7;
@@ -154,7 +154,7 @@ LONGBOW_TEST_CASE(Performance, newfangled)
     }
 
     PARCBuffer *keyid = parcBuffer_Wrap(keyidArray, 32, 0, 32);
-    CCNxName *name = ccnxName_CreateFromURI("lci:/dark/and/stormy/bits");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/dark/and/stormy/bits");
 
     struct timeval t0, t1;
     unsigned trials = 10000;
@@ -295,8 +295,8 @@ LONGBOW_TEST_CASE(Global, ccnxInterestFacadeV1_GetPayload)
 
 LONGBOW_TEST_CASE(Global, ccnxInterestFacadeV1_Equals)
 {
-    CCNxName *name1 = ccnxName_CreateFromURI("lci:/name/1");
-    CCNxName *name2 = ccnxName_CreateFromURI("lci:/name/2");
+    CCNxName *name1 = ccnxName_CreateFromCString("lci:/name/1");
+    CCNxName *name2 = ccnxName_CreateFromCString("lci:/name/2");
 
     CCNxTlvDictionary *x = _ccnxInterestFacadeV1_CreateSimple(name1); // same
     CCNxTlvDictionary *y = _ccnxInterestFacadeV1_CreateSimple(name1); // same

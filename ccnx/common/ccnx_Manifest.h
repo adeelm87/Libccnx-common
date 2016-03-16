@@ -66,7 +66,7 @@ typedef struct ccnx_manifest CCNxManifest;
  *     PARCBuffer *signatureBits = parcBuffer_Allocate(256);
  *     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
  *
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/manifest");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
  *     CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
  *
  *     CCNxManifest *object = ccnxManifest_Create(signature, name, NULL, NULL);

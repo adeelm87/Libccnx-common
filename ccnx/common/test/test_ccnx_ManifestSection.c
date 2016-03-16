@@ -96,7 +96,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_Create_Empty)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -110,7 +110,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_Create_Empty)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_AddNameEntry)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -118,7 +118,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_AddNameEntry)
     assertNotNull(section, "Expected non-null section");
 
     PARCBuffer *buffer = parcBuffer_WrapCString("test");
-    CCNxName *elementName = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName = ccnxName_CreateFromCString("lci:/foo/bar/1");
     bool result = ccnxManifestSection_AddNameEntry(section, elementName, 0, buffer);
     assertTrue(result, "Expected successful addition of new name entry");
 
@@ -136,7 +136,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_AddNameEntry)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_Acquire_Release)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -163,7 +163,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_Acquire_Release)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetACSLink)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -180,7 +180,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetACSLink)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameCount)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -188,7 +188,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameCount)
     assertNotNull(section, "Expected non-null section");
 
     PARCBuffer *buffer = parcBuffer_WrapCString("test");
-    CCNxName *elementName = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName = ccnxName_CreateFromCString("lci:/foo/bar/1");
     bool result = ccnxManifestSection_AddNameEntry(section, elementName, 0, buffer);
     assertTrue(result, "Expected successful addition of new name entry");
 
@@ -204,7 +204,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameCount)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetHashCount)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -212,7 +212,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetHashCount)
     assertNotNull(section, "Expected non-null section");
 
     PARCBuffer *buffer = parcBuffer_WrapCString("test");
-    CCNxName *elementName = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName = ccnxName_CreateFromCString("lci:/foo/bar/1");
     bool result = ccnxManifestSection_AddNameEntry(section, elementName, 0, buffer);
     assertTrue(result, "Expected successful addition of new name entry");
 
@@ -228,7 +228,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetHashCount)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetHash)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -236,7 +236,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetHash)
     assertNotNull(section, "Expected non-null section");
 
     PARCBuffer *buffer = parcBuffer_WrapCString("test");
-    CCNxName *elementName = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName = ccnxName_CreateFromCString("lci:/foo/bar/1");
     bool result = ccnxManifestSection_AddNameEntry(section, elementName, 0, buffer);
     assertTrue(result, "Expected successful addition of new name entry");
 
@@ -252,7 +252,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetHash)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameFromHashIndex)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -260,7 +260,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameFromHashIndex)
     assertNotNull(section, "Expected non-null section");
 
     PARCBuffer *buffer = parcBuffer_WrapCString("test");
-    CCNxName *elementName = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName = ccnxName_CreateFromCString("lci:/foo/bar/1");
     bool result = ccnxManifestSection_AddNameEntry(section, elementName, 0, buffer);
     assertTrue(result, "Expected successful addition of new name entry");
 
@@ -276,7 +276,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameFromHashIndex)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameChunkFromHashIndex)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -284,7 +284,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameChunkFromHashIndex)
     assertNotNull(section, "Expected non-null section");
 
     PARCBuffer *buffer = parcBuffer_WrapCString("test");
-    CCNxName *elementName = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName = ccnxName_CreateFromCString("lci:/foo/bar/1");
     bool result = ccnxManifestSection_AddNameEntry(section, elementName, 10, buffer);
     assertTrue(result, "Expected successful addition of new name entry");
 
@@ -300,7 +300,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_GetNameChunkFromHashIndex)
 
 LONGBOW_TEST_CASE(Global, ccnxManifestSection_Create_ToString)
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -308,7 +308,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_Create_ToString)
     assertNotNull(section, "Expected non-null section");
 
     PARCBuffer *buffer = parcBuffer_WrapCString("test");
-    CCNxName *elementName = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName = ccnxName_CreateFromCString("lci:/foo/bar/1");
     bool result = ccnxManifestSection_AddNameEntry(section, elementName, 0, buffer);
     assertTrue(result, "Expected successful addition of new name entry");
 
@@ -326,7 +326,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_Create_ToString)
 static CCNxManifestSection *
 _createFullManifestSection()
 {
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -334,7 +334,7 @@ _createFullManifestSection()
     assertNotNull(section, "Expected non-null section");
 
     PARCBuffer *buffer = parcBuffer_WrapCString("test");
-    CCNxName *elementName = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName = ccnxName_CreateFromCString("lci:/foo/bar/1");
     ccnxManifestSection_AddNameEntry(section, elementName, 0, buffer);
 
     ccnxLink_Release(&acsLink);
@@ -353,7 +353,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_Equals)
 
     CCNxManifestSection *u1 = _createFullManifestSection();
     ccnxLink_Release(&u1->acsLink);
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/different");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/different");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
     u1->acsLink = acsLink;
 
@@ -372,7 +372,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_Equals)
     PARCArrayList *nameList4 = parcArrayList_Create((void (*)(void **))_ccnxManifestSectionHashEntry_Release);
     u4->listOfNames = parcList(nameList4, PARCArrayListAsPARCList);
     PARCBuffer *buffer4 = parcBuffer_WrapCString("THIS HASH IS DIFFERENT");
-    CCNxName *elementName4 = ccnxName_CreateFromURI("lci:/foo/bar/1");
+    CCNxName *elementName4 = ccnxName_CreateFromCString("lci:/foo/bar/1");
     ccnxManifestSection_AddNameEntry(u4, elementName4, 0, buffer4);
     parcBuffer_Release(&buffer4);
     ccnxName_Release(&elementName4);
@@ -385,7 +385,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestSection_Equals)
     PARCArrayList *nameList5 = parcArrayList_Create((void (*)(void **))_ccnxManifestSectionHashEntry_Release);
     u5->listOfNames = parcList(nameList5, PARCArrayListAsPARCList);
     PARCBuffer *buffer5 = parcBuffer_WrapCString("test");
-    CCNxName *elementName5 = ccnxName_CreateFromURI("lci:/foo/bar/somethingdifferent");
+    CCNxName *elementName5 = ccnxName_CreateFromCString("lci:/foo/bar/somethingdifferent");
     ccnxManifestSection_AddNameEntry(u5, elementName5, 0, buffer5);
     parcBuffer_Release(&buffer5);
     ccnxName_Release(&elementName5);

@@ -61,7 +61,7 @@ typedef struct ccnx_manifest_section CCNxManifestSection;
  * Example:
  * @code
  * {
- *     CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+ *     CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
  *     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
  *
  *     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
@@ -152,11 +152,11 @@ void ccnxManifestSection_AssertValid(const CCNxManifestSection *manifest);
  * Example:
  * @code
  * {
- *     CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+ *     CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
  *     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
  *     CCNxManifestSection *section = ccnxManifestSection_Create(acsLink);
  *
- *     CCNxName *nameEntry = ccnxName_CreateFromURI("lci:/some/content");
+ *     CCNxName *nameEntry = ccnxName_CreateFromCString("lci:/some/content");
  *     PARCBuffer *hashDigest = ...;
  *
  *     ccnxManifestSection_AddNameEntry(section, nameEntry, 0, hashDigest);

@@ -119,7 +119,7 @@ LONGBOW_TEST_CASE(Setters, ccnxValidationFacadeV1_SetKeyName)
     CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterest();
     PARCBuffer *keyid = parcBuffer_Wrap((uint8_t []) { 1, 2, 3, 4, 5 }, 5, 0, 5);
     PARCBuffer *hash = parcBuffer_Wrap((uint8_t []) { 11, 12, 13, 14 }, 4, 0, 4);
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
     CCNxLink *link = ccnxLink_Create(name, keyid, hash);
 
     bool success = ccnxValidationFacadeV1_SetKeyName(dictionary, link);
@@ -308,7 +308,7 @@ LONGBOW_TEST_CASE(Setters, ccnxValidationFacadeV1_GetKeyName)
     CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterest();
     PARCBuffer *keyid = parcBuffer_Wrap((uint8_t []) { 1, 2, 3, 4, 5 }, 5, 0, 5);
     PARCBuffer *hash = parcBuffer_Wrap((uint8_t []) { 11, 12, 13, 14 }, 4, 0, 4);
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
     CCNxLink *link = ccnxLink_Create(name, keyid, hash);
 
     ccnxValidationFacadeV1_SetKeyName(dictionary, link);

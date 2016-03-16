@@ -300,7 +300,7 @@ PARCBuffer *ccnxNameSegment_GetParameter(const CCNxNameSegment *segment);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/212");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/212");
  *     CCNxNameSegment *segment = ccnxName_GetSegment(name, 3);
  *
  *     char *string = ccnxNameSegment_ToString(segment);
@@ -324,7 +324,7 @@ char *ccnxNameSegment_ToString(const CCNxNameSegment *segment);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/212");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/212");
  *     CCNxNameSegment *segment = ccnxName_GetSegment(name, 3);
  *
  *     ccnxNameSegment_Display(segment, 0);
@@ -373,7 +373,7 @@ PARCBufferComposer *ccnxNameSegment_BuildString(const CCNxNameSegment *segment, 
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/humidity/12");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/humidity/12");
  *     CCNxNameSegment *segment = ccnxName_GetSegment(name, 3);
  *
  *     int length = ccnxNameSegment_Length(segment);

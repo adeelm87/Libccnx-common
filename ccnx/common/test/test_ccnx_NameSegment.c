@@ -74,6 +74,8 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_META);
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_APP0);
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_NAME);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_NAME_NotDefault);
+    
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_SERIAL);
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ParseURISegment_RawNAME);
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_APP256);
@@ -628,6 +630,23 @@ LONGBOW_TEST_CASE(Global, ccnxNameSegment_ToString_NAME)
 
     ccnxNameSegment_Release(&segment);
     parcBuffer_Release(&buf);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxNameSegment_ToString_NAME_NotDefault)
+{
+    PARCBuffer *value = parcBuffer_WrapCString("MiISAg==");
+    CCNxNameSegment *segment = ccnxNameSegment_CreateTypeValue(CCNxNameLabelType_NAME, value);
+    
+    // Note that this is different than the other tests for segments because a NAME name segment
+    // is the default type and as such the string representation doesn't include the leading label specification.
+    char *expected = CCNxNameLabel_Name "=" "MiISAg%3D%3D";
+    char *actual = ccnxNameSegment_ToString(segment);
+    assertTrue(strcmp(expected, actual) == 0,
+               "Expected %s, actual %s", expected, actual);
+    parcMemory_Deallocate((void **) &actual);
+    
+    ccnxNameSegment_Release(&segment);
+    parcBuffer_Release(&value);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxNameSegment_ToString_APP0)

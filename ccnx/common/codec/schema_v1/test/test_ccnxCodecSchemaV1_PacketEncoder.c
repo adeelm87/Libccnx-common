@@ -99,7 +99,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(ContentObject)
  */
 LONGBOW_TEST_CASE(ContentObject, v1_content_nameA_keyid1_rsasha256)
 {
-    CCNxName *name = ccnxName_CreateFromURI(v1_content_nameA_keyid1_rsasha256_URI);
+    CCNxName *name = ccnxName_CreateFromCString(v1_content_nameA_keyid1_rsasha256_URI);
 
     TlvExtent payloadExtent =
         getTruthTableExtent(TRUTHTABLENAME(v1_content_nameA_keyid1_rsasha256), V1_MANIFEST_OBJ_PAYLOAD);
@@ -200,7 +200,7 @@ LONGBOW_TEST_CASE(ContentObject, v1_content_nameA_keyid1_rsasha256)
 
 LONGBOW_TEST_CASE(ContentObject, zero_length_payload)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/no/payload");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/no/payload");
     PARCBuffer *payload = parcBuffer_Allocate(0);
 
     CCNxTlvDictionary *message =
@@ -227,7 +227,7 @@ LONGBOW_TEST_CASE(ContentObject, zero_length_payload)
 
 LONGBOW_TEST_CASE(ContentObject, null_payload)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/no/payload");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/no/payload");
 
     CCNxTlvDictionary *message =
         ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
@@ -252,7 +252,7 @@ LONGBOW_TEST_CASE(ContentObject, null_payload)
  */
 LONGBOW_TEST_CASE(ContentObject, no_cryptosuite)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/no/payload");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/no/payload");
 
     CCNxTlvDictionary *message =
         ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
@@ -303,7 +303,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Interest)
  */
 LONGBOW_TEST_CASE(Interest, v1_interest_nameA_crc32c)
 {
-    CCNxName *name = ccnxName_CreateFromURI(v1_interest_nameA_crc32c_URI);
+    CCNxName *name = ccnxName_CreateFromCString(v1_interest_nameA_crc32c_URI);
 
     CCNxTlvDictionary *message =
         ccnxInterest_CreateWithImpl(&CCNxInterestFacadeV1_Implementation,
@@ -363,7 +363,7 @@ LONGBOW_TEST_CASE(Interest, v1_interest_nameA_crc32c)
  */
 LONGBOW_TEST_CASE(Interest, v1_interest_nameA_crc32c_IoVec)
 {
-    CCNxName *name = ccnxName_CreateFromURI(v1_interest_nameA_crc32c_URI);
+    CCNxName *name = ccnxName_CreateFromCString(v1_interest_nameA_crc32c_URI);
 
     CCNxTlvDictionary *message =
         ccnxInterest_CreateWithImpl(&CCNxInterestFacadeV1_Implementation,
@@ -455,7 +455,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(InterestReturn)
  */
 LONGBOW_TEST_CASE(InterestReturn, v1_interest_return)
 {
-    CCNxName *name = ccnxName_CreateFromURI(v1_interest_nameA_crc32c_URI);
+    CCNxName *name = ccnxName_CreateFromCString(v1_interest_nameA_crc32c_URI);
 
     CCNxInterest *interest =
         ccnxInterest_CreateWithImpl(&CCNxInterestFacadeV1_Implementation,
@@ -837,7 +837,7 @@ LONGBOW_TEST_CASE(Local, _encodeMessage_Interest)
     };
     PARCBuffer *truth = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/poppy");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/poppy");
     CCNxTlvDictionary *dict = ccnxCodecSchemaV1TlvDictionary_CreateInterest();
     ccnxTlvDictionary_PutName(dict, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_NAME, name);
 
@@ -876,7 +876,7 @@ LONGBOW_TEST_CASE(Local, _encodeMessage_ContentObject)
     };
     PARCBuffer *truth = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/poppy");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/poppy");
     CCNxTlvDictionary *dict = ccnxCodecSchemaV1TlvDictionary_CreateContentObject();
     ccnxTlvDictionary_PutName(dict, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_NAME, name);
 

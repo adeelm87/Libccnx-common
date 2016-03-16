@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
+ * Copyright (c) 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,11 +37,12 @@
  * such as `"/parc/csl/version=7"` and `"/parc/csl/page=7"`.
  *
  * @author Glenn Scott, Palo Alto Research Center (Xerox PARC)
- * @copyright 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
+ * @copyright 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
  */
 #ifndef libccnx_ccnx_Name_h
 #define libccnx_ccnx_Name_h
 
+#include <parc/algol/parc_HashCode.h>
 #include <ccnx/common/ccnx_NameSegment.h>
 
 struct ccnx_name;
@@ -66,13 +67,13 @@ typedef struct ccnx_name CCNxName;
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/media/h2162");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/media/h2162");
  *
  *     ccnxName_Release(&name);
  * }
  * @endcode
  */
-CCNxName *ccnxName_CreateFromURI(const char *uri);
+CCNxName *ccnxName_CreateFromCString(const char *uri);
 
 /**
  * Create a new instance of `CCNxName`, initialized from the given `PARCURI` representation of an LCI URI,
@@ -90,7 +91,7 @@ CCNxName *ccnxName_CreateFromURI(const char *uri);
  * @code
  * {
  *     PARCURI *uri = parcURI_Parse("lci:/parc/csl/media/h2162");
- *     CCNxName *name = ccnxName_CreateFromURI(uri);
+ *     CCNxName *name = ccnxName_CreateFromCString(uri);
  *
  *     parcURI_Release(&uri);
  *
@@ -98,7 +99,7 @@ CCNxName *ccnxName_CreateFromURI(const char *uri);
  * }
  * @endcode
  */
-CCNxName *ccnxName_FromLCIURI(const PARCURI *uri);
+CCNxName *ccnxName_FromURI(const PARCURI *uri);
 
 /**
  * Create a new instance of `CCNxName` from the given format string and variable number of parameters.
@@ -116,7 +117,7 @@ CCNxName *ccnxName_FromLCIURI(const PARCURI *uri);
  * }
  * @endcode
  */
-CCNxName *ccnxName_CreateFormatString(const char * restrict format, ...);
+CCNxName *ccnxName_CreateFormatString(const char *restrict format, ...);
 
 /**
  * Create a new instance of `CCNxName`, initialized from a string representation of a LCI URI contained in the given PARCBuffer,
@@ -215,7 +216,7 @@ void ccnxName_Release(CCNxName **nameP);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/ccn/things/p1e");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/ccn/things/p1e");
  *
  *     ccnxName_AssertValid(name);
  *
@@ -239,7 +240,7 @@ void ccnxName_AssertValid(const CCNxName *name);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/ccn/things/p1e");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/ccn/things/p1e");
  *
  *     if (ccnxName_IsValid(name) == true) {
  *         ...
@@ -327,7 +328,7 @@ char *ccnxName_ToString(const CCNxName *name);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *
  *     ccnxInterest_Display(name, 0);
  *
@@ -350,7 +351,7 @@ void ccnxName_Display(const CCNxName *name, int indentation);
  * Example:
  * @code
  * {
- *     CCNxName *name1 = ccnxName_CreateFromURI("lci:/a/b/c/d");
+ *     CCNxName *name1 = ccnxName_CreateFromCString("lci:/a/b/c/d");
  *     CCNxName *name2 = ccnxName_Create();
  *
  *     CCNxNameSegment *segment = ccnxName_GetSegment(name1, 0);
@@ -379,8 +380,8 @@ CCNxName *ccnxName_Append(CCNxName *name, const CCNxNameSegment *segment);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/17");
- *     CCNxName *prefix = ccnxName_CreateFromURI("lci:/parc/csl");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/17");
+ *     CCNxName *prefix = ccnxName_CreateFromCString("lci:/parc/csl");
  *
  *     if (ccnxName_StartsWith(name, prefix)) {
  *        ...
@@ -406,7 +407,7 @@ bool ccnxName_StartsWith(const CCNxName *name, const CCNxName *prefix);
  * Example:
  * @code
  * {
- *     CCNxName *originalName = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/17");
+ *     CCNxName *originalName = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/17");
  *     CCNxName *copy = ccnxName_Copy(originalName);
  *
  *     ...
@@ -447,7 +448,7 @@ CCNxName *ccnxName_Copy(const CCNxName *originalName);
  * Example:
  * @code
  * {
- *     CCNxName *orig = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/17");
+ *     CCNxName *orig = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/17");
  *     CCNxName *copy = ccnxName_Copy(orig);
  *
  *     if (ccnxName_Equals(orig, copy)) {
@@ -505,7 +506,7 @@ CCNxName *ccnxName_Create(void);
  * Example:
  * @code
  * {
- *     CCNxName *orig = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/17");
+ *     CCNxName *orig = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/17");
  *     CCNxName *copy = ccnxName_Copy(orig);
  *
  *     if (ccnxName_Compare(orig, copy)) {
@@ -533,7 +534,7 @@ int ccnxName_Compare(const CCNxName *name1, const CCNxName *name2);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/things/b00se");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/things/b00se");
  *     CCNxNameSegment *segment2 = ccnxName_GetSegment(name, 2);
  *
  *     ccnxName_Release(&name);
@@ -552,7 +553,7 @@ CCNxNameSegment *ccnxName_GetSegment(const CCNxName *name, size_t index);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/things/b00se");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/things/b00se");
  *     size_t segmentCount = ccnxName_GetSegmentCount(name);
  *
  *     printf("Number of segments: %d\n", segmentCount);
@@ -586,7 +587,7 @@ size_t ccnxName_GetSegmentCount(const CCNxName *name);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/ccn/things/r00");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/ccn/things/r00");
  *
  *     uint32_t hashCode = ccnx_LeftMostHashCode(name);
  *
@@ -609,7 +610,7 @@ PARCHashCode ccnxName_HashCode(const CCNxName *name);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/ccn/things/r00");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/ccn/things/r00");
  *
  *     uint32_t hashCode = ccnx_LeftMostHashCode(name, 2);
  *
@@ -635,7 +636,7 @@ PARCHashCode ccnxName_LeftMostHashCode(const CCNxName *name, size_t count);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/ccn/things/b00se");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/ccn/things/b00se");
  *
  *     name = ccnxName_Trim(name, 2);
  *
@@ -662,4 +663,89 @@ CCNxName *ccnxName_Trim(CCNxName *name, size_t numberToRemove);
  * @endcode
  */
 CCNxName *ccnxName_ComposeNAME(const CCNxName *prefix, const char *suffix);
+
+
+/**
+ * Get the Nth segment number of the given `CCNxName`
+ *
+ * <#Paragraphs Of Explanation#>
+ *
+ * @param [in] name A pointer to a valid `CCNxName` instance.
+ * @param [in] nthNumber The nth segment number in the given name, or SIZE_MAX
+ *
+ * @return <#value#> <#explanation#>
+ *
+ * Example:
+ * @code
+ * {
+ *     <#example#>
+ * }
+ * @endcode
+ */
+uint64_t ccnxName_GetNthSegmentNumber(const CCNxName *name, size_t nthNumber);
+
+/**
+ * <#One Line Description#>
+ *
+ * <#Paragraphs Of Explanation#>
+ *
+ * @param [<#in#> | <#out#> | <#in,out#>] <#name#> <#description#>
+ *
+ * @return <#value#> <#explanation#>
+ *
+ * Example:
+ * @code
+ * {
+ *     <#example#>
+ * }
+ * @endcode
+ */
+uint64_t ccnxName_GetSegmentNumber(const CCNxName *name);
+
+/**
+ * Create a new CCNxName instance composed of the given CCNxName with the parsed result of the format string appended.
+ *
+ * @param [in] baseName The base name of the new CCNxName
+ * @param [in] format A printf(3) format string
+ *
+ * @return non-NULL A pointer to a valid `CCNxName` segment.
+ * @return NULL The object could not be created.
+ *
+ * Example:
+ * @code
+ * {
+ *     <#example#>
+ * }
+ * @endcode
+ */
+CCNxName *ccnxName_ComposeFormatString(const CCNxName *baseName, const char *restrict format, ...);
+
+/**
+ * Create a CCNxName that is a prefix of another.
+ *
+ * If the specified length is greater than the number of segments available,
+ * the result is a new name that is a copy of the old name.
+ *
+ * @param [in] name A pointer to a valid `CCNxName` instance.
+ * @param [in] length The number of `CCNxNameSegments` the prefix must include.
+ *
+ * @return non-NULL A pointer to a valid CCNxName.
+ * @return NULL An error occurred.
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxName *a = ccnxName_CreateFromCString("ccnx:/a/b/c");
+ *
+ *     CCNxName *prefix = ccnxName_CreatePrefix(a, 1);
+ *
+ *     // prefix is equal to the name "ccnx:/a"
+ *
+ *     ccnxName_Release(&a);
+ *     ccnxName_Release(&prefix);
+ *     ccnxName_Release(&actual);
+ * }
+ * @endcode
+ */
+CCNxName *ccnxName_CreatePrefix(const CCNxName *name, size_t length);
 #endif // libccnx_ccnx_Name_h
