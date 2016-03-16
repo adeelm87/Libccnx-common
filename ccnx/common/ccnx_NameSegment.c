@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
+ * Copyright (c) 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,12 @@
  */
 /**
  * @author Glenn Scott, Palo Alto Research Center (Xerox PARC)
- * @copyright 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
+ * @copyright 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
  */
 #include <config.h>
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 
 #include <LongBow/runtime.h>
 
