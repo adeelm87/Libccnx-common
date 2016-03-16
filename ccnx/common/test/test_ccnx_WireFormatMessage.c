@@ -407,7 +407,7 @@ LONGBOW_TEST_CASE(Global, ccnxWireFormatMessage_CreateContentObjectHash)
     assertNull(hash, "Expect NULL for hash as it hasn't been encoded yet");
 
     // We need to create a content object that is hashable
-    CCNxName *name = ccnxName_CreateFromURI("lci:/test/content");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/test/content");
     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, buffer);
     ccnxName_Release(&name);
 

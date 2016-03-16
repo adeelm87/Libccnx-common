@@ -72,7 +72,7 @@ typedef CCNxTlvDictionary CCNxContentObject;
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
  *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -104,7 +104,7 @@ CCNxContentObject *ccnxContentObject_CreateWithDataPayload(const CCNxName *conte
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
  *     CCNxContentObject *contentObject =
@@ -140,7 +140,7 @@ CCNxContentObject *ccnxContentObject_CreateWithImplAndPayload(const CCNxContentO
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
  *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -173,7 +173,7 @@ CCNxName *ccnxContentObject_GetName(const CCNxContentObject *contentObject);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
  *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -204,7 +204,7 @@ PARCBuffer *ccnxContentObject_GetPayload(const CCNxContentObject *contentObject)
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
  *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -305,7 +305,7 @@ uint64_t ccnxContentObject_GetFinalChunkNumber(const CCNxContentObject *contentO
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/hello/dolly");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/hello/dolly");
  *     PARCBuffer *payload = parcBuffer_WrapCString("hello");
  *
  *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -429,7 +429,7 @@ void ccnxContentObject_Release(CCNxContentObject **contentObjectP);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
  *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
@@ -600,7 +600,7 @@ bool ccnxContentObject_HasExpiryTime(const CCNxContentObject *contentObject);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
  *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, NULL);
@@ -633,7 +633,7 @@ bool ccnxContentObject_SetPayload(CCNxContentObject *contentObject, CCNxPayloadT
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
  *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, NULL);

@@ -111,7 +111,7 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_Create)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *key = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(key, 1234L);
 
@@ -127,7 +127,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_Create)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_CreateSimple)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
 
     ccnxName_Release(&name);
@@ -136,7 +136,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_CreateSimple)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_Release)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
 
     CCNxInterest *reference = ccnxInterest_Acquire(interest);
@@ -151,7 +151,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_Release)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_AssertValid)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/boose/roo/pie");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/boose/roo/pie");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
 
     ccnxInterest_AssertValid(interest);
@@ -162,7 +162,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_AssertValid)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_Equals_Same)
 {
-    CCNxName *nameA = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *nameA = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *key = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(key, 1234L);
 
@@ -184,7 +184,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_Equals_Same)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_Equals)
 {
-    CCNxName *nameA = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *nameA = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *keyA = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(keyA, 1234L);
 
@@ -194,7 +194,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_Equals)
                                                   NULL  /* ContentObjectHash */
                                                   );
 
-    CCNxName *nameB = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *nameB = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *keyB = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(keyB, 1234L);
     CCNxInterest *interestB = ccnxInterest_Create(nameB,
@@ -215,7 +215,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_Equals)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_SetLifetime)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *key = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(key, 1234L);
 
@@ -245,7 +245,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_SetLifetime)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_GetLifetime)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *key = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(key, 1234L);
 
@@ -268,7 +268,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_GetLifetime)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_GetName)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
 
     CCNxName *actual = ccnxInterest_GetName(interest);
@@ -280,7 +280,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_GetName)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_SetKeyIdRestriction)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *key = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(key, 1234L);
 
@@ -298,7 +298,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_SetKeyIdRestriction)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_GetKeyIdRestriction)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *key = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(key, 1234L);
 
@@ -316,7 +316,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_GetKeyIdRestriction)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_SetContentObjectHashRestriction)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *coh = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(coh, 77573L);
 
@@ -346,7 +346,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_SetContentObjectHashRestriction)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_GetContentObjectHashRestriction)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     PARCBuffer *coh = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(coh, 1234L);
 
@@ -363,7 +363,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_GetContentObjectHashRestriction)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_SetGetPayload)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
     CCNxName *origNameCopy = ccnxName_Copy(name);
 
@@ -393,7 +393,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_SetGetPayload)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_SetPayloadAndId)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
 
     CCNxInterestInterface *impl = ccnxInterestInterface_GetInterface(interest);
@@ -424,7 +424,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_SetPayloadAndId)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_SetPayloadWithId)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
     CCNxName *origNameCopy = ccnxName_Copy(name);
 
@@ -469,7 +469,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_SetPayloadWithId)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_SetGetHopLimit)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
 
     CCNxInterestInterface *impl = ccnxInterestInterface_GetInterface(interest);
@@ -491,7 +491,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_SetGetHopLimit)
 
 LONGBOW_TEST_CASE(Global, ccnxInterest_ToString)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_Create(name,
                                                  CCNxInterestDefault_LifetimeMilliseconds, /* lifetime */
                                                  NULL,                                    /* KeyId */
@@ -511,7 +511,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterest_Display)
     PARCBuffer *coh = parcBuffer_Allocate(8);
     parcBuffer_PutUint64(coh, 7778L);
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/name");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/name");
     CCNxInterest *interest = ccnxInterest_Create(name,
                                                  100, /* lifetime */
                                                  NULL,                                    /* KeyId */
@@ -540,7 +540,7 @@ _commonSetup(void)
 {
     TestData *data = parcMemory_AllocateAndClear(sizeof(TestData));
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/default/testData/content");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/default/testData/content");
 
     data->impl = CCNxInterestFacadeV1_Implementation; // This copies the struct each time.
     data->name = name;

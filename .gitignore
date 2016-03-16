@@ -1,8 +1,10 @@
-VERSION
+aVERSION
 .cproject
 .project
 *.plist
 libccnx*.tar.gz
+.idea/
+
 .idea/
 
 LongBow

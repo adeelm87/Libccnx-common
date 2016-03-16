@@ -57,8 +57,8 @@ static struct CCNxNameLabelMnemonic {
     { NULL,                            CCNxNameLabelType_Unknown   },
 };
 
-static void
-_ccnxNameLabel_Destroy(CCNxNameLabel **labelP)
+static bool
+_ccnxNameLabel_Destructor(CCNxNameLabel **labelP)
 {
     assertNotNull(labelP, "Parameter must be a non-null pointer to a CCNxNameLabels pointer.");
 
@@ -66,9 +66,11 @@ _ccnxNameLabel_Destroy(CCNxNameLabel **labelP)
     if (label->parameter != NULL) {
         parcBuffer_Release(&label->parameter);
     }
+    return true;
 }
 
-parcObject_ExtendPARCObject(CCNxNameLabel, _ccnxNameLabel_Destroy, NULL, NULL, NULL, NULL, NULL, NULL);
+parcObject_Override(CCNxNameLabel, PARCObject,
+                    .destructor = (PARCObjectDestructor *) _ccnxNameLabel_Destructor);
 
 parcObject_ImplementAcquire(ccnxNameLabel, CCNxNameLabel);
 
@@ -294,7 +296,7 @@ ccnxNameLabel_BuildString(const CCNxNameLabel *label, PARCBufferComposer *compos
 
     if (label->type >= CCNxNameLabelType_App(0) && label->type <= CCNxNameLabelType_App(4096)) {
         parcBufferComposer_Format(composer, "%s:%u=", CCNxNameLabel_App, label->type - CCNxNameLabelType_App(0));
-    } else if (label->type != CCNxNameLabelType_NAME || label->parameter != NULL) {
+    } else {
         const char *mnemonic = _ccnxNameLabelType_ToMnemonic(label->type);
         if (mnemonic == NULL) {
             parcBufferComposer_Format(composer, "%u", label->type);
@@ -308,7 +310,6 @@ ccnxNameLabel_BuildString(const CCNxNameLabel *label, PARCBufferComposer *compos
         }
         parcBufferComposer_PutString(composer, "=");
     }
-    // No else clause here, because for NAME types, the label portion is optional.
 
     return composer;
 }

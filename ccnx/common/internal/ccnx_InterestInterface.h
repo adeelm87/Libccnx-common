@@ -122,7 +122,7 @@ extern CCNxInterestInterface CCNxInterestFacadeV1_Implementation;
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/boose/roo/pie");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/boose/roo/pie");
  *
  *     CCNxInterest *interestV1 =
  *          ccnxInterest_CreateWithImpl(&CCNxInterestFacadeV1_Implementation,

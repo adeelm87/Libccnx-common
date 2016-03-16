@@ -275,7 +275,7 @@ LONGBOW_TEST_CASE(DecodeAlg, KeyName)
     };
 
     PARCBuffer *buffer = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
-    CCNxName *name = ccnxName_CreateFromURI("lci:/2=apple/2=pie");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/2=apple/2=pie");
     PARCBuffer *keyid = parcBuffer_Wrap(encoded, sizeof(encoded), 32, 36);
     PARCBuffer *hash = parcBuffer_Wrap(encoded, sizeof(encoded), 40, 48);
 

@@ -214,7 +214,7 @@ LONGBOW_TEST_CASE(Global, rtaTlvPacket_IoVecDecode_SeveralBuffer)
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_DictionaryEncode_V1)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/Antidisestablishmentarianism");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/Antidisestablishmentarianism");
     CCNxTlvDictionary *message =
         ccnxInterest_CreateWithImpl(&CCNxInterestFacadeV1_Implementation,
                                     name, CCNxInterestDefault_LifetimeMilliseconds, NULL, NULL, CCNxInterestDefault_HopLimit);
@@ -269,7 +269,7 @@ _bufferFromString(size_t length, const char string[length])
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
     PARCBuffer *payload = parcBuffer_WrapCString("payload");
     CCNxContentObject *obj = ccnxContentObject_CreateWithDataPayload(name, payload);
     ccnxName_Release(&name);

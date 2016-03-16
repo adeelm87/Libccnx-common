@@ -120,7 +120,7 @@ extern CCNxContentObjectInterface CCNxContentObjectFacadeV1_Implementation;
  * Example:
  * @code
  * {
- *      CCNxName *name = ccnxName_CreateFromURI("lci:/boose/roo/pie");
+ *      CCNxName *name = ccnxName_CreateFromCString("lci:/boose/roo/pie");
  *
  *      CCNxContentObject *contentObjectV0 =
  *          ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV0_Implementation,

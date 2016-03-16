@@ -98,7 +98,7 @@ LONGBOW_TEST_FIXTURE_SETUP(Global)
 {
     TestData *data = parcMemory_AllocateAndClear(sizeof(TestData));
     assertNotNull(data, "parcMemory_AllocateAndClear(%lu) returned NULL", sizeof(TestData));
-    data->name = ccnxName_CreateFromURI("lci:/once/upon/a/time");
+    data->name = ccnxName_CreateFromCString("lci:/once/upon/a/time");
 
     for (int i = 0; i < 32; i++) {
         data->keyidArray[i] = i * 7;

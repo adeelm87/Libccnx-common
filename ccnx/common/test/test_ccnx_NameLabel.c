@@ -439,7 +439,7 @@ LONGBOW_TEST_CASE(Global, ccnxNameType_Parse_DefaultLabel)
     PARCBuffer *buffer = parcBuffer_WrapCString("value");
     CCNxNameLabel *label = ccnxNameLabel_Parse(buffer);
     char *actual = ccnxNameLabel_ToString(label);
-    char *expected = ""; // There is no mnemonic for a NAME label.
+    char *expected = "Name=";
     assertTrue(strcmp(expected, actual) == 0, "Expected %s, actual %s", expected, actual);
     parcMemory_Deallocate((void **) &actual);
     ccnxNameLabel_Release(&label);
