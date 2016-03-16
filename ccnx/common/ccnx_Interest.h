@@ -86,7 +86,7 @@ typedef CCNxTlvDictionary CCNxInterest;
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/temp/2");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/temp/2");
  *
  *     PARCBuffer *keyId = parcBuffer_Allocate(8);
  *     parcBuffer_PutUint64(keyId, 1234L);
@@ -144,7 +144,7 @@ CCNxInterest *ccnxInterest_CreateWithImpl(const CCNxInterestInterface *implement
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/temp/2");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/temp/2");
  *
  *     PARCBuffer *keyId = parcBuffer_Allocate(8);
  *     parcBuffer_PutUint64(keyId, 1234L);
@@ -185,7 +185,7 @@ CCNxInterest *ccnxInterest_Create(const CCNxName *name,
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/humidity/4");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/humidity/4");
  *
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
@@ -232,7 +232,7 @@ CCNxInterest *ccnxInterest_CreateSimple(const CCNxName *name);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     uint32_t lifetime = 15 * 1000; // 15 seconds, in milliseconds
  *
  *     PARCBuffer *keyDigest1 = parcBuffer_Allocate(8);
@@ -302,7 +302,7 @@ CCNxName *ccnxInterest_GetName(const CCNxInterest *interest);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/media/Ab00se");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/media/Ab00se");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     uint32_t lifetime = 15 * 1000; // 15 seconds, in milliseconds
@@ -328,7 +328,7 @@ bool ccnxInterest_SetLifetime(CCNxInterest *interest, uint32_t lifetime);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/media/b00se");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/media/b00se");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     uint32_t lifetime = ccnxInterest_GetLifetime(interest);
@@ -357,7 +357,7 @@ uint32_t ccnxInterest_GetLifetime(const CCNxInterest *interest);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/media/r00");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/media/r00");
  *
  *     PARCBuffer *keyId = parcBuffer_Allocate(8);
  *     parcBuffer_PutUint64(keyId, 1234L);
@@ -391,7 +391,7 @@ bool ccnxInterest_SetKeyIdRestriction(CCNxInterest *interest, const PARCBuffer *
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/media/p1e");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/media/p1e");
  *
  *     PARCBuffer *keyId = parcBuffer_Allocate(8);
  *     parcBuffer_PutUint64(keyId, 1234L);
@@ -429,7 +429,7 @@ PARCBuffer *ccnxInterest_GetKeyIdRestriction(const CCNxInterest *interest);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/media/r00");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/media/r00");
  *
  *     PARCBuffer *contentObjectHash = parcBuffer_Allocate(8);
  *     parcBuffer_PutUint64(contentObjectHashcontentObjectHash, 1234L);
@@ -463,7 +463,7 @@ bool ccnxInterest_SetContentObjectHashRestriction(CCNxInterest *interest, const 
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/media/p1e");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/media/p1e");
  *
  *     uint32_t lifetime = 3 * 1000; // milliseconds
  *
@@ -501,7 +501,7 @@ PARCBuffer *ccnxInterest_GetContentObjectHashRestriction(const CCNxInterest *int
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     char *string = ccnxInterest_ToString(interest);
@@ -532,7 +532,7 @@ char *ccnxInterest_ToString(const CCNxInterest *interest);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     ccnxInterest_Display(interest, 0);
@@ -616,7 +616,7 @@ void ccnxInterest_Release(CCNxInterest **instanceP);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     ccnxInterest_AssertValid(interest);
@@ -644,7 +644,7 @@ void ccnxInterest_AssertValid(const CCNxInterest *interest);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     PARCBuffer *payload = parcBuffer_Allocate(8);
@@ -677,7 +677,7 @@ bool ccnxInterest_SetPayload(CCNxInterest *interest, const PARCBuffer *payload);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     PARCBuffer *payload = parcBuffer_Allocate(8);
@@ -712,7 +712,7 @@ bool ccnxInterest_SetPayloadAndId(CCNxInterest *interest, const PARCBuffer *payl
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     PARCBuffer *payload = parcBuffer_Allocate(8);
@@ -743,7 +743,7 @@ bool ccnxInterest_SetPayloadWithId(CCNxInterest *interest, const PARCBuffer *pay
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     PARCBuffer *payload = parcBuffer_Allocate(8);
@@ -774,7 +774,7 @@ PARCBuffer *ccnxInterest_GetPayload(const CCNxInterest *interest);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     ccnxInterest_SetHopLimit(interest, 30);
@@ -802,7 +802,7 @@ bool ccnxInterest_SetHopLimit(CCNxInterest *interest, uint32_t hopLimit);
  * Example:
  * @code
  * {
- *     CCNxName *name = ccnxName_CreateFromURI("lci:/parc/csl/sensors/radiation/11");
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/parc/csl/sensors/radiation/11");
  *     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
  *
  *     ccnxInterest_SetHopLimit(interest, 30);

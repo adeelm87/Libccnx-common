@@ -164,9 +164,9 @@ _ccnxManifestSectionHashEntry_Release(_CCNxManifestSectionHashEntry **entryP)
 static _CCNxManifestSectionNameEntry *
 _getNameEntryFromHashIndex(const CCNxManifestSection *section, size_t index)
 {
-    _CCNxManifestSectionHashEntry *hashEntry = (_CCNxManifestSectionHashEntry *)parcList_GetAtIndex(section->listOfHashes, index);
+    _CCNxManifestSectionHashEntry *hashEntry = (_CCNxManifestSectionHashEntry *) parcList_GetAtIndex(section->listOfHashes, index);
     size_t nameIndex = hashEntry->nameIndex;
-    _CCNxManifestSectionNameEntry *nameEntry = (_CCNxManifestSectionNameEntry *)parcList_GetAtIndex(section->listOfNames, nameIndex);
+    _CCNxManifestSectionNameEntry *nameEntry = (_CCNxManifestSectionNameEntry *) parcList_GetAtIndex(section->listOfNames, nameIndex);
     return nameEntry;
 }
 
@@ -207,11 +207,11 @@ ccnxManifestSection_Create(CCNxLink *acsLink)
         section->acsLink = acsLink == NULL ? NULL : ccnxLink_Acquire(acsLink);
 
         PARCArrayList *hashList = parcArrayList_Create((void (*)(void **))_ccnxManifestSectionHashEntry_Release);
-        section->listOfHashes = parcList((PARCObject *)hashList, PARCArrayListAsPARCList);
+        section->listOfHashes = parcList((PARCObject *) hashList, PARCArrayListAsPARCList);
         section->numberOfHashes = 0;
 
         PARCArrayList *nameList = parcArrayList_Create((void (*)(void **))_ccnxManifestSectionNameEntry_Release);
-        section->listOfNames = parcList((PARCObject *)nameList, PARCArrayListAsPARCList);
+        section->listOfNames = parcList((PARCObject *) nameList, PARCArrayListAsPARCList);
         section->numberOfNames = 0;
     }
 
@@ -254,7 +254,7 @@ PARCBuffer *
 ccnxManifestSection_GetHashAtIndex(const CCNxManifestSection *section, size_t index)
 {
     _CCNxManifestSectionHashEntry *hashEntry =
-        (_CCNxManifestSectionHashEntry *)parcList_GetAtIndex(section->listOfHashes, index);
+        (_CCNxManifestSectionHashEntry *) parcList_GetAtIndex(section->listOfHashes, index);
     PARCBuffer *retBuffer = _ccnxManifestSection_GetHashEntryDigest(hashEntry);
     return retBuffer;
 }
@@ -292,18 +292,18 @@ ccnxManifestSection_Equals(const CCNxManifestSection *objectA, const CCNxManifes
             if (objectA->numberOfNames == objectB->numberOfNames) {
                 for (size_t i = 0; i < parcList_Size(objectA->listOfHashes); i++) {
                     _CCNxManifestSectionHashEntry *entryA =
-                        (_CCNxManifestSectionHashEntry *)parcList_GetAtIndex(objectA->listOfHashes, i);
+                        (_CCNxManifestSectionHashEntry *) parcList_GetAtIndex(objectA->listOfHashes, i);
                     _CCNxManifestSectionHashEntry *entryB =
-                        (_CCNxManifestSectionHashEntry *)parcList_GetAtIndex(objectB->listOfHashes, i);
+                        (_CCNxManifestSectionHashEntry *) parcList_GetAtIndex(objectB->listOfHashes, i);
                     if (!_ccnxManifestSectionHashEntry_Equals(entryA, entryB)) {
                         return false;
                     }
                 }
                 for (size_t i = 0; i < parcList_Size(objectA->listOfNames); i++) {
                     _CCNxManifestSectionNameEntry *entryA =
-                        (_CCNxManifestSectionNameEntry *)parcList_GetAtIndex(objectA->listOfNames, i);
+                        (_CCNxManifestSectionNameEntry *) parcList_GetAtIndex(objectA->listOfNames, i);
                     _CCNxManifestSectionNameEntry *entryB =
-                        (_CCNxManifestSectionNameEntry *)parcList_GetAtIndex(objectB->listOfNames, i);
+                        (_CCNxManifestSectionNameEntry *) parcList_GetAtIndex(objectB->listOfNames, i);
                     if (!_ccnxManifestSectionNameEntry_Equals(entryA, entryB)) {
                         return false;
                     }

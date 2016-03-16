@@ -144,7 +144,7 @@ LONGBOW_TEST_CASE(ContentObject, ContentObject_RsaSha256_Name)
     assertTrue(success, "Error on decode: %s", ccnxCodecError_ToString(ccnxCodecTlvDecoder_GetError(decoder)));
 
     CCNxName *name = ccnxTlvDictionary_GetName(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_NAME);
-    CCNxName *trueName = ccnxName_CreateFromURI(v1_content_nameA_keyid1_rsasha256_URI);
+    CCNxName *trueName = ccnxName_CreateFromCString(v1_content_nameA_keyid1_rsasha256_URI);
 
     assertTrue(ccnxName_Equals(name, trueName), "Buffers not equal")
     {
@@ -521,7 +521,7 @@ LONGBOW_TEST_CASE(Interest, interest_all_fields_Name)
     assertTrue(success, "Error on decode: %s", ccnxCodecError_ToString(ccnxCodecTlvDecoder_GetError(decoder)));
 
     CCNxName *name = ccnxTlvDictionary_GetName(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_NAME);
-    CCNxName *trueName = ccnxName_CreateFromURI(v1_interest_all_fields_URI);
+    CCNxName *trueName = ccnxName_CreateFromCString(v1_interest_all_fields_URI);
 
     assertTrue(ccnxName_Equals(name, trueName), "Buffers not equal")
     {

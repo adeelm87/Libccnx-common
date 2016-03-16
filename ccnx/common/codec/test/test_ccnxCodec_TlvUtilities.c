@@ -306,7 +306,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsName)
 
     assertTrue(success, "The Name failed to decode or some other error");
 
-    CCNxName *truth = ccnxName_CreateFromURI("lci:/2=hello");
+    CCNxName *truth = ccnxName_CreateFromCString("lci:/2=hello");
     CCNxName *test = ccnxTlvDictionary_GetName(dictionary, 1);
     assertTrue(ccnxName_Equals(truth, test), "Names not equal")
     {

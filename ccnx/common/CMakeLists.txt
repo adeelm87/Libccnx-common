@@ -7,6 +7,8 @@ set(VALIDATION_HDRS
 	validation/ccnxValidation_RsaSha256.h
 	)
 
+source_group(validation FILES ${VALIDATION_HDRS})
+
 set(INTERNAL_HDRS 
 	internal/ccnx_ChunkingFacadeV1.h 
 	internal/ccnx_ContentObjectFacadeV1.h 
@@ -24,6 +26,8 @@ set(INTERNAL_HDRS
 	internal/ccnx_WireFormatMessageInterface.h
 	)
 
+source_group(internal FILES ${INTERNAL_HDRS})
+
 set(CODEC_HDRS 
 	codec/ccnxCodec_EncodingBuffer.h 
 	codec/ccnxCodec_Error.h 
@@ -34,6 +38,8 @@ set(CODEC_HDRS
 	codec/ccnxCodec_TlvUtilities.h 
 	codec/ccnxCodec_TlvPacket.h
 	)
+
+source_group(codec FILES ${CODEC_HDRS})
 
 set(TESTDATA_HDRS 
 	codec/testdata/tlv_Schema.h 
@@ -61,6 +67,8 @@ set(SCHEMAV1_TESTDATA_HDRS
 	codec/schema_v1/testdata/v1_testrig_truthTable.h 
 	)
 
+source_group(schema_v1_testData FILES ${SCHEMAV1_TESTDATA_HDRS})
+
 set(SCHEMAV1_HDRS 
 	codec/schema_v1/ccnxCodecSchemaV1_TlvDictionary.h 
 	codec/schema_v1/ccnxCodecSchemaV1_CryptoSuite.h 
@@ -81,7 +89,9 @@ set(SCHEMAV1_HDRS
 	codec/schema_v1/ccnxCodecSchemaV1_ValidationEncoder.h 
 	)
 
-set(COMMON_HDRS 
+source_group(codec FILES ${SCHEMAV1_HDRS})
+
+set(CORE_HDRS 
 	libccnxCommon_About.h 
     ccnx_ContentObject.h 
 	ccnx_Interest.h 
@@ -100,13 +110,26 @@ set(COMMON_HDRS
 	ccnx_TimeStamp.h  
 	ccnx_WireFormatMessage.h 
 	)
-  
+
+source_group(core FILES ${CORE_HDRS})
+
+set(ALL_HDRS
+	${VALIDATION_HDRS}
+	${INTERNAL_HDRS}
+	${CODEC_HDRS}
+	${TESTDATA_HDRS}
+	${SCHEMAV1_TESTDATA_HDRS}
+	${SCHEMAV1_HDRS}
+	${CORE_HDRS})	
+
 set(VALIDATION_SRCS  
 	validation/ccnxValidation_CRC32C.c 
 	validation/ccnxValidation_EcSecp256K1.c 
 	validation/ccnxValidation_HmacSha256.c 
 	validation/ccnxValidation_RsaSha256.c
 	)
+
+source_group(validation FILES ${VALIDATION_SRCS})
 
 set(INTERNAL_SRCS  
 	internal/ccnx_ChunkingFacadeV1.c 
@@ -123,6 +146,7 @@ set(INTERNAL_SRCS
 	internal/ccnx_WireFormatMessageInterface.c
 	)
 
+source_group(internal FILES ${INTERNAL_SRCS})
 
 set(CODEC_V1_SRCS 
 	codec/schema_v1/ccnxCodecSchemaV1_CryptoSuite.c 
@@ -142,6 +166,8 @@ set(CODEC_V1_SRCS
 	codec/schema_v1/ccnxCodecSchemaV1_ValidationEncoder.c
 	)
 
+source_group(codec FILES ${CODEC_V1_SRCS})
+
 set(CODEC_SRCS  
 	codec/ccnxCodec_EncodingBuffer.c 
 	codec/ccnxCodec_Error.c 
@@ -152,6 +178,8 @@ set(CODEC_SRCS
 	codec/ccnxCodec_TlvPacket.c 
 	${CODEC_V1_SRCS}
 	)
+
+source_group(codec FILES ${CODEC_SRCS})
 
 set(CORE_SRCS   
 	libccnxCommon_About.c 
@@ -172,11 +200,20 @@ set(CORE_SRCS
 	ccnx_WireFormatMessage.c
 	)
 
+source_group(core FILES ${CORE_SRCS})
+
 set(ALL_SRCS  
 	${INTERNAL_SRCS} 
 	${VALIDATION_SRCS} 
 	${CORE_SRCS} 
 	${CODEC_SRCS} 
+	${VALIDATION_HDRS}
+	${INTERNAL_HDRS}
+	${CODEC_HDRS}
+	${TESTDATA_HDRS}
+	${SCHEMAV1_TESTDATA_HDRS}
+	${SCHEMAV1_HDRS}
+	${COMMON_HDRS}
 	)
 
 set(PUBLIC_HDRS 
@@ -190,8 +227,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 	message( "-- Set \"-undefined dynamic_lookup\" for shared libraries")
 endif()
 
-add_library(ccnx_common         STATIC ${ALL_SRCS})
+add_library(ccnx_common         STATIC ${ALL_SRCS} ${ALL_HDRS})
 add_library(ccnx_common.shared  SHARED ${ALL_SRCS})
+
 target_link_libraries(ccnx_common.shared ${LIBPARC_LIBRARIES})
 set_target_properties(ccnx_common.shared PROPERTIES 
   C_STANDARD 99
@@ -210,7 +248,7 @@ foreach(lib ${libccnx_commonLibraries})
   set_property(TARGET ${lib} PROPERTY INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 endforeach()
 
-install(FILES ${COMMON_HDRS}             DESTINATION include/ccnx/common )
+install(FILES ${CORE_HDRS}               DESTINATION include/ccnx/common )
 install(FILES ${INTERNAL_HDRS}           DESTINATION include/ccnx/common/internal )
 install(FILES ${VALIDATION_HDRS}         DESTINATION include/ccnx/common/validation )
 install(FILES ${CODEC_HDRS}              DESTINATION include/ccnx/common/codec )

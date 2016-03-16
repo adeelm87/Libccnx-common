@@ -63,9 +63,9 @@ _createFullManifest(void)
     PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/manifest");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
     CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *payloadSection = ccnxManifestSection_Create(acsLink);
@@ -95,9 +95,9 @@ _commonSetup(void)
     PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/manifest");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
     CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *payloadSection = ccnxManifestSection_Create(acsLink);
@@ -195,9 +195,9 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_Create_Full)
     PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/manifest");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
     CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *payloadSection = ccnxManifestSection_Create(acsLink);
@@ -224,9 +224,9 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_Create_OnlyMetadata)
     PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/manifest");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
     CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *metadataSection = ccnxManifestSection_Create(acsLink);
@@ -250,9 +250,9 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_Create_OnlyPayload)
     PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/manifest");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
     CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromURI("lci:/foo/bar/manifest/acs");
+    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
     CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
 
     CCNxManifestSection *payloadSection = ccnxManifestSection_Create(acsLink);
@@ -276,7 +276,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_Create_Empty)
     PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/manifest");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
     CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
 
     CCNxManifest *object = ccnxManifest_Create(signature, nameLink, NULL, NULL);
@@ -378,7 +378,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_Equals)
     CCNxManifest *z = _createFullManifest();
     CCNxManifest *u1 = _createFullManifest();
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/foo/bar/different-manifest");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/different-manifest");
     CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
     ccnxName_Release(&name);
     ccnxLink_Release(&u1->nameLink);

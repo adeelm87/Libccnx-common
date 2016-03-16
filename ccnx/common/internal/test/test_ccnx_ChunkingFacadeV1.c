@@ -57,7 +57,7 @@ _commonSetup(void)
     TestData *data = parcMemory_AllocateAndClear(sizeof(TestData));
     assertNotNull(data, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(TestData));
 
-    data->name = ccnxName_CreateFromURI("lci:/foo/bar/v1");
+    data->name = ccnxName_CreateFromCString("lci:/foo/bar/v1");
 
     data->contentObjectV1 =
         ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,

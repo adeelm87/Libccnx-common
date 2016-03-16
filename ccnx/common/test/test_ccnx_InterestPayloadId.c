@@ -152,7 +152,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterestPayloadId_CreateFromSegmentInName)
     ccnxInterestPayloadId_AssertValid(ipId);
     assertTrue(ccnxInterestPayloadId_IsValid(ipId), "Expected a valid CCNxInteresPayloadId.");
 
-    CCNxName *name = ccnxName_CreateFromURI("lci:/segment1/segment2/segment3");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/segment1/segment2/segment3");
     ccnxName_Append(name, ccnxInterestPayloadId_GetNameSegment(ipId));
 
     CCNxInterestPayloadId *result = ccnxInterestPayloadId_CreateFromSegmentInName(name);
@@ -170,7 +170,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterestPayloadId_CreateFromSegmentInName)
 
 LONGBOW_TEST_CASE(Global, ccnxInterestPayloadId_CreateFromSegmentInName_NotFound)
 {
-    CCNxName *name = ccnxName_CreateFromURI("lci:/segment1/segment2/segment3");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/segment1/segment2/segment3");
     CCNxInterestPayloadId *result = ccnxInterestPayloadId_CreateFromSegmentInName(name);
     ccnxName_Release(&name);
 
@@ -442,7 +442,7 @@ LONGBOW_TEST_FIXTURE_SETUP(Error)
 
     TestDataError *data = parcMemory_AllocateAndClear(sizeof(TestDataError));
     assertNotNull(data, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(TestDataError));
-    data->name = ccnxName_CreateFromURI("lci:/segment1/segment2/segment3");
+    data->name = ccnxName_CreateFromCString("lci:/segment1/segment2/segment3");
     longBowTestCase_SetClipBoardData(testCase, data);
 
     return LONGBOW_STATUS_SUCCEEDED;
