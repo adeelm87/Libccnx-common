@@ -31,6 +31,7 @@
 // Include the file(s) containing the functions to be tested.
 // This permits internal static functions to be visible to this Test Framework.
 #include "../ccnx_KeystoreUtilities.c"
+
 #include <LongBow/unit-test.h>
 #include <parc/algol/parc_SafeMemory.h>
 
@@ -145,13 +146,15 @@ LONGBOW_TEST_FIXTURE(Local)
     LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_HomeDirectoryFromPasswd);
 
     LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Missing);
-    // Disable tests that writes in home directory
-	//LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile);
-    //LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile);
+
+    LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile);
+    LONGBOW_RUN_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Local)
 {
+    parcSecurity_Init();
+    
     TestData *data = commonSetup(longBowTestCase_GetName(testCase));
     longBowTestCase_SetClipBoardData(testCase, data);
     return LONGBOW_STATUS_SUCCEEDED;
@@ -161,6 +164,8 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Local)
 {
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
     commonTeardown(&data);
+
+    parcSecurity_Fini();
 
     if (parcSafeMemory_ReportAllocation(STDOUT_FILENO) != 0) {
         printf("('%s' leaks memory by %d (allocs - frees)) ", longBowTestCase_GetName(testCase), parcMemory_Outstanding());
@@ -209,10 +214,6 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Missing)
 
 
 /**
- *
- * XXX: Disable this test.  We should not write to a users home directory in a
- * test.
- *  
  * Create a keystore with the old default name in the old location
  */
 LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile)
@@ -222,12 +223,12 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile)
     mkdir(ccnxdir, 0700);
     char *path = ccnxKeystoreUtilities_ConstructPath(ccnxdir, ".ccnx_keystore");
 
-    bool success = parcPublicKeySignerPkcs12Store_CreateFile(path, "1234", "ccnxuser", 1024, 365);
-    assertTrue(success, "parcPublicKeySignerPkcs12Store_CreateFile() failed.");
+    bool success = parcPkcs12KeyStore_CreateFile(path, "1234", "ccnxuser", 1024, 365);
+    assertTrue(success, "parcPkcs12KeyStore_CreateFile() failed.");
 
-    PARCSigner *signer = ccnxKeystoreUtilities_OpenFromHomeDirectory("1234");
+    KeystoreParams *signer = ccnxKeystoreUtilities_OpenFromHomeDirectory("1234");
     assertNotNull(signer, "Signer should be non-null opening from a file we just created");
-    parcSigner_Release(&signer);
+    keystoreParams_Destroy(&signer);
 
     parcMemory_Deallocate((void **) &path);
     parcMemory_Deallocate((void **) &ccnxdir);
@@ -235,10 +236,6 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Oldfile)
 }
 
 /**
- *
- * XXX: Disable this test.  We should not write to a users home directory in a
- * test.
- *  
  * Create a keystore with the new default name in the old location
  */
 LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile)
@@ -248,12 +245,12 @@ LONGBOW_TEST_CASE(Local, ccnxKeystoreUtilities_OpenFromHomeDirectory_Newfile)
     mkdir(ccnxdir, 0700);
     char *path = ccnxKeystoreUtilities_ConstructPath(ccnxdir, ".ccnx_keystore.p12");
 
-    bool success = parcPublicKeySignerPkcs12Store_CreateFile(path, "1234", "ccnxuser", 1024, 365);
-    assertTrue(success, "parcPublicKeySignerPkcs12Store_CreateFile() failed.");
+    bool success = parcPkcs12KeyStore_CreateFile(path, "1234", "ccnxuser", 1024, 365);
+    assertTrue(success, "parcPkcs12KeyStore_CreateFile() failed.");
 
-    PARCSigner *signer = ccnxKeystoreUtilities_OpenFromHomeDirectory("1234");
+    KeystoreParams *signer = ccnxKeystoreUtilities_OpenFromHomeDirectory("1234");
     assertNotNull(signer, "Signer should be non-null opening from a file we just created");
-    parcSigner_Release(&signer);
+    keystoreParams_Destroy(&signer);
 
     parcMemory_Deallocate((void **) &path);
     parcMemory_Deallocate((void **) &ccnxdir);
