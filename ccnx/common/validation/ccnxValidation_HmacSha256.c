@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
+ * Copyright (c) 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * @author Marc Mosko, Palo Alto Research Center (Xerox PARC)
- * @copyright 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
+ * @author Marc Mosko, Christopher A. Wood, Palo Alto Research Center (Xerox PARC)
+ * @copyright 2013-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
  */
 #include <config.h>
 #include <stdio.h>
@@ -35,7 +35,8 @@
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_TlvDictionary.h>
 
 #include <parc/security/parc_Verifier.h>
-#include <parc/security/parc_SymmetricSignerFileStore.h>
+#include <parc/security/parc_SymmetricKeyStore.h>
+#include <parc/security/parc_SymmetricKeySigner.h>
 
 /**
  * Sets the Validation algorithm to HMAC with SHA-256 hash
@@ -69,7 +70,7 @@ ccnxValidationHmacSha256_Set(CCNxTlvDictionary *message, const PARCBuffer *keyid
         }
 
         default:
-            trapIllegalValue(message, "Unknown schema version: %d", ccnxTlvDictionary_GetSchemaVersion(message));
+        trapIllegalValue(message, "Unknown schema version: %d", ccnxTlvDictionary_GetSchemaVersion(message));
     }
     return success;
 }
@@ -77,9 +78,17 @@ ccnxValidationHmacSha256_Set(CCNxTlvDictionary *message, const PARCBuffer *keyid
 bool
 ccnxValidationHmacSha256_Test(const CCNxTlvDictionary *message)
 {
-    if (ccnxTlvDictionary_IsValueInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE)) {
-        uint64_t cryptosuite = ccnxTlvDictionary_GetInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE);
-        return (cryptosuite == PARCCryptoSuite_HMAC_SHA256);
+    switch (ccnxTlvDictionary_GetSchemaVersion(message)) {
+        case CCNxTlvDictionary_SchemaVersion_V1: {
+            if (ccnxTlvDictionary_IsValueInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE)) {
+                uint64_t cryptosuite = ccnxTlvDictionary_GetInteger(message, CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_CRYPTO_SUITE);
+                return (cryptosuite == PARCCryptoSuite_HMAC_SHA256);
+            }
+            return false;
+        }
+
+        default:
+        trapIllegalValue(message, "Unknown schema version: %d", ccnxTlvDictionary_GetSchemaVersion(message));
     }
     return false;
 }
@@ -87,10 +96,11 @@ ccnxValidationHmacSha256_Test(const CCNxTlvDictionary *message)
 PARCSigner *
 ccnxValidationHmacSha256_CreateSigner(PARCBuffer *secretKey)
 {
-    // stores the elasticKey by reference, does not acquire it
-    PARCSigningInterface *interface = parcSymmetricSignerFileStore_Create(secretKey, PARC_HASH_SHA256);
+    PARCSymmetricKeyStore *keyStore = parcSymmetricKeyStore_Create(secretKey);
+    PARCSymmetricKeySigner *signer = parcSymmetricKeySigner_Create(keyStore, PARC_HASH_SHA256);
+    parcSymmetricKeyStore_Release(&keyStore);
 
-    return parcSigner_Create(interface);
+    return parcSigner_Create(signer, PARCSymmetricKeySignerAsSigner);
 }
 
 PARCVerifier *

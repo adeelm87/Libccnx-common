@@ -99,6 +99,7 @@ LONGBOW_TEST_FIXTURE(Global)
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
 {
+    parcMemory_SetInterface(&PARCSafeMemoryAsPARCMemory);
     return LONGBOW_STATUS_SUCCEEDED;
 }
 
@@ -213,7 +214,7 @@ LONGBOW_TEST_CASE(Global, rtaTlvPacket_IoVecDecode_SeveralBuffer)
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_DictionaryEncode_V1)
 {
-    CCNxName *name = ccnxName_CreateFromCString("lci:/Antidisestablishmentarianism");
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/Antidisestablishmentarianism");
     CCNxTlvDictionary *message =
         ccnxInterest_CreateWithImpl(&CCNxInterestFacadeV1_Implementation,
                                     name, CCNxInterestDefault_LifetimeMilliseconds, NULL, NULL, CCNxInterestDefault_HopLimit);
@@ -263,7 +264,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_Decode_VFF)
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
 {
-    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/foo/bar");
     PARCBuffer *payload = parcBuffer_WrapCString("payload");
     CCNxContentObject *obj = ccnxContentObject_CreateWithDataPayload(name, payload);
     ccnxName_Release(&name);
@@ -276,9 +277,11 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
     parcBuffer_Release(&secretKey);
 
     // this was breaking the signature
-    const PARCCryptoHash *secretHash = parcSigner_GetVerifierKeyDigest(signer);
+    PARCKeyStore *keyStore = parcSigner_GetKeyStore(signer);
+    const PARCCryptoHash *secretHash = parcKeyStore_GetVerifierKeyDigest(keyStore);
     const PARCBuffer *keyid = parcCryptoHash_GetDigest(secretHash);
     ccnxValidationHmacSha256_Set(obj, keyid);
+    parcBuffer_Release(&secretHash);
 
     CCNxCodecNetworkBufferIoVec *iovec = ccnxCodecTlvPacket_DictionaryEncode(obj, signer);
 
