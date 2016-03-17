@@ -3,7 +3,6 @@ aVERSION
 .project
 *.plist
 libccnx*.tar.gz
-.idea/
 
 .idea/
 

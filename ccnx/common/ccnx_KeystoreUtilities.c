@@ -48,8 +48,7 @@
 
 #include <parc/algol/parc_Memory.h>
 #include <ccnx/common/ccnx_KeystoreUtilities.h>
-#include <parc/security/parc_Pkcs12KeyStore.h>
-#include <parc/security/parc_PublicKeySigner.h>
+#include <parc/security/parc_PublicKeySignerPkcs12Store.h>
 #include <parc/security/parc_Signer.h>
 
 
@@ -104,16 +103,9 @@ ccnxKeystoreUtilities_OpenFromPath(const char *path, const char *password)
     struct stat filestat;
     int failure = stat(path, &filestat);
     if (!failure) {
-        PARCPkcs12KeyStore *keyStore = parcPkcs12KeyStore_Open(path, password, PARC_HASH_SHA256);
-        PARCKeyStore *publicKeyStore = parcKeyStore_Create(keyStore, PARCPkcs12KeyStoreAsKeyStore);
-        PARCPublicKeySigner *pksigner = parcPublicKeySigner_Create(publicKeyStore, PARCSigningAlgorithm_RSA, PARC_HASH_SHA256);
-        PARCSigner *signer = parcSigner_Create(pksigner, PARCPublicKeySignerAsSigner);
-
-        if (signer) {
-            params = ccnxKeystoreUtilities_Create(signer, path, password);
-
-            parcSigner_Release(&signer);
-            parcKeyStore_Release(&publicKeyStore);
+        PARCSigningInterface *interface = parcPublicKeySignerPkcs12Store_Open(path, password, PARC_HASH_SHA256);
+        if (interface) {
+            params = ccnxKeystoreUtilities_Create(interface, path, password);
         }
     }
 
@@ -125,18 +117,11 @@ ccnxKeystoreUtilities_CreateInPath(const char *path, const char *password, int k
 {
     KeystoreParams *params = NULL;
 
-    bool success = parcPkcs12KeyStore_CreateFile(path, password, "ccnxuser", keystoreBits, keystoreDays);
+    bool success = parcPublicKeySignerPkcs12Store_CreateFile(path, password, "ccnxuser", keystoreBits, keystoreDays);
     if (success) {
-        PARCPkcs12KeyStore *keyStore = parcPkcs12KeyStore_Open(path, password, PARC_HASH_SHA256);
-        PARCKeyStore *publicKeyStore = parcKeyStore_Create(keyStore, PARCPkcs12KeyStoreAsKeyStore);
-        PARCPublicKeySigner *pksigner = parcPublicKeySigner_Create(publicKeyStore, PARCSigningAlgorithm_RSA, PARC_HASH_SHA256);
-        PARCSigner *signer = parcSigner_Create(pksigner, PARCPublicKeySignerAsSigner);
-
-        if (signer) {
-            params = ccnxKeystoreUtilities_Create(signer, path, password);
-
-            parcSigner_Release(&signer);
-            parcKeyStore_Release(&publicKeyStore);
+        PARCSigningInterface *interface = parcPublicKeySignerPkcs12Store_Open(path, password, PARC_HASH_SHA256);
+        if (interface) {
+            params = ccnxKeystoreUtilities_Create(interface, path, password);
         }
     }
     return params;
@@ -254,11 +239,11 @@ ccnxKeystoreUtilities_CreateFile(const char *keystoreFile, const char *keystoreP
 }
 
 KeystoreParams *
-ccnxKeystoreUtilities_Create(PARCSigner *signer, const char *path, const char *password)
+ccnxKeystoreUtilities_Create(PARCSigningInterface *interface, const char *path, const char *password)
 {
     KeystoreParams *params = parcMemory_AllocateAndClear(sizeof(KeystoreParams));
     assertNotNull(params, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(KeystoreParams));
-    params->signer = parcSigner_Acquire(signer);
+    params->signer = parcSigner_Create(interface);
     strncpy(params->filename, path, 1024);
     strncpy(params->password, password, 1024);
     return params;

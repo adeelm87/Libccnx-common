@@ -62,7 +62,7 @@ typedef struct keystore_params KeystoreParams;
  * @endcode
  *
  */
-KeystoreParams *ccnxKeystoreUtilities_Create(PARCSigner *signer, const char *path, const char *password);
+KeystoreParams *ccnxKeystoreUtilities_Create(PARCSigningInterface *interface, const char *path, const char *password);
 
 /**
  * Destroy the `KeystoreParams`.
