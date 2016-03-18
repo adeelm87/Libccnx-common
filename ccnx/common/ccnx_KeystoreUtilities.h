@@ -46,9 +46,9 @@ struct keystore_params;
 typedef struct keystore_params KeystoreParams;
 
 /**
- * Create a new `KeystoreParams` from a @p path, @p password, and a {@link PARCSigningInterface}.
+ * Create a new `KeystoreParams` from a @p path, @p password, and a {@link PARCSigner}.
  *
- * @param [in] impl A pointer to an instance of `PARCSigningInterface`.
+ * @param [in] signer A pointer to an instance of `PARCSigner`.
  * @param [in] path The path to use.
  * @param [in] password The password to use.
  *
@@ -62,7 +62,7 @@ typedef struct keystore_params KeystoreParams;
  * @endcode
  *
  */
-KeystoreParams *ccnxKeystoreUtilities_Create(PARCSigningInterface *interface, const char *path, const char *password);
+KeystoreParams *ccnxKeystoreUtilities_Create(PARCSigner *signer, const char *path, const char *password);
 
 /**
  * Destroy the `KeystoreParams`.
