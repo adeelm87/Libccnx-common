@@ -135,7 +135,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeHashGroup)
 
     PARCBuffer *expectedPointer = parcBuffer_AllocateCString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
     CCNxManifestHashGroupPointer *pointer = ccnxManifestHashGroup_GetPointerAtIndex(group, 0);
-    PARCBuffer *actualPointer = ccnxManifestHashGroupPointer_GetDigest(pointer);
+    const PARCBuffer *actualPointer = ccnxManifestHashGroupPointer_GetDigest(pointer);
     assertTrue(parcBuffer_Equals(expectedPointer, actualPointer), "Expected decoded pointer to equal %s, got %s", parcBuffer_ToHexString(expectedPointer), parcBuffer_ToHexString(actualPointer));
 
     parcBuffer_Release(&expectedPointer);

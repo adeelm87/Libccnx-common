@@ -380,8 +380,8 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_Iterator)
     size_t i = 0;
     while (parcIterator_HasNext(itr)) {
         CCNxManifestHashGroupPointer *ptr = (CCNxManifestHashGroupPointer *) parcIterator_Next(itr);
-        PARCBuffer *digest = ccnxManifestHashGroupPointer_GetDigest(ptr);
-        size_t index = parcBuffer_GetUint32(digest);
+        const PARCBuffer *digest = ccnxManifestHashGroupPointer_GetDigest(ptr);
+        size_t index = parcBuffer_GetUint32((PARCBuffer *) digest);
         assertTrue(index == i, "Expected the right digest pointer to be extracted, got %zu, expected %zu", index, i);
         i++;
     }

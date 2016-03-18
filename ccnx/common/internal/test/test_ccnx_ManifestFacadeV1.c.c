@@ -121,7 +121,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestFacadeV1_Create)
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
     CCNxTlvDictionary *manifest= _ccnxManifestFacadeV1_Create(data->name);
 
-    CCNxName *test = _ccnxManifestFacadeV1_GetName(manifest);
+    const CCNxName *test = _ccnxManifestFacadeV1_GetName(manifest);
     assertTrue(ccnxName_Equals(test, data->name), "Names do not match");
     ccnxTlvDictionary_Release(&manifest);
 }
@@ -167,16 +167,15 @@ LONGBOW_TEST_CASE(Global, ccnxManifestFacadeV1_GetNumberOfHashGroups)
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
     CCNxTlvDictionary *manifest= _ccnxManifestFacadeV1_Create(data->name);
 
-    CCNxName *test = _ccnxManifestFacadeV1_GetName(manifest);
-    assertTrue(ccnxName_Equals(test, data->name), "Names do not match");
+    size_t numberOfGroups = _ccnxManifestFacadeV1_GetNumberOfHashGroups(manifest);
+    assertTrue(numberOfGroups == 1, "Expected 1 group, got %zu", numberOfGroups);
     ccnxTlvDictionary_Release(&manifest);
 }
-
 
 LONGBOW_TEST_CASE(Global, ccnxManifestFacadeV1_GetName)
 {
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxName *test = _ccnxManifestFacadeV1_GetName(data->manifest);
+    const CCNxName *test = _ccnxManifestFacadeV1_GetName(data->manifest);
     assertTrue(ccnxName_Equals(test, data->name), "Names do not match")
     {
         printf("\ngot     : \n"); ccnxName_Display(test, 3);

@@ -29,7 +29,7 @@ typedef struct ccnx_manifest_interface {
     char                 *description;
 
     /** @see ccnxManifest_Create */
-    CCNxTlvDictionary *(*create) (CCNxName *name);
+    CCNxTlvDictionary *(*create) (const CCNxName *name);
 
     /** @see ccnxManifest_AddHashGroup */
     void (*addHashGroup)(CCNxTlvDictionary *dict, const CCNxManifestHashGroup *group);
@@ -41,10 +41,10 @@ typedef struct ccnx_manifest_interface {
     size_t (*getNumberOfHashGroups)(const CCNxTlvDictionary *dict);
 
     /** @see ccnxManifest_Equals */
-    bool               (*equals)(const CCNxTlvDictionary *objectA, const CCNxTlvDictionary *objectB);
+    bool (*equals)(const CCNxTlvDictionary *objectA, const CCNxTlvDictionary *objectB);
 
     /** @see ccnxManifest_GetName */
-    CCNxName *(*getName)(const CCNxTlvDictionary *dict);
+    const CCNxName *(*getName)(const CCNxTlvDictionary *dict);
 } CCNxManifestInterface;
 
 CCNxManifestInterface *ccnxManifestInterface_GetInterface(const CCNxTlvDictionary *dictionary);

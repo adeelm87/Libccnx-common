@@ -144,7 +144,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_Create)
     CCNxManifest *manifest = ccnxManifest_Create(name);
 
     assertNotNull(manifest, "Expected the Manifest to be created without errors.");
-    CCNxName *copy = ccnxManifest_GetName(manifest);
+    const CCNxName *copy = ccnxManifest_GetName(manifest);
 
     assertTrue(ccnxName_Equals(name, copy), "Expected name to equal %s, got %s", ccnxName_ToString(name), ccnxName_ToString(copy));
 
@@ -176,7 +176,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_GetHashGroup)
 
     CCNxManifestHashGroup *group = ccnxManifest_GetHashGroupByIndex(manifest, 0);
     CCNxName *expected = ccnxName_CreateFromCString("ccnx:/locator");
-    CCNxName *actual = ccnxManifestHashGroup_GetLocator(group);
+    const CCNxName *actual = ccnxManifestHashGroup_GetLocator(group);
     assertTrue(ccnxName_Equals(expected, actual), "Expected %s, got %s", ccnxName_ToString(expected), ccnxName_ToString(actual));
 
     ccnxName_Release(&expected);
@@ -206,7 +206,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_GetName)
     CCNxManifest *manifest = ccnxManifest_Create(name);
 
     assertNotNull(manifest, "Expected the Manifest to be created without errors.");
-    CCNxName *copy = ccnxManifest_GetName(manifest);
+    const CCNxName *copy = ccnxManifest_GetName(manifest);
 
     assertTrue(ccnxName_Equals(name, copy), "Expected name to equal %s, got %s", ccnxName_ToString(name), ccnxName_ToString(copy));
 
@@ -240,7 +240,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_ToString)
     CCNxManifest *manifest = ccnxManifest_Create(name);
 
     assertNotNull(manifest, "Expected the Manifest to be created without errors.");
-    CCNxName *copy = ccnxManifest_GetName(manifest);
+    const CCNxName *copy = ccnxManifest_GetName(manifest);
 
     assertTrue(ccnxName_Equals(name, copy), "Expected name to equal %s, got %s", ccnxName_ToString(name), ccnxName_ToString(copy));
 

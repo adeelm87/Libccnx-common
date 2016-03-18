@@ -26,7 +26,7 @@
 static size_t _ccnxManifestFacadeV1_GetNumberOfHashGroups(const CCNxTlvDictionary *dict);
 
 static CCNxTlvDictionary *
-_ccnxManifestFacadeV1_Create(CCNxName *name)
+_ccnxManifestFacadeV1_Create(const CCNxName *name)
 {
     assertNotNull(name, "Parameter name must be non-null");
 
@@ -41,7 +41,7 @@ _ccnxManifestFacadeV1_Create(CCNxName *name)
     return dictionary;
 }
 
-static CCNxName *
+static const CCNxName *
 _ccnxManifestFacadeV1_GetName(const CCNxTlvDictionary *dict)
 {
     return ccnxTlvDictionary_GetName(dict, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_NAME);

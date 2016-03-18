@@ -42,7 +42,7 @@
 static const CCNxManifestInterface *_defaultImplementation = &CCNxManifestFacadeV1_Interface;
 
 static CCNxManifest *
-_ccnxManifest_InternalCreate(const CCNxManifestInterface *impl, CCNxName *name)
+_ccnxManifest_InternalCreate(const CCNxManifestInterface *impl, const CCNxName *name)
 {
     CCNxManifest *result = NULL;
 
@@ -97,7 +97,7 @@ ccnxManifest_GetName(const CCNxManifest *manifest)
 {
     CCNxManifestInterface *impl = ccnxManifestInterface_GetInterface(manifest);
 
-    CCNxName *result = NULL;
+    const CCNxName *result = NULL;
 
     if (impl->getName != NULL) {
         result = impl->getName(manifest);

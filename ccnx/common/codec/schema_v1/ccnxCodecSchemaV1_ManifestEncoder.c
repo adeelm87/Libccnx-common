@@ -35,16 +35,16 @@
 static size_t
 _appendPointer(CCNxCodecTlvEncoder *encoder, CCNxManifestHashGroupPointer *ptr)
 {
-    PARCBuffer *digest = ccnxManifestHashGroupPointer_GetDigest(ptr);
+    const PARCBuffer *digest = ccnxManifestHashGroupPointer_GetDigest(ptr);
     CCNxManifestHashGroupPointerType type = ccnxManifestHashGroupPointer_GetType(ptr);
 
     ssize_t length = -1;
     switch (type) {
         case CCNxManifestHashGroupPointerType_Data:
-            length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_DataPointer, digest);
+            length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_DataPointer, (PARCBuffer *) digest);
             break;
         case CCNxManifestHashGroupPointerType_Manifest:
-            length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_ManifestPointer, digest);
+            length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_ManifestPointer, (PARCBuffer *) digest);
             break;
         default:
             assertTrue(false, "Invalid pointer type %d", type);

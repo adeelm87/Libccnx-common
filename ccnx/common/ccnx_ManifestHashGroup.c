@@ -37,7 +37,7 @@
 #include <parc/algol/parc_Object.h>
 #include <parc/algol/parc_LinkedList.h>
 
-#include <ccnx/common/ccnx_ManifesthashGroup.h>
+#include <ccnx/common/ccnx_ManifestHashGroup.h>
 #include <ccnx/common/internal/ccnx_WireFormatMessageInterface.h>
 
 #define MAX_NUMBER_OF_POINTERS 100
