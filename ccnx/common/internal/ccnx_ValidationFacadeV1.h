@@ -33,7 +33,7 @@
  * @code
  * {
  *    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
- *    CCNxContentObject *object = ccnxContentObject_CreateWithDataPayload(name, NULL);
+ *    CCNxContentObject *object = ccnxContentObject_CreateWithNameAndPayload(name, NULL);
  *    ccnxName_Release(&name);
  *    // generate the KeyId
  *    ccnxValidationFacadeV1_SetKeyId(object, keyId);
@@ -295,7 +295,7 @@ uint64_t ccnxValidationFacadeV1_GetSigningTime(const CCNxTlvDictionary *message)
  * @code
  * {
  *    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
- *    CCNxContentObject *object = ccnxContentObject_CreateWithDataPayload(name, NULL);
+ *    CCNxContentObject *object = ccnxContentObject_CreateWithNameAndPayload(name, NULL);
  *    ccnxName_Release(&name);
  *
  *    PARCBuffer *secretKey = parcBuffer_Wrap("password", 8, 0, 8);
@@ -364,7 +364,7 @@ bool ccnxValidationFacadeV1_SetKeyName(CCNxTlvDictionary *message, const CCNxLin
  * @code
  * {
  *    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
- *    CCNxContentObject *object = ccnxContentObject_CreateWithDataPayload(name, NULL);
+ *    CCNxContentObject *object = ccnxContentObject_CreateWithNameAndPayload(name, NULL);
  *    ccnxName_Release(&name);
  *
  *    PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("keystore.p12", "password", PARC_HASH_SHA256));
@@ -394,7 +394,7 @@ bool ccnxValidationFacadeV1_SetPublicKey(CCNxTlvDictionary *message, const PARCB
  * @code
  * {
  *    CCNxName *name = ccnxName_CreateFromCString("lci:/foo");
- *    CCNxContentObject *object = ccnxContentObject_CreateWithDataPayload(name, NULL);
+ *    CCNxContentObject *object = ccnxContentObject_CreateWithNameAndPayload(name, NULL);
  *    ccnxName_Release(&name);
  *
  *    PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("keystore.p12", "password", PARC_HASH_SHA256));

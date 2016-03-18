@@ -52,10 +52,19 @@ static const CCNxContentObjectInterface *_defaultImplementation = &CCNxContentOb
  */
 
 CCNxContentObject *
-ccnxContentObject_CreateWithDataPayload(const CCNxName *contentName, const PARCBuffer *payload)
+ccnxContentObject_CreateWithNameAndPayload(const CCNxName *contentName, const PARCBuffer *payload)
 {
     return ccnxContentObject_CreateWithImplAndPayload(_defaultImplementation,
                                                       contentName,
+                                                      CCNxPayloadType_DATA,
+                                                      payload);
+}
+
+CCNxContentObject *
+ccnxContentObject_CreateWithPayload(const PARCBuffer *payload)
+{
+    return ccnxContentObject_CreateWithImplAndPayload(_defaultImplementation,
+                                                      NULL,
                                                       CCNxPayloadType_DATA,
                                                       payload);
 }
@@ -68,13 +77,17 @@ ccnxContentObject_CreateWithImplAndPayload(const CCNxContentObjectInterface *imp
 {
     CCNxContentObject *result = NULL;
 
-    if (impl->createWithPayload != NULL) {
-        result = impl->createWithPayload(contentName, payloadType, payload);
+    if (impl->createWithNameAndPayload != NULL) {
+        if (contentName == NULL) {
+            result = impl->createWithPayload(payloadType, payload);
+        } else {
+            result = impl->createWithNameAndPayload(contentName, payloadType, payload);
+        }
 
         // And set the dictionary's interface pointer to the one we just used to create this.
         ccnxTlvDictionary_SetMessageInterface(result, impl);
     } else {
-        trapNotImplemented("ContentObject implementations must implement createWithPayload()");
+        trapNotImplemented("ContentObject implementations must implement createWithNameAndPayload()");
     }
 
     return result;

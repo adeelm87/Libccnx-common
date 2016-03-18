@@ -408,7 +408,7 @@ LONGBOW_TEST_CASE(Global, ccnxWireFormatMessage_CreateContentObjectHash)
 
     // We need to create a content object that is hashable
     CCNxName *name = ccnxName_CreateFromCString("lci:/test/content");
-    CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, buffer);
+    CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, buffer);
     ccnxName_Release(&name);
 
     // This next stuff is to force an encode/decode to setup hash extents
