@@ -46,6 +46,7 @@
 
 #include <ccnx/common/internal/ccnx_InterestDefault.h>
 #include <ccnx/common/internal/ccnx_ValidationFacadeV1.h>
+#include <ccnx/common/internal/ccnx_WireFormatMessageInterface.h>
 
 // =====================================================
 // Private API
@@ -211,6 +212,10 @@ _encodeMessage(CCNxCodecTlvEncoder *packetEncoder, CCNxTlvDictionary *packetDict
         *packetTypePtr = CCNxCodecSchemaV1Types_PacketType_Control;
         ccnxCodecTlvEncoder_AppendContainer(packetEncoder, CCNxCodecSchemaV1Types_MessageType_Control, 0);
         innerLength = _encodeCPI(packetEncoder, packetDictionary);
+    } else if (ccnxTlvDictionary_IsManifest(packetDictionary)) {
+        *packetTypePtr = CCNxCodecSchemaV1Types_PacketType_ContentObject;
+        ccnxCodecTlvEncoder_AppendContainer(packetEncoder, CCNxCodecSchemaV1Types_MessageType_Manifest, 0);
+        innerLength = ccnxCodecSchemaV1MessageEncoder_Encode(packetEncoder, packetDictionary);
     }
 
     if (innerLength >= 0) {
@@ -284,7 +289,7 @@ ccnxCodecSchemaV1PacketEncoder_DictionaryEncode(CCNxTlvDictionary *packetDiction
     CCNxCodecTlvEncoder *packetEncoder = ccnxCodecTlvEncoder_Create();
 
     if (signer) {
-        ccnxCodecTlvEncoder_SetSigner(packetEncoder, signer);
+//        ccnxCodecTlvEncoder_SetSigner(packetEncoder, signer);
     }
 
     ssize_t encodedLength = ccnxCodecSchemaV1PacketEncoder_Encode(packetEncoder, packetDictionary);
@@ -323,7 +328,9 @@ ccnxCodecSchemaV1PacketEncoder_Encode(CCNxCodecTlvEncoder *packetEncoder, CCNxTl
         ccnxCodecTlvEncoder_MarkSignatureStart(packetEncoder);
 
         CCNxCodecSchemaV1Types_PacketType messageType = -1;
+
         ssize_t messageLength = _encodeMessage(packetEncoder, packetDictionary, &messageType);
+
         if (messageLength >= 0) {
             // validation is optional, so it's ok if its 0 length
             ssize_t validationAlgLength = _encodeValidationAlg(packetEncoder, packetDictionary);
@@ -357,4 +364,3 @@ ccnxCodecSchemaV1PacketEncoder_Encode(CCNxCodecTlvEncoder *packetEncoder, CCNxTl
 
     return length;
 }
-

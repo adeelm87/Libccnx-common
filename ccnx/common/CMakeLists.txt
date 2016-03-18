@@ -19,6 +19,8 @@ set(INTERNAL_HDRS
 	internal/ccnx_InterestReturnFacadeV1.h 
 	internal/ccnx_InterestReturnInterface.h 
 	internal/ccnx_InterestPayloadIdMethod.h 
+    internal/ccnx_ManifestFacadeV1.h
+    internal/ccnx_ManifestInterface.h
 	internal/ccnx_MessageInterface.h 
 	internal/ccnx_TlvDictionary.h 
 	internal/ccnx_ValidationFacadeV1.h 
@@ -76,6 +78,8 @@ set(SCHEMAV1_HDRS
 	codec/schema_v1/ccnxCodecSchemaV1_FixedHeaderEncoder.h 
 	codec/schema_v1/ccnxCodecSchemaV1_FixedHeader.h 
 	codec/schema_v1/ccnxCodecSchemaV1_LinkCodec.h 
+    codec/schema_v1/ccnxCodecSchemaV1_ManifestDecoder.h
+    codec/schema_v1/ccnxCodecSchemaV1_ManifestEncoder.h
 	codec/schema_v1/ccnxCodecSchemaV1_MessageDecoder.h 
 	codec/schema_v1/ccnxCodecSchemaV1_MessageEncoder.h 
 	codec/schema_v1/ccnxCodecSchemaV1_NameCodec.h 
@@ -101,7 +105,7 @@ set(CORE_HDRS
 	ccnx_KeystoreUtilities.h 
 	ccnx_Link.h 
 	ccnx_Manifest.h 
-	ccnx_ManifestSection.h 
+    ccnx_ManifestHashGroup.h 
 	ccnx_Name.h 
 	ccnx_NameSegment.h 
 	ccnx_NameSegmentNumber.h 
@@ -140,6 +144,8 @@ set(INTERNAL_SRCS
 	internal/ccnx_InterestInterface.c 
 	internal/ccnx_InterestReturnFacadeV1.c 
 	internal/ccnx_InterestReturnInterface.c 
+    internal/ccnx_ManifestFacadeV1.c
+    internal/ccnx_ManifestInterface.c
 	internal/ccnx_TlvDictionary.c 
 	internal/ccnx_ValidationFacadeV1.c 
 	internal/ccnx_WireFormatFacadeV1.c 
@@ -153,6 +159,8 @@ set(CODEC_V1_SRCS
 	codec/schema_v1/ccnxCodecSchemaV1_FixedHeaderDecoder.c 
 	codec/schema_v1/ccnxCodecSchemaV1_FixedHeaderEncoder.c 
 	codec/schema_v1/ccnxCodecSchemaV1_LinkCodec.c 
+    codec/schema_v1/ccnxCodecSchemaV1_ManifestDecoder.c
+    codec/schema_v1/ccnxCodecSchemaV1_ManifestEncoder.c
 	codec/schema_v1/ccnxCodecSchemaV1_MessageDecoder.c 
 	codec/schema_v1/ccnxCodecSchemaV1_MessageEncoder.c 
 	codec/schema_v1/ccnxCodecSchemaV1_NameCodec.c 
@@ -191,7 +199,7 @@ set(CORE_SRCS
 	ccnx_KeystoreUtilities.c 
 	ccnx_Link.c 
 	ccnx_Manifest.c 
-	ccnx_ManifestSection.c 
+    ccnx_ManifestHashGroup.c 
 	ccnx_Name.c 
 	ccnx_NameSegment.c 
 	ccnx_NameSegmentNumber.c 

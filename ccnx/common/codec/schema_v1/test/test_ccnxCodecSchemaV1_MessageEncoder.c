@@ -398,11 +398,11 @@ LONGBOW_TEST_CASE(Local, _encodePayload)
 
 LONGBOW_TEST_CASE(Local, _encodePayloadType)
 {
-    CCNxPayloadType type = CCNxPayloadType_MANIFEST;
+    CCNxPayloadType type = CCNxPayloadType_LINK;
 
     uint8_t encoded[] = {
         0x00, 0x05, 0x00, 1,
-        CCNxCodecSchemaV1Types_PayloadType_Manifest
+        CCNxCodecSchemaV1Types_PayloadType_Link
     };
 
     CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();

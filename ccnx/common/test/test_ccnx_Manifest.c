@@ -26,110 +26,56 @@
  */
 /**
  * @author Christopher A. Wood, Palo Alto Research Center (Xerox PARC)
- * @copyright 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
+ * @copyright 2015-2016, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
  */
 
 // Include the file(s) containing the functions to be tested.
 // This permits internal static functions to be visible to this Test Framework.
 #include "../ccnx_Manifest.c"
-#include <ccnx/common/ccnx_ManifestSection.h>
-
-#include <ccnx/common/ccnx_Link.h>
-
-#include <inttypes.h>
 
 #include <LongBow/unit-test.h>
 #include <parc/algol/parc_SafeMemory.h>
-#include <parc/algol/parc_ArrayList.h>
+
+#include <parc/testing/parc_ObjectTesting.h>
 
 typedef struct test_data {
-    PARCBuffer *signatureBits;
-    PARCSignature *signature;
-
-    CCNxName *name;
-    CCNxLink *nameLink;
-    CCNxName *acsName;
-    CCNxLink *acsLink;
-
-    CCNxManifestSection *payloadSection;
-    CCNxManifestSection *metadataSection;
-
     CCNxManifest *object;
 } ManifestTestData;
-
-static CCNxManifest *
-_createFullManifest(void)
-{
-    PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
-
-    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
-    CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
-    CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
-
-    CCNxManifestSection *payloadSection = ccnxManifestSection_Create(acsLink);
-
-    CCNxManifestSection *metadataSection = ccnxManifestSection_Create(acsLink);
-
-    CCNxManifest *object = ccnxManifest_Create(signature, nameLink, metadataSection, payloadSection);
-
-    parcBuffer_Release(&signatureBits);
-    parcSignature_Release(&signature);
-    ccnxName_Release(&name);
-    ccnxName_Release(&acsName);
-    ccnxLink_Release(&nameLink);
-    ccnxLink_Release(&acsLink);
-    ccnxManifestSection_Release(&payloadSection);
-    ccnxManifestSection_Release(&metadataSection);
-
-    return object;
-}
 
 static ManifestTestData *
 _commonSetup(void)
 {
     ManifestTestData *data = parcMemory_AllocateAndClear(sizeof(ManifestTestData));
-    assertNotNull(data, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(ManifestTestData));
 
-    PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/my/manifest");
+    CCNxManifest *manifest = ccnxManifest_Create(name);
+    ccnxName_Release(&name);
 
-    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
-    CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
-    CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
 
-    CCNxManifestSection *payloadSection = ccnxManifestSection_Create(acsLink);
-    CCNxManifestSection *metadataSection = ccnxManifestSection_Create(acsLink);
+    PARCBuffer *digest1 = parcBuffer_Allocate(10);
+    PARCBuffer *digest2 = parcBuffer_Allocate(10);
+    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, digest1);
+    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Manifest, digest1);
+    parcBuffer_Release(&digest1);
+    parcBuffer_Release(&digest2);
 
-    CCNxManifest *object = ccnxManifest_Create(signature, nameLink, metadataSection, payloadSection);
+    CCNxName *locator = ccnxName_CreateFromCString("ccnx:/locator");
+    ccnxManifestHashGroup_SetLocator(group, locator);
+    ccnxName_Release(&locator);
 
-    data->signatureBits = signatureBits;
-    data->signature = signature;
-    data->name = name;
-    data->nameLink = nameLink;
-    data->acsName = acsName;
-    data->acsLink = acsLink;
-    data->payloadSection = payloadSection;
-    data->metadataSection = metadataSection;
-    data->object = object;
+    ccnxManifest_AddHashGroup(manifest, group);
+    ccnxManifestHashGroup_Release(&group);
+
+    data->object = manifest;
+
     return data;
 }
 
 static void
 _commonTeardown(ManifestTestData *data)
 {
-    parcBuffer_Release(&data->signatureBits);
-    parcSignature_Release(&data->signature);
-    ccnxName_Release(&data->name);
-    ccnxName_Release(&data->acsName);
-    ccnxLink_Release(&data->nameLink);
-    ccnxLink_Release(&data->acsLink);
-    ccnxManifestSection_Release(&data->payloadSection);
-    ccnxManifestSection_Release(&data->metadataSection);
     ccnxManifest_Release(&data->object);
-
     parcMemory_Deallocate((void **) &data);
 }
 
@@ -153,23 +99,14 @@ LONGBOW_TEST_RUNNER_TEARDOWN(ccnx_Manifest)
 
 LONGBOW_TEST_FIXTURE(Global)
 {
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Create_Full);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Create_OnlyMetadata);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Create_OnlyPayload);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Create_Empty);
-
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Verify_Valid);
-//    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Verify_Invalid);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Acquire_and_Release);
-
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_GetNameLink);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_GetMetadataSection);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_GetPayloadSection);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_GetSignature);
-
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Create_ToString);
-
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_AcquireRelease);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Create);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_AddHashGroup);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_GetHashGroup);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_GetNumberOfHashGroups);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_GetName);
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Equals);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_ToString);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
@@ -190,218 +127,125 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
     return LONGBOW_STATUS_SUCCEEDED;
 }
 
-LONGBOW_TEST_CASE(Global, ccnxManifest_Create_Full)
+LONGBOW_TEST_CASE(Global, ccnxManifest_AcquireRelease)
 {
-    PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
-
-    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
-    CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
-    CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
-
-    CCNxManifestSection *payloadSection = ccnxManifestSection_Create(acsLink);
-
-    CCNxManifestSection *metadataSection = ccnxManifestSection_Create(acsLink);
-
-    CCNxManifest *object = ccnxManifest_Create(signature, nameLink, metadataSection, payloadSection);
-
-    assertNotNull(object, "Expected non-null return value.");
-
-    ccnxManifest_Release(&object);
-    parcBuffer_Release(&signatureBits);
-    parcSignature_Release(&signature);
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/my/manifest");
+    CCNxManifest *manifest = ccnxManifest_Create(name);
     ccnxName_Release(&name);
-    ccnxName_Release(&acsName);
-    ccnxLink_Release(&nameLink);
-    ccnxLink_Release(&acsLink);
-    ccnxManifestSection_Release(&payloadSection);
-    ccnxManifestSection_Release(&metadataSection);
+
+    parcObjectTesting_AssertAcquireReleaseContract(ccnxManifest_Acquire, manifest);
+
+    ccnxManifest_Release(&manifest);
 }
 
-LONGBOW_TEST_CASE(Global, ccnxManifest_Create_OnlyMetadata)
+LONGBOW_TEST_CASE(Global, ccnxManifest_Create)
 {
-    PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/my/manifest");
+    CCNxManifest *manifest = ccnxManifest_Create(name);
 
-    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
-    CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
-    CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
+    assertNotNull(manifest, "Expected the Manifest to be created without errors.");
+    CCNxName *copy = ccnxManifest_GetName(manifest);
 
-    CCNxManifestSection *metadataSection = ccnxManifestSection_Create(acsLink);
+    assertTrue(ccnxName_Equals(name, copy), "Expected name to equal %s, got %s", ccnxName_ToString(name), ccnxName_ToString(copy));
 
-    CCNxManifest *object = ccnxManifest_Create(signature, nameLink, metadataSection, NULL);
-
-    assertNotNull(object, "Expected non-null return value.");
-
-    ccnxManifest_Release(&object);
-    parcBuffer_Release(&signatureBits);
-    parcSignature_Release(&signature);
     ccnxName_Release(&name);
-    ccnxName_Release(&acsName);
-    ccnxLink_Release(&nameLink);
-    ccnxLink_Release(&acsLink);
-    ccnxManifestSection_Release(&metadataSection);
+    ccnxManifest_Release(&manifest);
 }
 
-LONGBOW_TEST_CASE(Global, ccnxManifest_Create_OnlyPayload)
+LONGBOW_TEST_CASE(Global, ccnxManifest_AddHashGroup)
 {
-    PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
+    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
+    CCNxManifest *manifest = data->object;
 
-    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
-    CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-    CCNxName *acsName = ccnxName_CreateFromCString("lci:/foo/bar/manifest/acs");
-    CCNxLink *acsLink = ccnxLink_Create(acsName, NULL, NULL);
+    size_t numGroups = ccnxManifest_GetNumberOfHashGroups(manifest);
 
-    CCNxManifestSection *payloadSection = ccnxManifestSection_Create(acsLink);
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
+    ccnxManifest_AddHashGroup(manifest, group);
 
-    CCNxManifest *object = ccnxManifest_Create(signature, nameLink, NULL, payloadSection);
+    size_t expected = numGroups + 1;
+    size_t actual = ccnxManifest_GetNumberOfHashGroups(manifest);
+    assertTrue(actual == expected, "Expected %zu, got %zu", expected, actual);
 
-    assertNotNull(object, "Expected non-null return value.");
+    ccnxManifestHashGroup_Release(&group);
+}
 
-    ccnxManifest_Release(&object);
-    parcBuffer_Release(&signatureBits);
-    parcSignature_Release(&signature);
+LONGBOW_TEST_CASE(Global, ccnxManifest_GetHashGroup)
+{
+    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
+    CCNxManifest *manifest = data->object;
+
+    CCNxManifestHashGroup *group = ccnxManifest_GetHashGroupByIndex(manifest, 0);
+    CCNxName *expected = ccnxName_CreateFromCString("ccnx:/locator");
+    CCNxName *actual = ccnxManifestHashGroup_GetLocator(group);
+    assertTrue(ccnxName_Equals(expected, actual), "Expected %s, got %s", ccnxName_ToString(expected), ccnxName_ToString(actual));
+
+    ccnxName_Release(&expected);
+    ccnxManifestHashGroup_Release(&group);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifest_GetNumberOfHashGroups)
+{
+    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
+    CCNxManifest *manifest = data->object;
+
+    size_t before = ccnxManifest_GetNumberOfHashGroups(manifest);
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
+    ccnxManifest_AddHashGroup(manifest, group);
+
+    size_t actual = ccnxManifest_GetNumberOfHashGroups(manifest);
+    size_t expected = before + 1;
+
+    assertTrue(expected == actual, "Expected %zu, got %zu", expected, actual);
+
+    ccnxManifestHashGroup_Release(&group);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifest_GetName)
+{
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/my/manifest");
+    CCNxManifest *manifest = ccnxManifest_Create(name);
+
+    assertNotNull(manifest, "Expected the Manifest to be created without errors.");
+    CCNxName *copy = ccnxManifest_GetName(manifest);
+
+    assertTrue(ccnxName_Equals(name, copy), "Expected name to equal %s, got %s", ccnxName_ToString(name), ccnxName_ToString(copy));
+
     ccnxName_Release(&name);
-    ccnxName_Release(&acsName);
-    ccnxLink_Release(&nameLink);
-    ccnxLink_Release(&acsLink);
-    ccnxManifestSection_Release(&payloadSection);
-}
-
-LONGBOW_TEST_CASE(Global, ccnxManifest_Create_Empty)
-{
-    PARCBuffer *signatureBits = parcBuffer_WrapCString("signature");
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, signatureBits);
-
-    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/manifest");
-    CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
-
-    CCNxManifest *object = ccnxManifest_Create(signature, nameLink, NULL, NULL);
-
-    assertNotNull(object, "Expected non-null return value.");
-
-    ccnxManifest_Release(&object);
-    parcBuffer_Release(&signatureBits);
-    parcSignature_Release(&signature);
-    ccnxName_Release(&name);
-    ccnxLink_Release(&nameLink);
-}
-
-LONGBOW_TEST_CASE(Global, ccnxManifest_Verify_Valid)
-{
-    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxManifest *object = data->object;
-    ccnxManifest_Verify(object);
-}
-
-LONGBOW_TEST_CASE_EXPECTS(Global, ccnxManifest_Verify_Invalid, .event = &LongBowAssertEvent)
-{
-    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxManifest *object = data->object;
-    object->nameLink = NULL;
-    ccnxManifest_Verify(object); // this must fail.
-}
-
-LONGBOW_TEST_CASE(Global, ccnxManifest_Acquire_and_Release)
-{
-    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxManifest *object = data->object;
-
-    assertNotNull(object, "Expected non-null return value.");
-
-    PARCReferenceCount oldReferenceCount = parcObject_GetReferenceCount(object);
-    CCNxManifest *handle = ccnxManifest_Acquire(object);
-
-    assertNotNull(object, "Expected non-null return value.");
-
-    PARCReferenceCount newReferenceCount = parcObject_GetReferenceCount(object);
-    assertTrue(oldReferenceCount + 1 == newReferenceCount,
-               "Error: expected reference count to be incremented by 1 from %" PRIu64 ", got %" PRIu64, oldReferenceCount, newReferenceCount);
-
-    ccnxManifest_Release(&handle);
-
-    PARCReferenceCount finalReferenceCount = parcObject_GetReferenceCount(object);
-    assertTrue(oldReferenceCount == finalReferenceCount,
-               "Error: expected reference count to be the same as the original (%" PRIu64 "), got %" PRIu64, oldReferenceCount, newReferenceCount);
-}
-
-LONGBOW_TEST_CASE(Global, ccnxManifest_GetNameLink)
-{
-    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxManifest *object = data->object;
-
-    assertNotNull(object, "Expected non-null return value.");
-    CCNxLink *realLink = ccnxManifest_GetNameLink(object);
-    assertTrue(ccnxLink_Equals(data->nameLink, realLink), "Expected name links to be equal");
-}
-
-LONGBOW_TEST_CASE(Global, ccnxManifest_GetMetadataSection)
-{
-    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxManifest *object = data->object;
-
-    assertNotNull(object, "Expected non-null return value.");
-
-    CCNxManifestSection *realSection = ccnxManifest_GetMetadataSection(object);
-    assertTrue(ccnxManifestSection_Equals(data->metadataSection, realSection), "Expected metadata sections to be equal");
-}
-
-LONGBOW_TEST_CASE(Global, ccnxManifest_GetPayloadSection)
-{
-    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxManifest *object = data->object;
-
-    assertNotNull(object, "Expected non-null return value.");
-
-    CCNxManifestSection *realSection = ccnxManifest_GetPayloadSection(object);
-    assertTrue(ccnxManifestSection_Equals(data->payloadSection, realSection), "Expected payload sections to be equal");
-}
-
-LONGBOW_TEST_CASE(Global, ccnxManifest_GetSignature)
-{
-    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxManifest *object = data->object;
-
-    assertNotNull(object, "Expected non-null return value.");
-
-    PARCSignature *realSignature = ccnxManifest_GetSignature(object);
-    assertTrue(parcSignature_Equals(data->signature, realSignature), "Expected signatures to be equal");
+    ccnxManifest_Release(&manifest);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxManifest_Equals)
 {
-    CCNxManifest *x = _createFullManifest();
-    CCNxManifest *y = _createFullManifest();
-    CCNxManifest *z = _createFullManifest();
-    CCNxManifest *u1 = _createFullManifest();
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/my/manifest");
+    CCNxManifest *x = ccnxManifest_Create(name);
+    CCNxManifest *y = ccnxManifest_Create(name);
+    CCNxManifest *z = ccnxManifest_Create(name);
 
-    CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/different-manifest");
-    CCNxLink *nameLink = ccnxLink_Create(name, NULL, NULL);
+    CCNxName *name1 = ccnxName_CreateFromCString("ccnx:/not/my/manifest");
+    CCNxManifest *u1 = ccnxManifest_Create(name1);
+
+    parcObjectTesting_AssertEqualsFunction(ccnxManifest_Equals, x, y, z, u1, NULL);
+
     ccnxName_Release(&name);
-    ccnxLink_Release(&u1->nameLink);
-    u1->nameLink = nameLink;
-
-    assertEqualsContract(ccnxManifest_Equals, x, y, z, u1, NULL);
-
+    ccnxName_Release(&name1);
     ccnxManifest_Release(&x);
     ccnxManifest_Release(&y);
     ccnxManifest_Release(&z);
     ccnxManifest_Release(&u1);
 }
 
-LONGBOW_TEST_CASE(Global, ccnxManifest_Create_ToString)
+LONGBOW_TEST_CASE(Global, ccnxManifest_ToString)
 {
-    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
-    CCNxManifest *object = data->object;
+    CCNxName *name = ccnxName_CreateFromCString("ccnx:/my/manifest");
+    CCNxManifest *manifest = ccnxManifest_Create(name);
 
-    assertNotNull(object, "Expected non-null return value.");
+    assertNotNull(manifest, "Expected the Manifest to be created without errors.");
+    CCNxName *copy = ccnxManifest_GetName(manifest);
 
-    char *string = ccnxManifest_ToString(object);
-    assertNotNull(string, "Expected non-null string.");
-    parcMemory_Deallocate((void **) &string);
+    assertTrue(ccnxName_Equals(name, copy), "Expected name to equal %s, got %s", ccnxName_ToString(name), ccnxName_ToString(copy));
+
+    ccnxName_Release(&name);
+    ccnxManifest_Release(&manifest);
 }
 
 int

@@ -677,7 +677,7 @@ void ccnxTlvDictionary_SetMessageType_Interest(CCNxTlvDictionary *dictionary, CC
  *     ...
  *
  *     CCNxTlvDictionary *dict = ccnxTlvDictionary_Create(5, 3);
- *     ccnxTlvDictionary_SetMessageType_ContentObject(dict, CCNxTlvDictionary_SchemaVersion_V0);
+ *     ccnxTlvDictionary_SetMessageType_ContentObject(dict, CCNxTlvDictionary_SchemaVersion_V1);
  *     // use the dictionary
  * }
  * @endcode
@@ -696,12 +696,31 @@ void ccnxTlvDictionary_SetMessageType_ContentObject(CCNxTlvDictionary *dictionar
  *     ...
  *
  *     CCNxTlvDictionary *dict = ccnxTlvDictionary_Create(5, 3);
- *     ccnxTlvDictionary_SetMessageType_Control(dict, CCNxTlvDictionary_SchemaVersion_V0);
+ *     ccnxTlvDictionary_SetMessageType_Control(dict, CCNxTlvDictionary_SchemaVersion_V1);
  *     // use the dictionary
  * }
  * @endcode
  */
 void ccnxTlvDictionary_SetMessageType_Control(CCNxTlvDictionary *dictionary, CCNxTlvDictionary_SchemaVersion schemaVersion);
+
+/**
+ * Set the type of message which this dictionary stores/represents to be a Manifest (message).
+ *
+ * @param [in] dictionary The dictionary instance whose type is to be modified.
+ * @param [in] schemaVersion The schema version which is used by the dictionary for message encoding.
+ *
+ * Example:
+ * @code
+ * {
+ *     ...
+ *
+ *     CCNxTlvDictionary *dict = ccnxTlvDictionary_Create(5, 3);
+ *     ccnxTlvDictionary_SetMessageType_Manifest(dict, CCNxTlvDictionary_SchemaVersion_V1);
+ *     // use the dictionary
+ * }
+ * @endcode
+ */
+void ccnxTlvDictionary_SetMessageType_Manifest(CCNxTlvDictionary *dictionary, CCNxTlvDictionary_SchemaVersion schemaVersion);
 
 /**
  * Set the type of message which this dictionary stores/represents to be an InterestReturn.
@@ -833,6 +852,28 @@ bool ccnxTlvDictionary_IsContentObject(const CCNxTlvDictionary *dictionary);
  * @endcode
  */
 bool ccnxTlvDictionary_IsControl(const CCNxTlvDictionary *dictionary);
+
+/**
+ * Determine if the specified dictionary represents a Manifest message.
+ *
+ * @param [in] dictionary The dictionary instance being examined.
+ *
+ * @return true The dictionary represents a Manifest message.
+ * @return false Otherwise
+ *
+ * Example:
+ * @code
+ * {
+ *     ...
+ *
+ *     CCNxTlvDictionary *dict = ccnxTlvDictionary_Create(5, 3);
+ *     ccnxTlvDictionary_SetMessageType_Manifest(dict, CCNxTlvDictionary_SchemaVersion_V1);
+ *     bool isManifest = ccnxTlvDictionary_IsManifest(dict);
+ *     // isManifest will be true
+ * }
+ * @endcode
+ */
+bool ccnxTlvDictionary_IsManifest(const CCNxTlvDictionary *dictionary);
 
 /**
  * If in DEBUG mode, returns how long the message has been in the system

@@ -10,6 +10,8 @@ set(TestsExpectedToPass
   test_ccnx_InterestInterface
   test_ccnx_InterestReturnFacadeV1
   test_ccnx_InterestReturnInterface
+  test_ccnx_ManifestFacadeV1
+  test_ccnx_ManifestInterface
   test_ccnx_TlvDictionary
   test_ccnx_ValidationFacadeV1
   test_ccnx_WireFormatFacadeV1
