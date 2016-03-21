@@ -291,7 +291,6 @@ LONGBOW_TEST_CASE(Local, _translateWirePayloadTypeToCCNxPayloadType)
         { .wire = CCNxCodecSchemaV1Types_PayloadType_Data,     .payloadType = CCNxPayloadType_DATA,     .success = true  },
         { .wire = CCNxCodecSchemaV1Types_PayloadType_Key,      .payloadType = CCNxPayloadType_KEY,      .success = true  },
         { .wire = CCNxCodecSchemaV1Types_PayloadType_Link,     .payloadType = CCNxPayloadType_LINK,     .success = true  },
-        { .wire = CCNxCodecSchemaV1Types_PayloadType_Manifest, .payloadType = CCNxPayloadType_MANIFEST, .success = true  },
         { .wire = -2,                                          .payloadType = -2,                       .success = false },
         { .wire = sentinel,                                    .payloadType = sentinel }
     };

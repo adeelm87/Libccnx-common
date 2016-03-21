@@ -64,10 +64,6 @@ _translateWirePayloadTypeToCCNxPayloadType(CCNxCodecSchemaV1Types_PayloadType wi
             *payloadTypePtr = CCNxPayloadType_LINK;
             break;
 
-        case CCNxCodecSchemaV1Types_PayloadType_Manifest:
-            *payloadTypePtr = CCNxPayloadType_MANIFEST;
-            break;
-
         default:
             // unknown type
             success = false;

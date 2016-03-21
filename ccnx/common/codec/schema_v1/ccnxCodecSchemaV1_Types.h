@@ -63,6 +63,7 @@ typedef enum rta_tlv_schema_v1_message_type {
     CCNxCodecSchemaV1Types_MessageType_ContentObject = 0x0002,
     CCNxCodecSchemaV1Types_MessageType_ValidationAlg = 0x0003,
     CCNxCodecSchemaV1Types_MessageType_ValidationPayload = 0x0004,
+    CCNxCodecSchemaV1Types_MessageType_Manifest = 0x0006,
     CCNxCodecSchemaV1Types_MessageType_Control = 0xBEEF,
 } CCNxCodecSchemaV1Types_MessageType;
 
@@ -89,7 +90,6 @@ typedef enum rta_tlv_schema_v1_payloadtype_types {
     CCNxCodecSchemaV1Types_PayloadType_Data = 0,
     CCNxCodecSchemaV1Types_PayloadType_Key = 1,
     CCNxCodecSchemaV1Types_PayloadType_Link = 2,
-    CCNxCodecSchemaV1Types_PayloadType_Manifest = 3,
 } CCNxCodecSchemaV1Types_PayloadType;
 
 // ==================================================
@@ -108,8 +108,33 @@ typedef enum rta_tlv_schema_v1_ccnxmessage_types {
     CCNxCodecSchemaV1Types_CCNxMessage_ContentObjectHashRestriction = 0x0003,
     CCNxCodecSchemaV1Types_CCNxMessage_PayloadType = 0x0005,
     CCNxCodecSchemaV1Types_CCNxMessage_ExpiryTime = 0x0006,
+    CCNxCodecSchemaV1Types_CCNxMessage_HashGroup = 0x0007,
     CCNxCodecSchemaV1Types_CCNxMessage_EndChunkNumber = 0x0019,
 } CCNxCodecSchemaV1Types_CCNxMessage;
+
+typedef enum rta_tlv_schema_v1_ccnxmanifest_hashgroup_types {
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata = 0x0001,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroup_DataPointer = 0x0002,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroup_ManifestPointer = 0x0003,
+} CCNxCodecSchemaV1Types_CCNxManifestHashGroup;
+
+typedef enum rta_tlv_schema_v1_ccnxmanifest_hashgroup_metadata_types {
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator = 0x0000,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_ExternalMetadata = 0x0001,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize = 0x0002,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSize = 0x0003,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256 = 0x0004,
+} CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata;
+
+//#define CCNX_MANIFEST_HASHGROUP                 1
+//#define CCNX_MANIFEST_HG_METADATA               1
+//#define CCNX_MANIFEST_HG_PTR2DATA               2
+//#define CCNX_MANIFEST_HG_PTR2MANIFEST           3
+//#define CCNX_MANIFEST_MT_LOCATOR                0 // == CCNX_TLV_M_Name
+//#define CCNX_MANIFEST_MT_EXTERNALMETADATA       1 // == CCNX_TLV_M_Name
+//#define CCNX_MANIFEST_MT_BLOCKSIZE              2
+//#define CCNX_MANIFEST_MT_OVERALLDATASIZE        3
+//#define CCNX_MANIFEST_MT_OVERALLDATASHA256      4
 
 
 // ==================================================
@@ -145,6 +170,32 @@ typedef enum rta_tlv_schema_v1_link_types {
     CCNxCodecSchemaV1Types_Link_KeyIdRestriction = 0x0001,
     CCNxCodecSchemaV1Types_Link_ContentObjectHashRestriction = 0x0002,
 } CCNxCodecSchemaV1Types_Link;
+
+/**
+ * @typedef CCNxCodecSchemaV1Types_HashGroup
+ * @abstract The well-known keys for the Manifest HashGroup.
+ * @constant <#name#> <#description#>
+ * @discussion <#Discussion#>
+ */
+typedef enum rta_tlv_schema_v1_link_hash_group {
+    CCNxCodecSchemaV1Types_HashGroup_Metadata = 0x0001,
+    CCNxCodecSchemaV1Types_HashGroup_DataPointer = 0x0002,
+    CCNxCodecSchemaV1Types_HashGroup_ManifestPointer = 0x0003
+} CCNxCodecSchemaV1Types_HashGroup;
+
+/**
+ * @typedef CCNxCodecSchemaV1Types_HashGroup
+ * @abstract The well-known keys for the Manifest HashGroup.
+ * @constant <#name#> <#description#>
+ * @discussion <#Discussion#>
+ */
+typedef enum rta_tlv_schema_v1_link_hash_group_metadata {
+    CCNxCodecSchemaV1Types_HashGroup_Locator = 0x0000,
+    CCNxCodecSchemaV1Types_HashGroup_ExternalMetadata = 0x0001,
+    CCNxCodecSchemaV1Types_HashGroup_BlockSize = 0x0002,
+    CCNxCodecSchemaV1Types_HashGroup_OverallDataSize = 0x0003,
+    CCNxCodecSchemaV1Types_HashGroup_OverallDataSha256 = 0x0004,
+} CCNxCodecSchemaV1Types_HashGroupMetadata;
 
 // ==================================================
 // Interest Return

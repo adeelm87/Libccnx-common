@@ -37,82 +37,75 @@
 #include <parc/algol/parc_Object.h>
 
 #include <ccnx/common/ccnx_Manifest.h>
+#include <ccnx/common/ccnx_ContentObject.h>
 
-struct ccnx_manifest {
-    CCNxLink *nameLink;
-    CCNxManifestSection *metadataSection;
-    CCNxManifestSection *payloadSection;
-    PARCSignature *signature;
-};
+static const CCNxManifestInterface *_defaultImplementation = &CCNxManifestFacadeV1_Interface;
 
-static void
-_ccnxManifest_FinalRelease(CCNxManifest **manifestP)
+static CCNxManifest *
+_ccnxManifest_InternalCreate(const CCNxManifestInterface *impl, const CCNxName *name)
 {
-    parcSignature_Release(&(*manifestP)->signature);
-    ccnxLink_Release(&(*manifestP)->nameLink);
-    if ((*manifestP)->metadataSection != NULL) {
-        ccnxManifestSection_Release(&(*manifestP)->metadataSection);
+    CCNxManifest *result = NULL;
+
+    if (impl->create != NULL) {
+        result = impl->create(name);
+
+        // And set the dictionary's interface pointer to the one we just used to create this.
+        ccnxTlvDictionary_SetMessageInterface(result, impl);
+    } else {
+        trapNotImplemented("Manifest implementations must implement create()");
     }
-    if ((*manifestP)->payloadSection != NULL) {
-        ccnxManifestSection_Release(&(*manifestP)->payloadSection);
-    }
+
+    return result;
 }
 
-parcObject_ExtendPARCObject(CCNxManifest, _ccnxManifest_FinalRelease, NULL,
-                            ccnxManifest_ToString, ccnxManifest_Equals, NULL, NULL, NULL);
-
 parcObject_ImplementAcquire(ccnxManifest, CCNxManifest);
-
 parcObject_ImplementRelease(ccnxManifest, CCNxManifest);
 
 CCNxManifest *
-ccnxManifest_Create(PARCSignature *signature, CCNxLink *nameLink, CCNxManifestSection *metadata,
-                    CCNxManifestSection *payload)
+ccnxManifest_Create(const CCNxName *name)
 {
-    CCNxManifest *manifest = parcObject_CreateInstance(CCNxManifest);
+    return _ccnxManifest_InternalCreate(_defaultImplementation, name);
+}
 
-    if (manifest != NULL) {
-        manifest->signature = parcSignature_Acquire(signature);
-        manifest->nameLink = ccnxLink_Acquire(nameLink);
+void
+ccnxManifest_AddHashGroup(CCNxManifest *manifest, const CCNxManifestHashGroup *group)
+{
+    CCNxManifestInterface *interface = ccnxManifestInterface_GetInterface(manifest);
+    interface->addHashGroup(manifest, group);
+}
 
-        if (metadata != NULL) {
-            manifest->metadataSection = ccnxManifestSection_Acquire(metadata);
-        } else {
-            manifest->metadataSection = NULL;
-        }
+CCNxManifestHashGroup *
+ccnxManifest_GetHashGroupByIndex(const CCNxManifest *manifest, size_t index)
+{
+    CCNxManifestInterface *interface = ccnxManifestInterface_GetInterface(manifest);
+    return interface->getHashGroup(manifest, index);
+}
 
-        if (payload != NULL) {
-            manifest->payloadSection = ccnxManifestSection_Acquire(payload);
-        } else {
-            manifest->payloadSection = NULL;
-        }
+size_t
+ccnxManifest_GetNumberOfHashGroups(const CCNxManifest *manifest)
+{
+    CCNxManifestInterface *impl = ccnxManifestInterface_GetInterface(manifest);
+    size_t result = 0;
+    if (impl->getNumberOfHashGroups != NULL) {
+        result = (impl->getNumberOfHashGroups)(manifest);
+    }
+    return result;
+}
+
+const CCNxName *
+ccnxManifest_GetName(const CCNxManifest *manifest)
+{
+    CCNxManifestInterface *impl = ccnxManifestInterface_GetInterface(manifest);
+
+    const CCNxName *result = NULL;
+
+    if (impl->getName != NULL) {
+        result = impl->getName(manifest);
+    } else {
+        trapNotImplemented("ccnxManifest_GetName");
     }
 
-    return manifest;
-}
-
-CCNxManifestSection *
-ccnxManifest_GetMetadataSection(const CCNxManifest *manifest)
-{
-    return manifest->metadataSection;
-}
-
-CCNxManifestSection *
-ccnxManifest_GetPayloadSection(const CCNxManifest *manifest)
-{
-    return manifest->payloadSection;
-}
-
-CCNxLink *
-ccnxManifest_GetNameLink(const CCNxManifest *manifest)
-{
-    return manifest->nameLink;
-}
-
-PARCSignature *
-ccnxManifest_GetSignature(const CCNxManifest *manifest)
-{
-    return manifest->signature;
+    return result;
 }
 
 bool
@@ -124,73 +117,48 @@ ccnxManifest_Equals(const CCNxManifest *objectA, const CCNxManifest *objectB)
     if (objectA == NULL || objectB == NULL) {
         return false;
     }
-    if (parcSignature_Equals(objectA->signature, objectB->signature)) {
-        if (ccnxLink_Equals(objectA->nameLink, objectB->nameLink)) {
-            if (ccnxManifestSection_Equals(objectA->metadataSection, objectB->metadataSection)) {
-                if (ccnxManifestSection_Equals(objectA->payloadSection, objectB->payloadSection)) {
-                    return true;
-                }
-            }
-        }
-    }
+
+    CCNxManifestInterface *impl = ccnxManifestInterface_GetInterface(objectA);
+    return (impl->equals)(objectA, objectB);
+
     return false;
 }
 
 char *
 ccnxManifest_ToString(const CCNxManifest *manifest)
 {
-    char *nameString = ccnxLink_ToString(manifest->nameLink);
-    char *signatureString = parcSignature_ToString(manifest->signature);
-
-    char *metadataString = "NULL";
-    bool nullMetadata = true;
-    if (manifest->metadataSection != NULL) {
-        metadataString = ccnxManifestSection_ToString(manifest->metadataSection);
-        nullMetadata = false;
-    }
-
-    char *payloadString = "NULL";
-    bool nullPayload = true;
-    if (manifest->payloadSection != NULL) {
-        payloadString = ccnxManifestSection_ToString(manifest->payloadSection);
-        nullPayload = false;
-    }
-
-    char *string;
-    int failure = asprintf(&string, "CCNxManifest { .name=\"%s\", .signature=\"%s\", .metadataSection=\"%s\", .payloadSection=\"%s\"}",
-                           nameString,
-                           signatureString,
-                           metadataString,
-                           payloadString);
-    assertTrue(failure > -1, "Error asprintf");
-
-    parcMemory_Deallocate((void **) &nameString);
-    parcMemory_Deallocate((void **) &signatureString);
-    if (!nullMetadata) {
-        parcMemory_Deallocate((void **) &metadataString);
-    }
-    if (!nullPayload) {
-        parcMemory_Deallocate((void **) &payloadString);
-    }
-
-    char *result = parcMemory_StringDuplicate(string, strlen(string));
-    free(string);
-
-    return result;
+    return NULL;
 }
 
-CCNxManifest *
-ccnxManifest_Verify(const CCNxManifest *manifest)
+PARCJSON *
+ccnxManifest_ToJSON(const CCNxManifest *manifest)
 {
-    ccnxManifest_AssertValid(manifest);
-    return (CCNxManifest *) manifest;
+    PARCJSON *root = parcJSON_Create();
+
+    char *nameString = ccnxName_ToString(ccnxManifest_GetName(manifest));
+    parcJSON_AddString(root, "locator", nameString);
+    parcMemory_Deallocate(&nameString);
+
+    PARCJSONArray *array = parcJSONArray_Create();
+    for (size_t i = 0; i < ccnxManifest_GetNumberOfHashGroups(manifest); i++) {
+        CCNxManifestHashGroup *group = ccnxManifest_GetHashGroupByIndex(manifest, i);
+        PARCJSON *groupJson = ccnxManifestHashGroup_ToJson(group);
+        PARCJSONValue *jsonValue = parcJSONValue_CreateFromJSON(groupJson);
+
+        parcJSONArray_AddValue(array, jsonValue);
+
+        parcJSONValue_Release(&jsonValue);
+        parcJSON_Release(&groupJson);
+        ccnxManifestHashGroup_Release(&group);
+    }
+    parcJSON_AddArray(root, "HashGroups", array);
+    parcJSONArray_Release(&array);
+
+    return root;
 }
 
 void
 ccnxManifest_AssertValid(const CCNxManifest *manifest)
 {
-    assertNotNull(manifest, "Parameter must be a non-null CCNxManifest pointer.");
-    assertNotNull(manifest->signature, "PARCSignature signature cannot be NULL.");
-    assertNotNull(manifest->nameLink, "CCNxLink name cannot be NULL.");
-    ccnxLink_AssertValid(manifest->nameLink);
+    assertNotNull(manifest, "Non-NULL manifest");
 }

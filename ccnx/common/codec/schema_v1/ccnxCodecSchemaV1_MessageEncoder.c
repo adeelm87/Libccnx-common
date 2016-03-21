@@ -42,11 +42,15 @@
 #include <ccnx/common/ccnx_PayloadType.h>
 #include <ccnx/common/ccnx_InterestReturn.h>
 
+#include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_ManifestEncoder.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_MessageEncoder.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_NameCodec.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_Types.h>
 
 #include <ccnx/common/codec/ccnxCodec_TlvUtilities.h>
+
+#include <ccnx/common/ccnx_Manifest.h>
+#include <ccnx/common/ccnx_ManifestHashGroup.h>
 
 static ssize_t
 _encodeName(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
@@ -68,17 +72,6 @@ _encodeName(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
 }
 
 static ssize_t
-_encodePayload(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
-{
-    ssize_t length = 0;
-    PARCBuffer *buffer = ccnxTlvDictionary_GetBuffer(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOAD);
-    if (buffer != NULL) {
-        length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_Payload, buffer);
-    }
-    return length;
-}
-
-static ssize_t
 _encodeJsonPayload(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
 {
     ssize_t length = 0;
@@ -87,6 +80,17 @@ _encodeJsonPayload(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictio
         char *jsonString = parcJSON_ToCompactString(json);
         size_t len = strlen(jsonString);
         length = ccnxCodecTlvEncoder_AppendArray(encoder, CCNxCodecSchemaV1Types_CCNxMessage_Payload, len, (uint8_t *) jsonString);
+    }
+    return length;
+}
+
+static ssize_t
+_encodePayload(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
+{
+    ssize_t length = 0;
+    PARCBuffer *buffer = ccnxTlvDictionary_GetBuffer(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOAD);
+    if (buffer != NULL) {
+        length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_Payload, buffer);
     }
     return length;
 }
@@ -107,10 +111,6 @@ _encodePayloadType(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictio
 
             case CCNxPayloadType_LINK:
                 wireFormatType = CCNxCodecSchemaV1Types_PayloadType_Link;
-                break;
-
-            case CCNxPayloadType_MANIFEST:
-                wireFormatType = CCNxCodecSchemaV1Types_PayloadType_Manifest;
                 break;
 
             default:
@@ -274,6 +274,27 @@ _encodeControl(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary
     return length;
 }
 
+static ssize_t
+_encodeManifest(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
+{
+    ssize_t length = 0;
+    ssize_t result;
+
+    result = _encodeName(encoder, packetDictionary);
+    if (result < 0) {
+        return result;
+    }
+    length += result;
+
+    result = ccnxCodecSchemaV1ManifestEncoder_Encode(encoder, packetDictionary);
+    if (result < 0) {
+        return result;
+    }
+    length += result;
+
+    return length;
+}
+
 ssize_t
 ccnxCodecSchemaV1MessageEncoder_Encode(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
 {
@@ -290,6 +311,8 @@ ccnxCodecSchemaV1MessageEncoder_Encode(CCNxCodecTlvEncoder *encoder, CCNxTlvDict
         length = _encodeContentObject(encoder, packetDictionary);
     } else if (ccnxTlvDictionary_IsControl(packetDictionary)) {
         length = _encodeControl(encoder, packetDictionary);
+    } else if (ccnxTlvDictionary_IsManifest(packetDictionary)) {
+        length = _encodeManifest(encoder, packetDictionary);
     } else {
         CCNxCodecError *error = ccnxCodecError_Create(TLV_ERR_PACKETTYPE, __func__, __LINE__, ccnxCodecTlvEncoder_Position(encoder));
         ccnxCodecTlvEncoder_SetError(encoder, error);
