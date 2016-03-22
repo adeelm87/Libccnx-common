@@ -35,6 +35,7 @@
 #include <parc/algol/parc_Object.h>
 
 #include <LongBow/runtime.h>
+#include <ccnx/common/ccnx_PayloadType.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_TlvDictionary.h>
 
 CCNxTlvDictionary *
@@ -50,6 +51,15 @@ ccnxCodecSchemaV1TlvDictionary_CreateContentObject(void)
 {
     CCNxTlvDictionary *dictionary = ccnxTlvDictionary_Create(CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END, CCNxCodecSchemaV1TlvDictionary_Lists_END);
     ccnxTlvDictionary_SetMessageType_ContentObject(dictionary, CCNxTlvDictionary_SchemaVersion_V1);
+    return dictionary;
+}
+
+CCNxTlvDictionary *
+ccnxCodecSchemaV1TlvDictionary_CreateManifest(void)
+{
+    CCNxTlvDictionary *dictionary = ccnxTlvDictionary_Create(CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END, CCNxCodecSchemaV1TlvDictionary_Lists_END);
+    ccnxTlvDictionary_SetMessageType_Manifest(dictionary, CCNxTlvDictionary_SchemaVersion_V1);
+    
     return dictionary;
 }
 

@@ -287,7 +287,6 @@ ccnxCodecTlvEncoder_AppendRawArray(CCNxCodecTlvEncoder *encoder, size_t length, 
     return length;
 }
 
-
 size_t
 ccnxCodecTlvEncoder_PutUint8(CCNxCodecTlvEncoder *encoder, size_t offset, uint8_t value)
 {

@@ -281,7 +281,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
     const PARCCryptoHash *secretHash = parcKeyStore_GetVerifierKeyDigest(keyStore);
     const PARCBuffer *keyid = parcCryptoHash_GetDigest(secretHash);
     ccnxValidationHmacSha256_Set(obj, keyid);
-    parcBuffer_Release(&secretHash);
+    parcCryptoHash_Release((PARCCryptoHash **) &secretHash);
 
     CCNxCodecNetworkBufferIoVec *iovec = ccnxCodecTlvPacket_DictionaryEncode(obj, signer);
 

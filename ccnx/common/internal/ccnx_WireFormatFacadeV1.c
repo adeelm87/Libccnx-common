@@ -385,7 +385,7 @@ _ccnxWireFormatFacadeV1_ComputeContentObjectHash(CCNxTlvDictionary *dictionary)
     // (e.g. ccnxCodecSchemaV1PacketDecoder_Decode) and has had the protected region extents set.
     // This will be the case for Athena. Metis has its own TLV parsing.
 
-    assertTrue(ccnxTlvDictionary_IsContentObject(dictionary), "Message must be a ContentObject");
+    assertTrue(ccnxTlvDictionary_IsContentObject(dictionary) || ccnxTlvDictionary_IsManifest(dictionary), "Message must be a ContentObject or Manifest");
 
     PARCCryptoHash *result = NULL;
 

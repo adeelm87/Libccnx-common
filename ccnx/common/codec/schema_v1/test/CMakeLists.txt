@@ -7,6 +7,8 @@ set(TestsExpectedToPass
   test_ccnxCodecSchemaV1_FixedHeaderDecoder
   test_ccnxCodecSchemaV1_FixedHeaderEncoder
   test_ccnxCodecSchemaV1_LinkCodec
+  test_ccnxCodecSchemaV1_ManifestDecoder
+  test_ccnxCodecSchemaV1_ManifestEncoder
   test_ccnxCodecSchemaV1_MessageDecoder
   test_ccnxCodecSchemaV1_MessageEncoder
   test_ccnxCodecSchemaV1_NameCodec

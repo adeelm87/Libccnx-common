@@ -555,16 +555,17 @@ LONGBOW_TEST_CASE(Control, payload)
 
 
     CCNxTlvDictionary *message = ccnxCodecSchemaV1TlvDictionary_CreateControl();
-    
+
     PARCJSON *json = parcJSON_Create();
     parcJSON_AddString(json, "this is", "annoying");
-    
+
     ccnxTlvDictionary_PutJson(message, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOAD, json);
     parcJSON_Release(&json);
+
     // encode
     CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();
     ssize_t length = ccnxCodecSchemaV1PacketEncoder_Encode(encoder, message);
-    
+
     assertFalse(length < 0, "Got encoding error: %s", ccnxCodecError_ToString(ccnxCodecTlvEncoder_GetError(encoder)));
     assertTrue(length == sizeof(encoded), "Wrong length, expected %zu got %zd", sizeof(encoded), length);
 
@@ -572,7 +573,7 @@ LONGBOW_TEST_CASE(Control, payload)
     ccnxCodecTlvEncoder_Finalize(encoder);
     PARCBuffer *test = ccnxCodecTlvEncoder_CreateBuffer(encoder);
     PARCBuffer *truth = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
-                                    
+
     assertTrue(parcBuffer_Equals(test, truth), "Buffers mismatch")
     {
         printf("Expected\n");

@@ -59,6 +59,7 @@ typedef enum {
     CCNxTlvDictionaryType_ContentObject,
     CCNxTlvDictionaryType_Control,
     CCNxTlvDictionaryType_InterestReturn,
+    CCNxTlvDictionaryType_Manifest
 } _CCNxTlvDictionaryType;
 
 // These form a singly linked list
@@ -84,6 +85,7 @@ static struct dictionary_type_string {
     { .type = CCNxTlvDictionaryType_ContentObject,  .string = "Content Object" },
     { .type = CCNxTlvDictionaryType_Control,        .string = "Control"        },
     { .type = CCNxTlvDictionaryType_InterestReturn, .string = "InterestReturn" },
+    { .type = CCNxTlvDictionaryType_Manifest,       .string = "Manifest"       },
     { .type = UINT32_MAX,                           .string = NULL             },
 };
 
@@ -666,6 +668,13 @@ ccnxTlvDictionary_SetMessageType_InterestReturn(CCNxTlvDictionary *dictionary, C
     dictionary->schemaVersion = schemaVersion;
 }
 
+void
+ccnxTlvDictionary_SetMessageType_Manifest(CCNxTlvDictionary *dictionary, CCNxTlvDictionary_SchemaVersion schemaVersion)
+{
+    dictionary->dictionaryType = CCNxTlvDictionaryType_Manifest;
+    dictionary->schemaVersion = schemaVersion;
+}
+
 bool
 ccnxTlvDictionary_IsInterest(const CCNxTlvDictionary *dictionary)
 {
@@ -688,6 +697,12 @@ bool
 ccnxTlvDictionary_IsControl(const CCNxTlvDictionary *dictionary)
 {
     return (dictionary->dictionaryType == CCNxTlvDictionaryType_Control);
+}
+
+bool
+ccnxTlvDictionary_IsManifest(const CCNxTlvDictionary *dictionary)
+{
+    return (dictionary->dictionaryType == CCNxTlvDictionaryType_Manifest);
 }
 
 CCNxTlvDictionary_SchemaVersion

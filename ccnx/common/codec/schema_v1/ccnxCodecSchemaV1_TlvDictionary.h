@@ -122,7 +122,10 @@ typedef enum rta_tlv_schema_v1_message_fastarray {
     CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOADTYPE = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 6,
     CCNxCodecSchemaV1TlvDictionary_MessageFastArray_EXPIRY_TIME = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 7,
     CCNxCodecSchemaV1TlvDictionary_MessageFastArray_ENDSEGMENT = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 8,
-    CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 11
+    CCNxCodecSchemaV1TlvDictionary_MessageFastArray_HASH_GROUP = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 9,
+    CCNxCodecSchemaV1TlvDictionary_MessageFastArray_DATA_POINTER = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 10,
+    CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MANIFEST_POINTER = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 11,
+    CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 12
 } CCNxCodecSchemaV1TlvDictionary_MessageFastArray;
 
 /**
@@ -134,7 +137,8 @@ typedef enum rta_tlv_schema_v1_lists {
     CCNxCodecSchemaV1TlvDictionary_Lists_MESSAGE_LIST = 1,
     CCNxCodecSchemaV1TlvDictionary_Lists_VALIDATION_ALG_LIST = 4,
     CCNxCodecSchemaV1TlvDictionary_Lists_VALIDATION_PAYLOAD_LIST = 5,
-    CCNxCodecSchemaV1TlvDictionary_Lists_END = 6
+    CCNxCodecSchemaV1TlvDictionary_Lists_HASH_GROUP_LIST = 6,
+    CCNxCodecSchemaV1TlvDictionary_Lists_END = 7
 } CCNxCodecSchemaV1TlvDictionary_Lists;
 
 /**
@@ -182,6 +186,29 @@ CCNxTlvDictionary *ccnxCodecSchemaV1TlvDictionary_CreateInterest(void);
  * @endcode
  */
 CCNxTlvDictionary *ccnxCodecSchemaV1TlvDictionary_CreateContentObject(void);
+
+/**
+ * Creates an empty Manifest dictionary
+ *
+ * The dictionary schema will be V1 and the dictionary type will be Content Object. The
+ * PayloadType will be set to CCNxPayloadType_MANIFEST. No other fields are pre-populated.
+ *
+ * @retval non-null An allocated Dictionary of type Manifest
+ * @retval null An error (likely no memory)
+ *
+ * Example:
+ * @code
+ * {
+ *     // in a decoder
+ *     if (messageType == _DecoderTlvType_Manifest) {
+ *         CCNxTlvDictionary *object = ccnxCodecSchemaV1TlvDictionary_Manifest();
+ *         // decode the rest of the packet
+ *         return object;
+ *     }
+ * }
+ * @endcode
+ */
+CCNxTlvDictionary *ccnxCodecSchemaV1TlvDictionary_CreateManifest(void);
 
 /**
  * Creates an empty Control dictionary
