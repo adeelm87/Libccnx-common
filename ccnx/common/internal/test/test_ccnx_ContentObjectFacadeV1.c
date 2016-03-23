@@ -46,6 +46,10 @@ typedef struct test_data {
     // a V1 dictionary but with no values set
     CCNxTlvDictionary *contentObjectV1Empty;
 
+    // a V1 nameless Content Object
+    CCNxTlvDictionary *contentObjectV1Nameless;
+
+    // a valid V1 Content Object
     CCNxTlvDictionary *contentObjectV1;
     CCNxTlvDictionary *contentObjectVFF;
 } TestData;
@@ -62,7 +66,9 @@ _commonSetup(void)
     data->payload = parcBuffer_Flip(parcBuffer_PutArray(parcBuffer_Allocate(20), 7, (uint8_t *) "payload"));
 
     data->contentObjectV1Empty = ccnxCodecSchemaV1TlvDictionary_CreateContentObject();
-    data->contentObjectV1 = _ccnxContentObjectFacadeV1_CreateWithPayload(data->name, data->payloadType, data->payload);
+    data->contentObjectV1 = _ccnxContentObjectFacadeV1_CreateWithNameAndPayload(data->name, data->payloadType,
+                                                                                data->payload);
+    data->contentObjectV1Nameless = _ccnxContentObjectFacadeV1_CreateWithPayload(data->payloadType, data->payload);
 
     data->contentObjectVFF = ccnxTlvDictionary_Create(CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END, CCNxCodecSchemaV1TlvDictionary_Lists_END);
     ccnxTlvDictionary_SetMessageType_ContentObject(data->contentObjectVFF, 0xFF);
@@ -78,6 +84,7 @@ _commonTeardown(TestData *data)
 
     ccnxTlvDictionary_Release(&data->contentObjectV1Empty);
     ccnxTlvDictionary_Release(&data->contentObjectV1);
+    ccnxTlvDictionary_Release(&data->contentObjectV1Nameless);
     ccnxTlvDictionary_Release(&data->contentObjectVFF);
     parcMemory_Deallocate((void **) &data);
 }
@@ -150,7 +157,9 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(ImplInterface)
 LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_Init)
 {
     CCNxContentObjectInterface *impl = &CCNxContentObjectFacadeV1_Implementation;
+    assertNotNull(impl->createWithNameAndPayload, "Expected CreateWithNameAndPayload to be set");
     assertNotNull(impl->createWithPayload, "Expected CreateWithPayload to be set");
+
     assertNotNull(impl->getName, "Expected GetName to be set");
     assertNotNull(impl->setSignature, "Expected SetSignature to be set");
     assertNotNull(impl->getKeyId, "Expected GetKeyID to be set");
@@ -178,6 +187,8 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_GetName)
         ccnxName_Display(test, 0);
         ccnxName_Display(data->name, 0);
     }
+    test = _ccnxContentObjectFacadeV1_GetName(data->contentObjectV1Nameless);
+    assertNull(test, "A nameless Content Object has no name.");
 }
 
 LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_SetPayload)
@@ -191,9 +202,9 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_SetPayload)
                 "Expected to not be able to re-assign a payload on an already initialized ContentObject");
 
     CCNxTlvDictionary *contentObject =
-        _ccnxContentObjectFacadeV1_CreateWithPayload(data->name,
-                                                     CCNxPayloadType_DATA,
-                                                     NULL);
+            _ccnxContentObjectFacadeV1_CreateWithNameAndPayload(data->name,
+                                                                CCNxPayloadType_DATA,
+                                                                NULL);
 
 
     bool status = _ccnxContentObjectFacadeV1_SetPayload(contentObject, CCNxPayloadType_KEY, newPayload);
@@ -219,9 +230,9 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_SetPayload_Link)
     PARCBuffer *payload = parcBuffer_WrapCString("this is a payload");
 
     CCNxTlvDictionary *contentObject =
-        _ccnxContentObjectFacadeV1_CreateWithPayload(data->name,
-                                                     CCNxPayloadType_LINK,
-                                                     payload);
+            _ccnxContentObjectFacadeV1_CreateWithNameAndPayload(data->name,
+                                                                CCNxPayloadType_LINK,
+                                                                payload);
 
     PARCBuffer *testPayload = _ccnxContentObjectFacadeV1_GetPayload(contentObject);
     assertTrue(parcBuffer_Equals(payload, testPayload), "payloads do not match")
@@ -316,7 +327,8 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_SetSignature)
     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/baz");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
-    CCNxTlvDictionary *contentObject = _ccnxContentObjectFacadeV1_CreateWithPayload(name, CCNxPayloadType_DATA, payload);
+    CCNxTlvDictionary *contentObject = _ccnxContentObjectFacadeV1_CreateWithNameAndPayload(name, CCNxPayloadType_DATA,
+                                                                                           payload);
 
     PARCBuffer *keyId = parcBuffer_WrapCString("keyhash");
     char *rawsig = "siggybits";
@@ -340,7 +352,8 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_GetKeyId)
     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar/baz");
     PARCBuffer *payload = parcBuffer_Allocate(100);
 
-    CCNxTlvDictionary *contentObject = _ccnxContentObjectFacadeV1_CreateWithPayload(name, CCNxPayloadType_DATA, payload);
+    CCNxTlvDictionary *contentObject = _ccnxContentObjectFacadeV1_CreateWithNameAndPayload(name, CCNxPayloadType_DATA,
+                                                                                           payload);
 
     assertNull(_ccnxContentObjectFacadeV1_GetKeyId(contentObject), "Expect key ID to be NULL");
 

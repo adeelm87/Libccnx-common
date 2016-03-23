@@ -61,11 +61,13 @@ _encodeName(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
         length = ccnxCodecSchemaV1NameCodec_Encode(encoder, CCNxCodecSchemaV1Types_CCNxMessage_Name, name);
     }
 
-    // required field
-    if (length < 0) {
+    // required field for everything except CCNxContentObjects
+    if (!ccnxTlvDictionary_IsContentObject(packetDictionary) && length < 0) {
         CCNxCodecError *error = ccnxCodecError_Create(TLV_MISSING_MANDATORY, __func__, __LINE__, ccnxCodecTlvEncoder_Position(encoder));
         ccnxCodecTlvEncoder_SetError(encoder, error);
         ccnxCodecError_Release(&error);
+    } else if (ccnxTlvDictionary_IsContentObject(packetDictionary) && name == NULL) {
+        length = 0;
     }
 
     return length;

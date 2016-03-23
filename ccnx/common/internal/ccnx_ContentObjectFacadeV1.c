@@ -58,9 +58,9 @@ _assertInvariants(const CCNxTlvDictionary *contentObjectDictionary)
 // Creation
 
 static CCNxTlvDictionary *
-_ccnxContentObjectFacadeV1_CreateWithPayload(const CCNxName        *name,           // required
-                                             const CCNxPayloadType payloadType,     // required
-                                             const PARCBuffer      *payload)        // may be null
+_ccnxContentObjectFacadeV1_CreateWithNameAndPayload(const CCNxName *name,              // required
+                                                    const CCNxPayloadType payloadType, // required
+                                                    const PARCBuffer *payload)         // may be null
 {
     assertNotNull(name, "Parameter name must be non-null");
 
@@ -82,6 +82,28 @@ _ccnxContentObjectFacadeV1_CreateWithPayload(const CCNxName        *name,       
 
     return dictionary;
 }
+
+static CCNxTlvDictionary *
+_ccnxContentObjectFacadeV1_CreateWithPayload(const CCNxPayloadType payloadType, // required
+                                             const PARCBuffer *payload)         // may be null
+{
+    CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateContentObject();
+
+    if (dictionary) {
+        if (payloadType != CCNxPayloadType_DATA) {
+            ccnxTlvDictionary_PutInteger(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOADTYPE, payloadType);
+        }
+
+        if (payload) {
+            ccnxTlvDictionary_PutBuffer(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOAD, payload);
+        }
+    } else {
+        trapOutOfMemory("Could not allocate ContentObject");
+    }
+
+    return dictionary;
+}
+
 // =========================
 // Getters
 
@@ -227,6 +249,7 @@ _ccnxContentObjectFacadeV1_Display(const CCNxTlvDictionary *contentObjectDiction
 CCNxContentObjectInterface CCNxContentObjectFacadeV1_Implementation = {
     .description         = "CCNxContentObjectFacadeV1_Implementation",
 
+    .createWithNameAndPayload   = &_ccnxContentObjectFacadeV1_CreateWithNameAndPayload,
     .createWithPayload   = &_ccnxContentObjectFacadeV1_CreateWithPayload,
 
     .setSignature        = &_ccnxContentObjectFacadeV1_SetSignature,

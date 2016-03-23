@@ -32,6 +32,7 @@
 #include <LongBow/unit-test.h>
 #include <ccnx/common/codec/schema_v1/testdata/v1_content_nameA_keyid1_rsasha256.h>
 #include <ccnx/common/codec/schema_v1/testdata/v1_interest_all_fields.h>
+#include <ccnx/common/codec/schema_v1/testdata/v1_content_nameless_nosig.h>
 
 #include "testrig_encoder.c"
 
@@ -69,6 +70,7 @@ LONGBOW_TEST_FIXTURE(Global)
 {
     LONGBOW_RUN_TEST_CASE(ContentObject, Interest);
     LONGBOW_RUN_TEST_CASE(ContentObject, ContentObject);
+    LONGBOW_RUN_TEST_CASE(ContentObject, ContentObjectNameless);
     LONGBOW_RUN_TEST_CASE(InterestReturn, InterestReturn);
 }
 
@@ -179,6 +181,34 @@ LONGBOW_TEST_CASE(InterestReturn, InterestReturn)
     ccnxInterestReturn_Release(&interestReturn);
 }
 
+LONGBOW_TEST_CASE(ContentObject, ContentObjectNameless)
+{
+    // create a Content Object that replicates v1_content_nameA_keyid1_rsasha256
+    TlvExtent payloadExtent = getTruthTableExtent(TRUTHTABLENAME(v1_content_nameless_nosig), V1_MANIFEST_OBJ_PAYLOAD);
+    TlvExtent contentObjectExtent = getTruthTableExtent(TRUTHTABLENAME(v1_content_nameless_nosig), V1_MANIFEST_OBJ_CONTENTOBJECT);
+
+    PARCBuffer *payload = parcBuffer_Wrap(v1_content_nameless_nosig, sizeof(v1_content_nameless_nosig), payloadExtent.offset, payloadExtent.offset + payloadExtent.length);
+
+    CCNxTlvDictionary *contentobject =
+        ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
+                                                   NULL, CCNxPayloadType_KEY, payload);
+
+    ccnxContentObject_SetExpiryTime(contentobject, 0x01434B198400ULL);
+    ccnxContentObject_SetFinalChunkNumber(contentobject, 0x06050403);
+
+    CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();
+    ccnxCodecSchemaV1MessageEncoder_Encode(encoder, contentobject);
+
+    PARCBuffer *truth = parcBuffer_Wrap(v1_content_nameless_nosig, sizeof(v1_content_nameless_nosig), contentObjectExtent.offset, contentObjectExtent.offset + contentObjectExtent.length);
+
+    testCompareEncoderToBuffer(encoder, truth);
+
+    ccnxCodecTlvEncoder_Destroy(&encoder);
+    parcBuffer_Release(&truth);
+    parcBuffer_Release(&payload);
+    ccnxTlvDictionary_Release(&contentobject);
+}
+
 LONGBOW_TEST_CASE(ContentObject, ContentObject)
 {
     // create a Content Object that replicates v1_content_nameA_keyid1_rsasha256
@@ -190,9 +220,8 @@ LONGBOW_TEST_CASE(ContentObject, ContentObject)
     PARCBuffer *payload = parcBuffer_Wrap(v1_content_nameA_keyid1_rsasha256, sizeof(v1_content_nameA_keyid1_rsasha256), payloadExtent.offset, payloadExtent.offset + payloadExtent.length);
 
     CCNxTlvDictionary *contentobject =
-        ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
-                                                   name, CCNxPayloadType_KEY, payload);
-
+            ccnxContentObject_CreateWithImplAndPayload(&CCNxContentObjectFacadeV1_Implementation,
+                                                       name, CCNxPayloadType_KEY, payload);
 
     ccnxContentObject_SetExpiryTime(contentobject, 0x01434B198400ULL);
     ccnxContentObject_SetFinalChunkNumber(contentobject, 0x06050403);
