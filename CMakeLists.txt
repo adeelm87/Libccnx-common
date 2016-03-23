@@ -17,10 +17,11 @@ include( detectCacheSize )
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS_NOPANTS "${CMAKE_C_FLAGS_NOPANTS} -O3 -DNDEBUG -DLibccnx_DISABLE_VALIDATION")
 
+include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR}/ccnx/common)
+
 include_directories($ENV{CCNX_DEPENDENCIES}/include)
 set(OPENSSL_ROOT_DIR $ENV{CCNX_DEPENDENCIES})
 
-include_directories(${PROJECT_BINARY_DIR}/ccnx/common ${PROJECT_SOURCE_DIR})
 
 find_package( LongBow REQUIRED )
 include_directories(${LONGBOW_INCLUDE_DIRS})
