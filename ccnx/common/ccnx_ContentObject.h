@@ -60,7 +60,7 @@ typedef CCNxTlvDictionary CCNxContentObject;
 
 /**
  * Create a new instance of a `CCNxContentObject`, using dynamically allocated memory, with
- * the specified payload.
+ * the specified name and payload.
  *
  * The created instance must be released by calling {@link ccnxContentObject_Release()}.
  *
@@ -75,7 +75,7 @@ typedef CCNxTlvDictionary CCNxContentObject;
  *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
- *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, payload);
  *
  *     ccnxContentObject_Release(&contentObject);
  *     ccnxName_Release(&name);
@@ -85,8 +85,36 @@ typedef CCNxTlvDictionary CCNxContentObject;
  *
  * @see {@link ccnxContentObject_Release}
  */
-CCNxContentObject *ccnxContentObject_CreateWithDataPayload(const CCNxName *contentName,
-                                                           const PARCBuffer *payload);
+CCNxContentObject *ccnxContentObject_CreateWithNameAndPayload(const CCNxName *contentName,
+                                                              const PARCBuffer *payload);
+
+/**
+ * Create a new instance of a `CCNxContentObject`, using dynamically allocated memory, with
+ * the specified payload. This will be a "nameless" Content Object.
+ *
+ * The created instance must be released by calling {@link ccnxContentObject_Release()}.
+ *
+ * @param [in] payload The data to be encapsulated by this `CCNxContentObject`. May be NULL.
+ *
+ * @return A new instance of a `CCNxContentObject`.
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
+ *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
+ *
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, payload);
+ *
+ *     ccnxContentObject_Release(&contentObject);
+ *     ccnxName_Release(&name);
+ *     parcBuffer_Release(&payload);
+ * }
+ * @endcode
+ *
+ * @see {@link ccnxContentObject_Release}
+ */
+CCNxContentObject *ccnxContentObject_CreateWithPayload(const PARCBuffer *payload);
 
 /**
  * Create a new instance of a `CCNxContentObject`, using dynamically allocated memory, with
@@ -143,7 +171,7 @@ CCNxContentObject *ccnxContentObject_CreateWithImplAndPayload(const CCNxContentO
  *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
- *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, payload);
  *
  *     CCNxName *pointerToName = ccnxContentObject_GetName(contentObject);
  *
@@ -176,7 +204,7 @@ CCNxName *ccnxContentObject_GetName(const CCNxContentObject *contentObject);
  *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
- *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, payload);
  *
  *     CCNxName *pointerToPayload = ccnxContentObject_GetPayload(contentObject);
  *
@@ -207,7 +235,7 @@ PARCBuffer *ccnxContentObject_GetPayload(const CCNxContentObject *contentObject)
  *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
- *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, payload);
  *
  *     ...
  *
@@ -308,7 +336,7 @@ uint64_t ccnxContentObject_GetFinalChunkNumber(const CCNxContentObject *contentO
  *     CCNxName *name = ccnxName_CreateFromCString("lci:/hello/dolly");
  *     PARCBuffer *payload = parcBuffer_WrapCString("hello");
  *
- *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, payload);
  *
  *     PARCBuffer *keyId = parcBuffer_WrapCString("keyhash");
  *     PARCBuffer *sigbits = parcBuffer_CreateFromArray((void *) "siggybits", strlen("siggybits"));
@@ -432,7 +460,7 @@ void ccnxContentObject_Release(CCNxContentObject **contentObjectP);
  *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
- *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, payload);
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, payload);
  *
  *     ccnxContentObject_AssertValid(contentObject);
  *
@@ -603,7 +631,7 @@ bool ccnxContentObject_HasExpiryTime(const CCNxContentObject *contentObject);
  *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
- *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, NULL);
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, NULL);
  *
  *     CCNxName *pointerToPayload = ccnxContentObject_GetPayload(contentObject);
  *     if (pointerToPayload == NULL) {
@@ -636,7 +664,7 @@ bool ccnxContentObject_SetPayload(CCNxContentObject *contentObject, CCNxPayloadT
  *     CCNxName *name = ccnxName_CreateFromCString("lci:/foo/bar");
  *     PARCBuffer *payload = parcBuffer_Allocate(<...>);
  *
- *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(name, NULL);
+ *     CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(name, NULL);
  *
  *     CCNxName *pointerToPayload = ccnxContentObject_GetPayload(contentObject);
  *     if (pointerToPayload == NULL) {
