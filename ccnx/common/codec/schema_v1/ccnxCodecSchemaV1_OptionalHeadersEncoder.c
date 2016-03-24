@@ -163,7 +163,7 @@ ccnxCodecSchemaV1OptionalHeadersEncoder_Encode(CCNxCodecTlvEncoder *optionalHead
     ssize_t result = 0;
     if (ccnxTlvDictionary_IsInterest(packetDictionary) || ccnxTlvDictionary_IsInterestReturn(packetDictionary)) {
         result = _EncodeInterestHeaders(optionalHeadersEncoder, packetDictionary);
-    } else if (ccnxTlvDictionary_IsContentObject(packetDictionary)) {
+    } else if (ccnxTlvDictionary_IsContentObject(packetDictionary) || ccnxTlvDictionary_IsManifest(packetDictionary)) {
         result = _EncodeContentObjectHeaders(optionalHeadersEncoder, packetDictionary);
     } else if (ccnxTlvDictionary_IsControl(packetDictionary)) {
         result = ccnxCodecTlvUtilities_EncodeCustomList(optionalHeadersEncoder, packetDictionary, CCNxCodecSchemaV1TlvDictionary_Lists_HEADERS);
