@@ -266,7 +266,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_EncodeWithSignature)
 {
     CCNxName *name = ccnxName_CreateFromCString("ccnx:/foo/bar");
     PARCBuffer *payload = parcBuffer_WrapCString("payload");
-    CCNxContentObject *obj = ccnxContentObject_CreateWithDataPayload(name, payload);
+    CCNxContentObject *obj = ccnxContentObject_CreateWithNameAndPayload(name, payload);
     ccnxName_Release(&name);
     parcBuffer_Release(&payload);
 

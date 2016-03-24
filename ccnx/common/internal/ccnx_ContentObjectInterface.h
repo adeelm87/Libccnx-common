@@ -47,9 +47,13 @@
 typedef struct ccnx_contentobject_interface {
     char               *description;      // A human-readable label for this implementation
 
+    /** @see ccnxContentObject_CreateWithNameAndPayload */
+    CCNxTlvDictionary  *(*createWithNameAndPayload)(const CCNxName * contentName,
+                                                    const CCNxPayloadType contentType,
+                                                    const PARCBuffer * payload);
+
     /** @see ccnxContentObject_CreateWithPayload */
-    CCNxTlvDictionary  *(*createWithPayload)(const CCNxName * contentName,
-                                             const CCNxPayloadType contentType,
+    CCNxTlvDictionary  *(*createWithPayload)(const CCNxPayloadType contentType,
                                              const PARCBuffer * payload);
 
     /** @see ccnxContentObject_GetName */
