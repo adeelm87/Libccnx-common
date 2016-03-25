@@ -614,7 +614,7 @@ void ccnxManifestHashGroup_SetTreeHeight(CCNxManifestHashGroup *group, size_t tr
  * {
  *     CCNxManifestHashGroup *group = ...
  *
- *     PARCBuffer *digest = ccnxManifestHashGroup_GetOverallDataDigest(group);
+ *     const PARCBuffer *digest = ccnxManifestHashGroup_GetOverallDataDigest(group);
  *     // use it
  * }
  * @endcode
@@ -631,7 +631,7 @@ const PARCBuffer *ccnxManifestHashGroup_GetOverallDataDigest(const CCNxManifestH
  * @code
  * {
  *     CCNxManifestHashGroup *group = ...
- *     PARCBuffer *digest = ...
+ *     const PARCBuffer *digest = ...
  *
  *     ccnxManifestHashGroup_SetOverallDataDigest(group, digest);
  * }

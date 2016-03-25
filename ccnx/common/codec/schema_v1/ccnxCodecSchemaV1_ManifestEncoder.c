@@ -65,6 +65,7 @@ _appendMetadata(CCNxCodecTlvEncoder *encoder, CCNxManifestHashGroup *group)
     ssize_t length = 0;
 
     // Pre-populate this field -- we'll come back and fill in the length after we're done
+    size_t startPosition = ccnxCodecTlvEncoder_Position(encoder);
     ccnxCodecTlvEncoder_AppendContainer(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata, length);
 
     // Now append all metadata that exists in the hash group.
@@ -99,12 +100,11 @@ _appendMetadata(CCNxCodecTlvEncoder *encoder, CCNxManifestHashGroup *group)
 
     // Rewind back to the container opening and fill in the length
     size_t endPosition = ccnxCodecTlvEncoder_Position(encoder);
-    ssize_t offset = endPosition - length - 4;
-    ccnxCodecTlvEncoder_PutUint16(encoder, offset, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata);
-    ccnxCodecTlvEncoder_PutUint16(encoder, offset + 2, length);
+    ccnxCodecTlvEncoder_PutUint16(encoder, startPosition, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata);
+    ccnxCodecTlvEncoder_PutUint16(encoder, startPosition + 2, length);
     ccnxCodecTlvEncoder_SetPosition(encoder, endPosition);
 
-    return length;
+    return endPosition - startPosition;
 }
 
 ssize_t

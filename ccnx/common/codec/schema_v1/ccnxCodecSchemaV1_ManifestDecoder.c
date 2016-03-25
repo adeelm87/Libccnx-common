@@ -39,61 +39,39 @@ _decodeHashGroupMetadata(CCNxCodecTlvDecoder *decoder, CCNxManifestHashGroup *gr
     while (offset < length) {
         uint16_t type = ccnxCodecTlvDecoder_GetType(decoder);
         uint16_t value_length = ccnxCodecTlvDecoder_GetLength(decoder);
+        PARCBuffer *value = ccnxCodecTlvDecoder_GetValue(decoder, value_length);
 
         offset += (4 + value_length);
 
         switch (type) {
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator: {
-                PARCBuffer *nameBuffer = ccnxCodecTlvDecoder_GetBuffer(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator);
-                if (nameBuffer != NULL) {
-                    CCNxName *locator = ccnxName_CreateFromBuffer(nameBuffer);
-                    ccnxManifestHashGroup_SetLocator(group, locator);
-                    ccnxName_Release(&locator);
-                } else {
-                    return false;
-                }
+                CCNxName *locator = ccnxName_CreateFromBuffer(value);
+                ccnxManifestHashGroup_SetLocator(group, locator);
+                ccnxName_Release(&locator);
                 break;
             }
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize: {
-                uint64_t dataSize = 0;
-                success = ccnxCodecTlvDecoder_GetUint64(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize, &dataSize);
-                if (success) {
-                    ccnxManifestHashGroup_SetDataSize(group, dataSize);
-                } else {
-                    return false;
-                }
+                uint64_t dataSize = parcBuffer_GetUint64(value);
+                ccnxManifestHashGroup_SetDataSize(group, dataSize);
                 break;
             }
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize: {
-                uint64_t blockSize = 0;
-                success = ccnxCodecTlvDecoder_GetUint64(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize, &blockSize);
-                if (success) {
-                    ccnxManifestHashGroup_SetBlockSize(group, blockSize);
-                } else {
-                    return false;
-                }
+                uint64_t blockSize = parcBuffer_GetUint64(value);
+                ccnxManifestHashGroup_SetBlockSize(group, blockSize);
                 break;
             }
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize: {
-                uint64_t entrySize = 0;
-                success = ccnxCodecTlvDecoder_GetUint64(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize, &entrySize);
-                if (success) {
-                    ccnxManifestHashGroup_SetBlockSize(group, entrySize);
-                } else {
-                    return false;
-                }
+                uint64_t entrySize = parcBuffer_GetUint64(value);
+                ccnxManifestHashGroup_SetEntrySize(group, entrySize);
                 break;
             }
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256: {
-                PARCBuffer *digest = ccnxCodecTlvDecoder_GetBuffer(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256);
-                if (digest != NULL) {
-                    ccnxManifestHashGroup_SetOverallDataDigest(group, digest);
-                } else {
-                    return false;
-                }
+                ccnxManifestHashGroup_SetOverallDataDigest(group, value);
                 break;
             }
         }
+
+        parcBuffer_Release(&value);
     }
 
     return success;
@@ -115,8 +93,10 @@ _decodeHashGroup(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictiona
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata: {
                 success = _decodeHashGroupMetadata(decoder, group, value_length);
                 if (!success) {
+                    printf("failed to decode metadata\n");
                     return false;
                 }
+                printf("decoded metadata OK\n");
                 break;
             }
 
@@ -146,6 +126,8 @@ _decodeHashGroup(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictiona
             ccnxCodecError_Release(&error);
         }
     }
+
+    printf("decoded hash group OK\n");
 
     CCNxManifestInterface *manifest = ccnxManifestInterface_GetInterface(packetDictionary);
     manifest->addHashGroup(packetDictionary, group);

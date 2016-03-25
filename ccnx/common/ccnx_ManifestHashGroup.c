@@ -375,7 +375,11 @@ ccnxManifestHashGroup_CreateFromJson(const PARCJSON *json)
 
     if (parcJSON_GetPairByName(json, "overallDataDigest") != NULL) {
         PARCJSONValue *overallDataDigestValue = parcJSON_GetValueByName(json, "overallDataDigest");
-        group->overallDataDigest = parcJSONValue_GetString(overallDataDigestValue);
+        PARCBuffer *digestHex = parcJSONValue_GetString(overallDataDigestValue);
+
+        char *hexString = parcBuffer_ToString(digestHex);
+        group->overallDataDigest = parcBuffer_Flip(parcBuffer_ParseHexString(hexString));
+        parcMemory_Deallocate(&hexString);
     }
 
     if (parcJSON_GetPairByName(json, "locator") != NULL) {
