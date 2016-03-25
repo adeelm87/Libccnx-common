@@ -31,6 +31,75 @@
 #include <ccnx/common/ccnx_ManifestHashGroup.h>
 
 static bool
+_decodeHashGroupMetadata(CCNxCodecTlvDecoder *decoder, CCNxManifestHashGroup *group, size_t length)
+{
+    size_t offset = 0;
+    bool success = true;
+
+    while (offset < length) {
+        uint16_t type = ccnxCodecTlvDecoder_GetType(decoder);
+        uint16_t value_length = ccnxCodecTlvDecoder_GetLength(decoder);
+
+        offset += (4 + value_length);
+
+        switch (type) {
+            case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator: {
+                PARCBuffer *nameBuffer = ccnxCodecTlvDecoder_GetBuffer(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator);
+                if (nameBuffer != NULL) {
+                    CCNxName *locator = ccnxName_CreateFromBuffer(nameBuffer);
+                    ccnxManifestHashGroup_SetLocator(group, locator);
+                    ccnxName_Release(&locator);
+                } else {
+                    return false;
+                }
+                break;
+            }
+            case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize: {
+                uint64_t dataSize = 0;
+                success = ccnxCodecTlvDecoder_GetUint64(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize, &dataSize);
+                if (success) {
+                    ccnxManifestHashGroup_SetDataSize(group, dataSize);
+                } else {
+                    return false;
+                }
+                break;
+            }
+            case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize: {
+                uint64_t blockSize = 0;
+                success = ccnxCodecTlvDecoder_GetUint64(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize, &blockSize);
+                if (success) {
+                    ccnxManifestHashGroup_SetBlockSize(group, blockSize);
+                } else {
+                    return false;
+                }
+                break;
+            }
+            case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize: {
+                uint64_t entrySize = 0;
+                success = ccnxCodecTlvDecoder_GetUint64(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize, &entrySize);
+                if (success) {
+                    ccnxManifestHashGroup_SetBlockSize(group, entrySize);
+                } else {
+                    return false;
+                }
+                break;
+            }
+            case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256: {
+                PARCBuffer *digest = ccnxCodecTlvDecoder_GetBuffer(decoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256);
+                if (digest != NULL) {
+                    ccnxManifestHashGroup_SetOverallDataDigest(group, digest);
+                } else {
+                    return false;
+                }
+                break;
+            }
+        }
+    }
+
+    return success;
+}
+
+static bool
 _decodeHashGroup(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictionary, CCNxManifestHashGroup *group, size_t length)
 {
     bool success = true;
@@ -43,6 +112,14 @@ _decodeHashGroup(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictiona
         offset += (4 + value_length);
 
         switch (type) {
+            case CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata: {
+                success = _decodeHashGroupMetadata(decoder, group, value_length);
+                if (!success) {
+                    return false;
+                }
+                break;
+            }
+
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroup_DataPointer: {
                 PARCBuffer *buffer = ccnxCodecTlvDecoder_GetValue(decoder, value_length);
                 ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, buffer);
@@ -57,7 +134,6 @@ _decodeHashGroup(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictiona
                 break;
             }
 
-            case CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata: // fallthrough
             default:
                 // if we do not know the TLV type, put it in this container's unknown list
                 success = ccnxCodecTlvUtilities_PutAsListBuffer(decoder, packetDictionary, type, value_length, CCNxCodecSchemaV1TlvDictionary_Lists_MESSAGE_LIST);

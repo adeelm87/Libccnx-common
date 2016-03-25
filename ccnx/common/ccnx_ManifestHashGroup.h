@@ -638,4 +638,23 @@ const PARCBuffer *ccnxManifestHashGroup_GetOverallDataDigest(const CCNxManifestH
  * @endcode
  */
 void ccnxManifestHashGroup_SetOverallDataDigest(CCNxManifestHashGroup *group, const PARCBuffer *digest);
+
+/**
+ * Determine if this `CCNxManifestHashGroup` is carrying any metadata.
+ *
+ * @param [in] group A {@link CCNxManifestHashGroup} instance.
+ *
+ * @retval true If the `CCNxManifestHashGroup` has metadata.
+ * @retval false Otherwise
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxManifestHashGroup *group = ...
+ *
+ *     bool hasMetadata = ccnxManifestHashGroup_HasMetadata(group);
+ * }
+ * @endcode
+ */
+bool ccnxManifestHashGroup_HasMetadata(const CCNxManifestHashGroup *group);
 #endif // libccnx_ccnx_ManifestHashGroup_h
