@@ -93,10 +93,8 @@ _decodeHashGroup(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictiona
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata: {
                 success = _decodeHashGroupMetadata(decoder, group, value_length);
                 if (!success) {
-                    printf("failed to decode metadata\n");
                     return false;
                 }
-                printf("decoded metadata OK\n");
                 break;
             }
 
@@ -126,8 +124,6 @@ _decodeHashGroup(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictiona
             ccnxCodecError_Release(&error);
         }
     }
-
-    printf("decoded hash group OK\n");
 
     CCNxManifestInterface *manifest = ccnxManifestInterface_GetInterface(packetDictionary);
     manifest->addHashGroup(packetDictionary, group);
