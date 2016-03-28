@@ -62,6 +62,13 @@ _ccnxWireFormatFacadeV1_FromInterestPacketTypeIoVec(const CCNxCodecNetworkBuffer
     return dictionary;
 }
 
+static CCNxTlvDictionary *
+_ccnxWireFormatFacadeV1_FromInterestReturnPacketType(const PARCBuffer *wireFormat)
+{
+    CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterestReturn();
+    ccnxTlvDictionary_PutBuffer(dictionary, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_WireFormat, wireFormat);
+    return dictionary;
+}
 
 static CCNxTlvDictionary *
 _ccnxWireFormatFacadeV1_FromContentObjectPacketType(const PARCBuffer *wireFormat)
@@ -122,7 +129,7 @@ _ccnxWireFormatFacadeV1_CreateFromV1(const PARCBuffer *wireFormat)
             dictionary = _ccnxWireFormatFacadeV1_FromInterestPacketType(wireFormat);
             break;
         case CCNxCodecSchemaV1Types_PacketType_InterestReturn:
-            // Add InterestReturn
+            dictionary = _ccnxWireFormatFacadeV1_FromInterestReturnPacketType(wireFormat);
             break;
         default:
             // will return NULL
