@@ -337,6 +337,10 @@ ccnxManifestHashGroup_ToJson(const CCNxManifestHashGroup *group)
         root = parcJSON_AddInteger(root, "blockSize", group->blockSize);
     }
 
+    if (group->treeHeight > 0) {
+        root = parcJSON_AddInteger(root, "treeHeight", group->treeHeight);
+    }
+
     return root;
 }
 
@@ -403,6 +407,11 @@ ccnxManifestHashGroup_CreateFromJson(const PARCJSON *json)
     if (parcJSON_GetPairByName(json, "blockSize") != NULL) {
         PARCJSONValue *blockSizeValue = parcJSON_GetValueByName(json, "blockSize");
         group->blockSize = parcJSONValue_GetInteger(blockSizeValue);
+    }
+
+    if (parcJSON_GetPairByName(json, "treeHeight") != NULL) {
+        PARCJSONValue *treeHeightValue = parcJSON_GetValueByName(json, "treeHeight");
+        group->treeHeight = parcJSONValue_GetInteger(treeHeightValue);
     }
 
     return group;

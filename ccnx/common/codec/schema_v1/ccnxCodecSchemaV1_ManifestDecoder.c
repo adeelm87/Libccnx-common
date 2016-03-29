@@ -45,8 +45,10 @@ _decodeHashGroupMetadata(CCNxCodecTlvDecoder *decoder, CCNxManifestHashGroup *gr
 
         switch (type) {
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator: {
-                CCNxName *locator = ccnxName_CreateFromBuffer(value);
+                char *nameString = parcBuffer_ToString(value);
+                const CCNxName *locator = ccnxName_CreateFromCString(nameString);
                 ccnxManifestHashGroup_SetLocator(group, locator);
+                parcMemory_Deallocate(&nameString);
                 ccnxName_Release(&locator);
                 break;
             }
@@ -63,6 +65,11 @@ _decodeHashGroupMetadata(CCNxCodecTlvDecoder *decoder, CCNxManifestHashGroup *gr
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize: {
                 uint64_t entrySize = parcBuffer_GetUint64(value);
                 ccnxManifestHashGroup_SetEntrySize(group, entrySize);
+                break;
+            }
+            case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_TreeHeight: {
+                uint64_t treeHeight = parcBuffer_GetUint64(value);
+                ccnxManifestHashGroup_SetTreeHeight(group, treeHeight);
                 break;
             }
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256: {

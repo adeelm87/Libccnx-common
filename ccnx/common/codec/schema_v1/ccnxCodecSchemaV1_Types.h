@@ -123,7 +123,8 @@ typedef enum rta_tlv_schema_v1_ccnxmanifest_hashgroup_metadata_types {
     CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize = 0x0001,
     CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize = 0x0002,
     CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize = 0x0003,
-    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256 = 0x0004,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_TreeHeight = 0x0004,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256 = 0x0005,
 } CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata;
 
 // ==================================================

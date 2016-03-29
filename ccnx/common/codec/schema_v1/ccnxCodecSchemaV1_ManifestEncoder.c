@@ -85,12 +85,17 @@ _appendMetadata(CCNxCodecTlvEncoder *encoder, CCNxManifestHashGroup *group)
 
     size_t blockSize = ccnxManifestHashGroup_GetBlockSize(group);
     if (blockSize > 0) {
-        length += ccnxCodecTlvEncoder_AppendUint64(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize, dataSize);
+        length += ccnxCodecTlvEncoder_AppendUint64(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize, blockSize);
     }
 
     size_t entrySize = ccnxManifestHashGroup_GetEntrySize(group);
     if (entrySize > 0) {
         length += ccnxCodecTlvEncoder_AppendUint64(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize, entrySize);
+    }
+
+    size_t treeSize = ccnxManifestHashGroup_GetTreeHeight(group);
+    if (treeSize > 0) {
+        length += ccnxCodecTlvEncoder_AppendUint64(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_TreeHeight, treeSize);
     }
 
     const PARCBuffer *dataDigest = ccnxManifestHashGroup_GetOverallDataDigest(group);

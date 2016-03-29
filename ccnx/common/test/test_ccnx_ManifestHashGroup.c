@@ -85,6 +85,7 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_TreeHeight);
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_Locator);
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_OverallDataDigest);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_HasMetadata);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
@@ -358,6 +359,22 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_Locator)
     const CCNxName *actual = ccnxManifestHashGroup_GetLocator(group);
 
     assertTrue(ccnxName_Equals(expected, actual) == true, "Expected %s, got %s", ccnxName_ToString(expected), ccnxName_ToString(actual));
+
+    ccnxName_Release(&expected);
+    ccnxManifestHashGroup_Release(&group);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_HasMetadata)
+{
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
+    assertNotNull(group, "Expected non-null CCNxManifestHashGroup");
+
+    assertFalse(ccnxManifestHashGroup_HasMetadata(group), "Expected an empty HashGroup to have no metadata");
+
+    CCNxName *expected = ccnxName_CreateFromCString("ccnx:/flic/manifest");
+    ccnxManifestHashGroup_SetLocator(group, expected);
+
+    assertTrue(ccnxManifestHashGroup_HasMetadata(group), "Expected a HashGroup with a locator to have metadata");
 
     ccnxName_Release(&expected);
     ccnxManifestHashGroup_Release(&group);

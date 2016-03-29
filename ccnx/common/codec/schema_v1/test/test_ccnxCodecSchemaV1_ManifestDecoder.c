@@ -63,6 +63,7 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_Decode);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeType);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeHashGroup);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeHashGroupMetadata);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
@@ -82,8 +83,16 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_Decode)
 {
-    // TODO: construction comment
-    uint8_t rawManifest[40] = {0x00,0x07,0x00,0x24,0x00,0x02,0x00,0x20,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46};
+    uint8_t rawManifest[40] = { 0x00, 0x07, 0x00, 0x24,
+                                0x00, 0x02, 0x00, 0x20,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46 };
     PARCBuffer *wireFormat = parcBuffer_Flip(parcBuffer_CreateFromArray(rawManifest, 40));
 
     CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(wireFormat);
@@ -99,8 +108,16 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_Decode)
 
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeType)
 {
-    // TODO: construction comment
-    uint8_t rawManifest[40] = {0x00,0x07,0x00,0x24,0x00,0x02,0x00,0x20,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46};
+    uint8_t rawManifest[40] = { 0x00, 0x07, 0x00, 0x24,
+                                0x00, 0x02, 0x00, 0x20,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46 };
     PARCBuffer *wireFormat = parcBuffer_Flip(parcBuffer_CreateFromArray(rawManifest, 40));
 
     CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(wireFormat);
@@ -119,8 +136,16 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeType)
 
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeHashGroup)
 {
-    // TODO: construction comment
-    uint8_t rawManifest[40] = {0x00,0x07,0x00,0x24,0x00,0x02,0x00,0x20,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46,0x46};
+    uint8_t rawManifest[40] = { 0x00, 0x07, 0x00, 0x24,
+                                0x00, 0x02, 0x00, 0x20,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46,
+                                0x46, 0x46, 0x46, 0x46 };
     PARCBuffer *wireFormat = parcBuffer_Flip(parcBuffer_CreateFromArray(rawManifest, 40));
 
     CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(wireFormat);
@@ -142,6 +167,103 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeHashGroup)
 
     ccnxManifestHashGroup_Release(&group);
     ccnxManifest_Release(&dict);
+    ccnxCodecTlvDecoder_Destroy(&decoder);
+    parcBuffer_Release(&wireFormat);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestDecoder_DecodeHashGroupMetadata)
+{
+    // Re-build the expected metadata from the manifest
+    CCNxName *groupLocator = ccnxName_CreateFromCString("ccnx:/locator");
+    PARCBuffer *digest = parcBuffer_Allocate(16);
+    for (size_t i = 0; i < parcBuffer_Limit(digest); i++) {
+        parcBuffer_PutUint8(digest, 0);
+    }
+    parcBuffer_Flip(digest);
+    size_t entrySize = 1;
+    size_t dataSize = 2;
+    size_t blockSize = 3;
+    size_t treeHeight = 4;
+
+    // Compute the expected size of this metadata group.
+    size_t metadataSize = 4 * (4 + 8) + 4 + parcBuffer_Limit(digest) + 4 + strlen("ccnx:/locator");
+
+    // See test_ccnxCodecSchemaV1_ManifestEncoder.c for the packet construction details.
+    uint8_t rawMetadata[89] = { 0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata,
+                                0x00, metadataSize,
+                                0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator,
+                                0x00, strlen("ccnx:/locator"),
+                                'c',  'c',
+                                'n',  'x',
+                                ':',  '/',
+                                'l',  'o',
+                                'c',  'a',
+                                't',  'o',
+                                'r',
+                                0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize,
+                                0x00, 0x08,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, dataSize,
+                                0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize,
+                                0x00, 0x08,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, blockSize,
+                                0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize,
+                                0x00, 0x08,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, entrySize,
+                                0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_TreeHeight,
+                                0x00, 0x08,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, treeHeight,
+                                0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256,
+                                0x00, parcBuffer_Remaining(digest),
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00,
+                                0x00, 0x00 };
+    PARCBuffer *wireFormat = parcBuffer_Flip(parcBuffer_CreateFromArray(rawMetadata, sizeof(rawMetadata)));
+
+    // Create the encoder and swallow the top level container
+    CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(wireFormat);
+    ccnxCodecTlvDecoder_GetType(decoder); // swallow type
+    uint16_t length = ccnxCodecTlvDecoder_GetLength(decoder);
+
+    // Decode the metadata
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
+    bool result = _decodeHashGroupMetadata(decoder, group, length);
+    assertTrue(result, "Expected hash group metadata to be decoded correctly.");
+
+    const CCNxName *actualLocator = ccnxManifestHashGroup_GetLocator(group);
+    size_t actualEntrySize = ccnxManifestHashGroup_GetEntrySize(group);
+    size_t actualDataSize = ccnxManifestHashGroup_GetDataSize(group);
+    size_t actualBlockSize = ccnxManifestHashGroup_GetBlockSize(group);
+    size_t actualTreeHeight = ccnxManifestHashGroup_GetTreeHeight(group);
+    const PARCBuffer *actualDigest = ccnxManifestHashGroup_GetOverallDataDigest(group);
+
+    assertTrue(ccnxName_Equals(groupLocator, actualLocator), "Expected decoded locator to equal %s, got %s", ccnxName_ToString(groupLocator), ccnxName_ToString(actualLocator));
+    assertTrue(entrySize == actualEntrySize, "Expected %zu entry size, got %zu", entrySize, actualEntrySize);
+    assertTrue(dataSize == actualDataSize, "Expected %zu data size, got %zu", dataSize, actualDataSize);
+    assertTrue(blockSize == actualBlockSize, "Expected %zu block size, got %zu", blockSize, actualBlockSize);
+    assertTrue(treeHeight == actualTreeHeight, "Expected %zu tree height, got %zu", treeHeight, actualTreeHeight);
+    assertTrue(parcBuffer_Equals(digest, actualDigest), "Expected %s digest, got %s", parcBuffer_ToHexString(digest), parcBuffer_ToHexString(actualDigest));
+
+    parcBuffer_Release(&digest);
+    ccnxName_Release(&groupLocator);
+
+    ccnxManifestHashGroup_Release(&group);
     ccnxCodecTlvDecoder_Destroy(&decoder);
     parcBuffer_Release(&wireFormat);
 }
