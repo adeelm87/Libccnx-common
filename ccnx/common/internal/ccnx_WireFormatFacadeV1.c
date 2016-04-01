@@ -107,7 +107,7 @@ _getWireFormatFixedHeader(CCNxTlvDictionary *dictionary)
 }
 
 static bool
-_ccnxWireFormatFacadeV1_SetHopLimit(const CCNxTlvDictionary *dictionary, uint32_t hopLimit)
+_ccnxWireFormatFacadeV1_SetHopLimit(CCNxTlvDictionary *dictionary, uint32_t hopLimit)
 {
     bool result = false;
 
@@ -120,7 +120,7 @@ _ccnxWireFormatFacadeV1_SetHopLimit(const CCNxTlvDictionary *dictionary, uint32_
 }
 
 static bool
-_ccnxWireFormatFacadeV1_ConvertInterestToInterestReturn(CCNxTlvDictionary *dictionary, uint16_t code)
+_ccnxWireFormatFacadeV1_ConvertInterestToInterestReturn(CCNxTlvDictionary *dictionary, uint8_t code)
 {
     bool result = false;
 

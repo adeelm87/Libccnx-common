@@ -85,7 +85,7 @@ typedef struct ccnx_wireformatmessage_interface {
     PARCCryptoHash    *(*hashProtectedRegion)(const CCNxTlvDictionary * dictionary, PARCCryptoHasher * hasher);
 
     /** @see ccnxWireFormatMessage_SetHopLimit */
-    bool (*setHopLimit)(const CCNxTlvDictionary *dictionary, uint32_t hopLimit);
+    bool (*setHopLimit)(CCNxTlvDictionary *dictionary, uint32_t hopLimit);
 
     /** @see ccnxWireFormatMessage_AssertValid*/
     void (*assertValid)(const CCNxTlvDictionary *dictionary);
@@ -94,7 +94,7 @@ typedef struct ccnx_wireformatmessage_interface {
     PARCCryptoHash    *(*computeContentObjectHash)(CCNxTlvDictionary * dictionary);
 
     /** @see ccnxWireFormatMessage_ConvertInterestToInterestReturn */
-    bool (*convertInterestToInterestReturn)(const CCNxTlvDictionary *dictionary, uint16_t returnCode);
+    bool (*convertInterestToInterestReturn)(CCNxTlvDictionary *dictionary, uint8_t returnCode);
 } CCNxWireFormatMessageInterface;
 
 /**
