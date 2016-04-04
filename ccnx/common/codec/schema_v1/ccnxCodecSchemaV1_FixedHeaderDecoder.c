@@ -67,6 +67,9 @@ ccnxCodecSchemaV1FixedHeaderDecoder_Decode(CCNxCodecTlvDecoder *decoder, CCNxTlv
         parcBuffer_SetPosition(buffer, _fixedHeader_PacketLengthOffset);
         uint16_t packetLength = parcBuffer_GetUint16(buffer);
 
+        parcBuffer_SetPosition(buffer, _fixedHeader_ReturnCodeOffset);
+        uint8_t interestReturnCode = parcBuffer_GetUint8(buffer);
+
         parcBuffer_SetPosition(buffer, _fixedHeader_HopLimitOffset);
         uint8_t hopLimit = parcBuffer_GetUint8(buffer);
 
@@ -99,7 +102,13 @@ ccnxCodecSchemaV1FixedHeaderDecoder_Decode(CCNxCodecTlvDecoder *decoder, CCNxTlv
         parcBuffer_Release(&buffer);
 
         // Set the hoplimit in the dictionary.
-        ccnxTlvDictionary_PutInteger(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_HOPLIMIT, hopLimit);
+        ccnxTlvDictionary_PutInteger(packetDictionary,
+                                     CCNxCodecSchemaV1TlvDictionary_MessageFastArray_HOPLIMIT, hopLimit);
+
+        // Set the InterestReturn code in the dictionary.
+        ccnxTlvDictionary_PutInteger(packetDictionary,
+                                     CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_InterestReturnCode,
+                                     interestReturnCode);
 
         return success;
     } else {
