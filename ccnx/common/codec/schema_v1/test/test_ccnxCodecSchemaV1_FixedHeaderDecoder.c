@@ -32,7 +32,6 @@
 // Include the file(s) containing the functions to be tested.
 // This permits internal static functions to be visible to this Test Framework.
 #include "../ccnxCodecSchemaV1_FixedHeaderDecoder.c"
-#include <arpa/inet.h>
 #include <parc/algol/parc_SafeMemory.h>
 
 #include <LongBow/unit-test.h>
@@ -61,7 +60,7 @@ _commonSetup(void)
 
     data->packet = parcMemory_Allocate(8);
     assertNotNull(data->packet, "parcMemory_Allocate(%d) returned NULL", 8);
-    memcpy(data->packet, &((uint8_t[]) { 0x00, 0x01, 0x01, 0x02, 0x03, 0x04, 0x05, 0x08 }), 8);
+    memcpy(data->packet, &((uint8_t[]) {0x00, 0x01, 0x01, 0x02, 0x03, 0x04, 0x05, 0x08}), 8);
 
     data->fixedHeader = parcBuffer_Wrap(data->packet, 8, 0, 8);
     data->version = 0;
@@ -72,7 +71,8 @@ _commonSetup(void)
     data->flags = 5;
     data->headerLength = 8;
     data->decoder = ccnxCodecTlvDecoder_Create(data->fixedHeader);
-    data->dictionary = ccnxTlvDictionary_Create(CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_END);
+    data->dictionary = ccnxTlvDictionary_Create(CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END,
+                                                CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_END);
 
     return data;
 }
@@ -170,7 +170,8 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1FixedHeaderDecoder_GetHeaderLength)
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
     ccnxCodecSchemaV1FixedHeaderDecoder_Decode(data->decoder, data->dictionary);
     int headerLength = ccnxCodecSchemaV1FixedHeaderDecoder_GetHeaderLength(data->dictionary);
-    assertTrue(headerLength == data->headerLength, "Wrong headerLength, got %d expected %d", headerLength, data->headerLength);
+    assertTrue(headerLength == data->headerLength, "Wrong headerLength, got %d expected %d", headerLength,
+               data->headerLength);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1FixedHeaderDecoder_GetPacketType)
@@ -186,7 +187,8 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1FixedHeaderDecoder_GetPacketLength)
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
     ccnxCodecSchemaV1FixedHeaderDecoder_Decode(data->decoder, data->dictionary);
     int packetLength = ccnxCodecSchemaV1FixedHeaderDecoder_GetPacketLength(data->dictionary);
-    assertTrue(packetLength == data->packetLength, "Wrong payloadLength, got %d expected %d", packetLength, data->packetLength);
+    assertTrue(packetLength == data->packetLength, "Wrong payloadLength, got %d expected %d", packetLength,
+               data->packetLength);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1FixedHeaderDecoder_GetVersion)
@@ -211,6 +213,12 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1FixedHeaderDecoder_GetReturnCode)
     ccnxCodecSchemaV1FixedHeaderDecoder_Decode(data->decoder, data->dictionary);
     int returnCode = ccnxCodecSchemaV1FixedHeaderDecoder_GetReturnCode(data->dictionary);
     assertTrue(returnCode == data->returnCode, "Wrong returnCode, got %d expected %d", returnCode, data->returnCode);
+
+    // Check that the InterestReturnCode was set in the fast array, too.
+    uint8_t test =
+        ccnxTlvDictionary_GetInteger(data->dictionary,
+                                     CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_InterestReturnCode);
+    assertTrue(test == data->returnCode, "Expected the dictionary to have the return code set");
 }
 
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1FixedHeaderDecoder_GetFlags)
