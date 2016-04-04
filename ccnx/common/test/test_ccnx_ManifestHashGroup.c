@@ -177,8 +177,8 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_PrependGetPointer)
     size_t actual = ccnxManifestHashGroup_GetNumberOfPointers(group);
 
     assertTrue(expected == actual, "Expected %zu, got %zu", expected, actual);
-    assertTrue(ccnxManifestHashGroupPointer_GetType(ccnxManifestHashGroup_GetPointerAtIndex(group, 0)) == CCNxManifestHashGroupPointerType_Data, "Expected data in the first slot");
-    assertTrue(ccnxManifestHashGroupPointer_GetType(ccnxManifestHashGroup_GetPointerAtIndex(group, 1)) == CCNxManifestHashGroupPointerType_Manifest, "Expected data in the first slot");
+    assertTrue(ccnxManifestHashGroupPointer_GetType(ccnxManifestHashGroup_GetPointerAtIndex(group, 1)) == CCNxManifestHashGroupPointerType_Data, "Expected data in the first slot");
+    assertTrue(ccnxManifestHashGroupPointer_GetType(ccnxManifestHashGroup_GetPointerAtIndex(group, 0)) == CCNxManifestHashGroupPointerType_Manifest, "Expected data in the first slot");
 
     parcBuffer_Release(&buffer1);
     parcBuffer_Release(&buffer2);
