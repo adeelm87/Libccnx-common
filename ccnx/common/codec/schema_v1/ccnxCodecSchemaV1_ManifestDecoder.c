@@ -107,14 +107,14 @@ _decodeHashGroup(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictiona
 
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroup_DataPointer: {
                 PARCBuffer *buffer = ccnxCodecTlvDecoder_GetValue(decoder, value_length);
-                ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, buffer);
+                ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer);
                 parcBuffer_Release(&buffer);
                 break;
             }
 
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroup_ManifestPointer: {
                 PARCBuffer *buffer = ccnxCodecTlvDecoder_GetValue(decoder, value_length);
-                ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Manifest, buffer);
+                ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Manifest, buffer);
                 parcBuffer_Release(&buffer);
                 break;
             }

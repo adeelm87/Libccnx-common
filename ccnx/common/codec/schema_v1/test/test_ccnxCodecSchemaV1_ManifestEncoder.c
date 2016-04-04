@@ -103,7 +103,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_AddPointer)
 
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
     PARCBuffer *pointer = parcBuffer_Flip(parcBuffer_ParseHexString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"));
-    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
 
     ccnxManifest_AddHashGroup(manifest, group);
 
@@ -142,7 +142,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeSingleHashGroup
 
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
     PARCBuffer *pointer = parcBuffer_Flip(parcBuffer_ParseHexString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"));
-    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
 
     ccnxManifest_AddHashGroup(manifest, group);
 
@@ -182,7 +182,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeSingleHashGroup
 
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
     PARCBuffer *pointer = parcBuffer_Flip(parcBuffer_ParseHexString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"));
-    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
 
     // Set the metadata now
     CCNxName *groupLocator = ccnxName_CreateFromCString("ccnx:/locator");

@@ -158,11 +158,23 @@ ccnxManifestHashGroup_Create(void)
 }
 
 bool
-ccnxManifestHashGroup_AddPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer)
+ccnxManifestHashGroup_AppendPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer)
 {
     if (!ccnxManifestHashGroup_IsFull(group)) {
         CCNxManifestHashGroupPointer *ptr = ccnxManifestHashGroupPointer_Create(type, buffer);
         parcLinkedList_Append(group->pointers, ptr);
+        ccnxManifestHashGroupPointer_Release(&ptr);
+        return true;
+    }
+    return false;
+}
+
+bool
+ccnxManifestHashGroup_PrependPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer)
+{
+    if (!ccnxManifestHashGroup_IsFull(group)) {
+        CCNxManifestHashGroupPointer *ptr = ccnxManifestHashGroupPointer_Create(type, buffer);
+        parcLinkedList_Prepend(group->pointers, ptr);
         ccnxManifestHashGroupPointer_Release(&ptr);
         return true;
     }
@@ -373,7 +385,7 @@ ccnxManifestHashGroup_CreateFromJson(const PARCJSON *json)
         PARCBuffer *digest = parcBuffer_Flip(parcBuffer_ParseHexString(hexString));
         parcMemory_Deallocate(&hexString);
 
-        ccnxManifestHashGroup_AddPointer(group, type, digest);
+        ccnxManifestHashGroup_AppendPointer(group, type, digest);
         parcBuffer_Release(&digest);
     }
 
