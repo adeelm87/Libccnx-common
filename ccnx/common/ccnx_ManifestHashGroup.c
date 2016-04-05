@@ -40,7 +40,7 @@
 #include <ccnx/common/ccnx_ManifestHashGroup.h>
 #include <ccnx/common/internal/ccnx_WireFormatMessageInterface.h>
 
-#define MAX_NUMBER_OF_POINTERS 100
+#define MAX_NUMBER_OF_POINTERS 1500
 
 struct ccnx_manifest_hash_group {
     PARCLinkedList *pointers;
