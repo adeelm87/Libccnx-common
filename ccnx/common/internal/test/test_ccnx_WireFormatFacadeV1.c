@@ -434,6 +434,7 @@ LONGBOW_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_Create_InterestReturn)
     uint8_t encoded[] = { 1, CCNxCodecSchemaV1Types_PacketType_InterestReturn, 0, 23 };
     PARCBuffer *wireFormat = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
     CCNxTlvDictionary *test = _ccnxWireFormatFacadeV1_CreateFromV1(wireFormat);
+    assertNotNull(test, "Got null dictionary for good InterestReturn");
     assertTrue(ccnxTlvDictionary_IsInterestReturn(test), "Expected IsInterestReturn() to be true");
     assertTrue(ccnxTlvDictionary_GetSchemaVersion(test) == 1, "Schema says it is not v1");
     parcBuffer_Release(&wireFormat);
