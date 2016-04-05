@@ -310,14 +310,32 @@ ccnxWireFormatMessage_Release(CCNxWireFormatMessage **message)
     ccnxTlvDictionary_Release(message);
 }
 
-void
+bool
 ccnxWireFormatMessage_SetHopLimit(CCNxWireFormatMessage *message, uint32_t hoplimit)
 {
+    bool result = false;
 
     ccnxWireFormatMessage_OptionalAssertValid(message);
     CCNxWireFormatMessageInterface *impl = ccnxWireFormatMessageInterface_GetInterface(message);
 
     if (impl != NULL) {
-        impl->setHopLimit(message, hoplimit);
+        result = impl->setHopLimit(message, hoplimit);
     }
+
+    return result;
 }
+
+bool
+ccnxWireFormatMessage_ConvertInterestToInterestReturn(CCNxWireFormatMessage *message, uint8_t returnCode)
+{
+    bool result = false;
+
+    ccnxWireFormatMessage_OptionalAssertValid(message);
+    CCNxWireFormatMessageInterface *impl = ccnxWireFormatMessageInterface_GetInterface(message);
+
+    if (impl != NULL) {
+        result = impl->convertInterestToInterestReturn(message, returnCode);
+    }
+    return result;
+}
+

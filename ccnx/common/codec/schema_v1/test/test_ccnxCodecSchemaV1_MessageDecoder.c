@@ -72,37 +72,43 @@ _getName(CCNxTlvDictionary *contentObjectDictionary)
 static PARCBuffer *
 _getPayload(const CCNxTlvDictionary *contentObjectDictionary)
 {
-    return ccnxTlvDictionary_GetBuffer(contentObjectDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOAD);
+    return ccnxTlvDictionary_GetBuffer(contentObjectDictionary,
+                                       CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOAD);
 }
 
 static int64_t
 _getPayloadType(CCNxTlvDictionary *contentObjectDictionary)
 {
-    return (int64_t) ccnxTlvDictionary_GetInteger(contentObjectDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOADTYPE);
+    return (int64_t) ccnxTlvDictionary_GetInteger(contentObjectDictionary,
+                                                  CCNxCodecSchemaV1TlvDictionary_MessageFastArray_PAYLOADTYPE);
 }
 
 static int64_t
 _getExpiryTime(CCNxTlvDictionary *contentObjectDictionary)
 {
-    return (int64_t) ccnxTlvDictionary_GetInteger(contentObjectDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_EXPIRY_TIME);
+    return (int64_t) ccnxTlvDictionary_GetInteger(contentObjectDictionary,
+                                                  CCNxCodecSchemaV1TlvDictionary_MessageFastArray_EXPIRY_TIME);
 }
 
 static int64_t
 _getEndChunkNumber(CCNxTlvDictionary *contentObjectDictionary)
 {
-    return (int64_t) ccnxTlvDictionary_GetInteger(contentObjectDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_ENDSEGMENT);
+    return (int64_t) ccnxTlvDictionary_GetInteger(contentObjectDictionary,
+                                                  CCNxCodecSchemaV1TlvDictionary_MessageFastArray_ENDSEGMENT);
 }
 
 static PARCBuffer *
 _getKeyIdRestriction(const CCNxTlvDictionary *contentObjectDictionary)
 {
-    return ccnxTlvDictionary_GetBuffer(contentObjectDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
+    return ccnxTlvDictionary_GetBuffer(contentObjectDictionary,
+                                       CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
 }
 
 static PARCBuffer *
 _getHashRestriction(const CCNxTlvDictionary *contentObjectDictionary)
 {
-    return ccnxTlvDictionary_GetBuffer(contentObjectDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
+    return ccnxTlvDictionary_GetBuffer(contentObjectDictionary,
+                                       CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
 }
 
 
@@ -120,10 +126,10 @@ LONGBOW_TEST_FIXTURE(ContentObject)
 LONGBOW_TEST_FIXTURE_SETUP(ContentObject)
 {
     longBowTestCase_SetClipBoardData(testCase,
-                                 commonSetup(v1_content_nameA_keyid1_rsasha256,
-                                             sizeof(v1_content_nameA_keyid1_rsasha256),
-                                             v1_content_nameA_keyid1_rsasha256_truthTableEntries,
-                                             V1_MANIFEST_OBJ_CONTENTOBJECT));
+                                     commonSetup(v1_content_nameA_keyid1_rsasha256,
+                                                 sizeof(v1_content_nameA_keyid1_rsasha256),
+                                                 v1_content_nameA_keyid1_rsasha256_truthTableEntries,
+                                                 V1_MANIFEST_OBJ_CONTENTOBJECT));
 
     return LONGBOW_STATUS_SUCCEEDED;
 }
@@ -169,17 +175,21 @@ LONGBOW_TEST_CASE(ContentObject, PayloadType)
     // look up the true name buffer from the truth table
     TlvExtent extent = getTruthTableExtent(data->truthTable, V1_MANIFEST_OBJ_PAYLOADTYPE);
 
-    PARCBuffer *truthbuffer = parcBuffer_Wrap(data->packet, data->packetLength, extent.offset, extent.offset + extent.length);
+    PARCBuffer
+        *truthbuffer = parcBuffer_Wrap(data->packet, data->packetLength, extent.offset, extent.offset + extent.length);
     uint64_t truthvalue = -2;
     ccnxCodecTlvUtilities_GetVarInt(truthbuffer, parcBuffer_Remaining(truthbuffer), &truthvalue);
 
     CCNxPayloadType truthPayloadType = -1;
-    bool success = _translateWirePayloadTypeToCCNxPayloadType((CCNxCodecSchemaV1Types_PayloadType) truthvalue, &truthPayloadType);
-    assertTrue(success, "failure in _translateWirePayloadTypeToCCNxPayloadType for wireFormatValue %" PRId64, truthvalue);
+    bool success =
+        _translateWirePayloadTypeToCCNxPayloadType((CCNxCodecSchemaV1Types_PayloadType) truthvalue, &truthPayloadType);
+    assertTrue(success, "failure in _translateWirePayloadTypeToCCNxPayloadType for wireFormatValue %"
+        PRId64, truthvalue);
 
     parcBuffer_Release(&truthbuffer);
 
-    assertTrue(truthPayloadType == testPayloadType, "Wrong value, got %d expected %d", testPayloadType, truthPayloadType);
+    assertTrue(truthPayloadType == testPayloadType, "Wrong value, got %d expected %d", testPayloadType,
+               truthPayloadType);
 }
 
 LONGBOW_TEST_CASE(ContentObject, ExpiryTime)
@@ -209,10 +219,10 @@ LONGBOW_TEST_FIXTURE(Interest)
 LONGBOW_TEST_FIXTURE_SETUP(Interest)
 {
     longBowTestCase_SetClipBoardData(testCase,
-                                 commonSetup(v1_interest_all_fields,
-                                             sizeof(v1_interest_all_fields),
-                                             TRUTHTABLENAME(v1_interest_all_fields),
-                                             V1_MANIFEST_INT_INTEREST));
+                                     commonSetup(v1_interest_all_fields,
+                                                 sizeof(v1_interest_all_fields),
+                                                 TRUTHTABLENAME(v1_interest_all_fields),
+                                                 V1_MANIFEST_INT_INTEREST));
     return LONGBOW_STATUS_SUCCEEDED;
 }
 
@@ -288,20 +298,22 @@ LONGBOW_TEST_CASE(Local, _translateWirePayloadTypeToCCNxPayloadType)
         CCNxPayloadType payloadType;
         bool success;
     } vectors[] = {
-        { .wire = CCNxCodecSchemaV1Types_PayloadType_Data,     .payloadType = CCNxPayloadType_DATA,     .success = true  },
-        { .wire = CCNxCodecSchemaV1Types_PayloadType_Key,      .payloadType = CCNxPayloadType_KEY,      .success = true  },
-        { .wire = CCNxCodecSchemaV1Types_PayloadType_Link,     .payloadType = CCNxPayloadType_LINK,     .success = true  },
-        { .wire = -2,                                          .payloadType = -2,                       .success = false },
-        { .wire = sentinel,                                    .payloadType = sentinel }
+        {.wire = CCNxCodecSchemaV1Types_PayloadType_Data, .payloadType = CCNxPayloadType_DATA, .success = true},
+        {.wire = CCNxCodecSchemaV1Types_PayloadType_Key,  .payloadType = CCNxPayloadType_KEY,  .success = true},
+        {.wire = CCNxCodecSchemaV1Types_PayloadType_Link, .payloadType = CCNxPayloadType_LINK, .success = true},
+        {.wire = -2,                                      .payloadType = -2,                   .success = false},
+        {.wire = sentinel,                                .payloadType = sentinel}
     };
 
     for (int i = 0; vectors[i].wire != sentinel; i++) {
         CCNxPayloadType payloadType = -1;
         bool success = _translateWirePayloadTypeToCCNxPayloadType(vectors[i].wire, &payloadType);
-        assertTrue(success == vectors[i].success, "Incorrect return index %d, expected %d got %d", i, vectors[i].success, success);
+        assertTrue(success == vectors[i].success, "Incorrect return index %d, expected %d got %d", i,
+                   vectors[i].success, success);
 
         if (success) {
-            assertTrue(payloadType == vectors[i].payloadType, "Wrong payloadtype index %d, expected %d got %d", i, vectors[i].payloadType, payloadType);
+            assertTrue(payloadType == vectors[i].payloadType, "Wrong payloadType index %d, expected %d got %d", i,
+                       vectors[i].payloadType, payloadType);
         }
     }
 }
