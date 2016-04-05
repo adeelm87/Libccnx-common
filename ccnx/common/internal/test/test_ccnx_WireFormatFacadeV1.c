@@ -122,6 +122,7 @@ LONGBOW_TEST_FIXTURE(SchemaV1)
     LONGBOW_RUN_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_FromContentObjectPacketType);
     LONGBOW_RUN_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_FromControlPacketType);
     LONGBOW_RUN_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_FromInterestPacketType);
+    LONGBOW_RUN_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_FromInterestReturnPacketType);
     LONGBOW_RUN_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_Get);
     LONGBOW_RUN_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_Put);
     LONGBOW_RUN_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_WriteToFile);
@@ -191,6 +192,20 @@ LONGBOW_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_FromInterestPacketType)
     CCNxTlvDictionary *wireformat = _ccnxWireFormatFacadeV1_FromInterestPacketType(buffer);
     assertNotNull(wireformat, "Got null wireformat");
     assertTrue(ccnxTlvDictionary_IsInterest(wireformat), "Wrong message type");
+    assertTrue(ccnxTlvDictionary_GetSchemaVersion(wireformat) == CCNxTlvDictionary_SchemaVersion_V1,
+               "Wrong schema, got %d expected %d",
+               ccnxTlvDictionary_GetSchemaVersion(wireformat), CCNxTlvDictionary_SchemaVersion_V1);
+
+    ccnxTlvDictionary_Release(&wireformat);
+    parcBuffer_Release(&buffer);
+}
+
+LONGBOW_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_FromInterestReturnPacketType)
+{
+    PARCBuffer *buffer = parcBuffer_Allocate(1);
+    CCNxTlvDictionary *wireformat = _ccnxWireFormatFacadeV1_FromInterestReturnPacketType(buffer);
+    assertNotNull(wireformat, "Got null wireformat");
+    assertTrue(ccnxTlvDictionary_IsInterestReturn(wireformat), "Wrong message type");
     assertTrue(ccnxTlvDictionary_GetSchemaVersion(wireformat) == CCNxTlvDictionary_SchemaVersion_V1,
                "Wrong schema, got %d expected %d",
                ccnxTlvDictionary_GetSchemaVersion(wireformat), CCNxTlvDictionary_SchemaVersion_V1);

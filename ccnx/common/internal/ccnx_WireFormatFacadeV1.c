@@ -55,14 +55,6 @@ _ccnxWireFormatFacadeV1_FromInterestPacketType(const PARCBuffer *wireFormat)
 }
 
 static CCNxTlvDictionary *
-_ccnxWireFormatFacadeV1_FromInterestReturnPacketType(const PARCBuffer *wireFormat)
-{
-    CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterestReturn();
-    ccnxTlvDictionary_PutBuffer(dictionary, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_WireFormat, wireFormat);
-    return dictionary;
-}
-
-static CCNxTlvDictionary *
 _ccnxWireFormatFacadeV1_FromInterestPacketTypeIoVec(const CCNxCodecNetworkBufferIoVec *vec)
 {
     CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterest();
@@ -70,6 +62,13 @@ _ccnxWireFormatFacadeV1_FromInterestPacketTypeIoVec(const CCNxCodecNetworkBuffer
     return dictionary;
 }
 
+static CCNxTlvDictionary *
+_ccnxWireFormatFacadeV1_FromInterestReturnPacketType(const PARCBuffer *wireFormat)
+{
+    CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterestReturn();
+    ccnxTlvDictionary_PutBuffer(dictionary, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_WireFormat, wireFormat);
+    return dictionary;
+}
 
 static CCNxTlvDictionary *
 _ccnxWireFormatFacadeV1_FromContentObjectPacketType(const PARCBuffer *wireFormat)
