@@ -40,7 +40,7 @@
 #include <ccnx/common/ccnx_ManifestHashGroup.h>
 #include <ccnx/common/internal/ccnx_WireFormatMessageInterface.h>
 
-#define MAX_NUMBER_OF_POINTERS 100
+#define MAX_NUMBER_OF_POINTERS 1500
 
 struct ccnx_manifest_hash_group {
     PARCLinkedList *pointers;
@@ -158,11 +158,23 @@ ccnxManifestHashGroup_Create(void)
 }
 
 bool
-ccnxManifestHashGroup_AddPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer)
+ccnxManifestHashGroup_AppendPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer)
 {
     if (!ccnxManifestHashGroup_IsFull(group)) {
         CCNxManifestHashGroupPointer *ptr = ccnxManifestHashGroupPointer_Create(type, buffer);
         parcLinkedList_Append(group->pointers, ptr);
+        ccnxManifestHashGroupPointer_Release(&ptr);
+        return true;
+    }
+    return false;
+}
+
+bool
+ccnxManifestHashGroup_PrependPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer)
+{
+    if (!ccnxManifestHashGroup_IsFull(group)) {
+        CCNxManifestHashGroupPointer *ptr = ccnxManifestHashGroupPointer_Create(type, buffer);
+        parcLinkedList_Prepend(group->pointers, ptr);
         ccnxManifestHashGroupPointer_Release(&ptr);
         return true;
     }
@@ -289,26 +301,6 @@ ccnxManifestHashGroup_ToJson(const CCNxManifestHashGroup *group)
 {
     PARCJSON *root = parcJSON_Create();
 
-    if (group->overallDataDigest != NULL) {
-        char *digestString = parcBuffer_ToString(group->overallDataDigest);
-        parcJSON_AddString(root, "overallDataDigest", digestString);
-        parcMemory_Deallocate((void **) &digestString);
-    }
-
-    if (group->locator != NULL) {
-        char *locatorString = ccnxName_ToString(group->locator);
-        parcJSON_AddString(root, "locator", locatorString);
-        parcMemory_Deallocate((void **) &locatorString);
-    }
-
-    if (group->entrySize > 0) {
-        parcJSON_AddInteger(root, "entrySize", group->entrySize);
-    }
-
-    if (group->dataSize > 0) {
-        parcJSON_AddInteger(root, "dataSize", group->dataSize);
-    }
-
     PARCJSONArray *ptrList = parcJSONArray_Create();
     for (size_t i = 0; i < parcLinkedList_Size(group->pointers); i++) {
         CCNxManifestHashGroupPointer *ptr = (CCNxManifestHashGroupPointer *) parcLinkedList_GetAtIndex(group->pointers, i);
@@ -330,8 +322,36 @@ ccnxManifestHashGroup_ToJson(const CCNxManifestHashGroup *group)
         parcJSONValue_Release(&val);
         parcJSON_Release(&ptrJson);
     }
-    parcJSON_AddArray(root, "HashGroup", ptrList);
+    root = parcJSON_AddArray(root, "HashGroup", ptrList);
     parcJSONArray_Release(&ptrList);
+
+    if (group->overallDataDigest != NULL) {
+        char *digestString = parcBuffer_ToHexString(group->overallDataDigest);
+        root = parcJSON_AddString(root, "overallDataDigest", digestString);
+        parcMemory_Deallocate((void **) &digestString);
+    }
+
+    if (group->locator != NULL) {
+        char *locatorString = ccnxName_ToString(group->locator);
+        root = parcJSON_AddString(root, "locator", locatorString);
+        parcMemory_Deallocate((void **) &locatorString);
+    }
+
+    if (group->entrySize > 0) {
+        root = parcJSON_AddInteger(root, "entrySize", group->entrySize);
+    }
+
+    if (group->dataSize > 0) {
+        root = parcJSON_AddInteger(root, "dataSize", group->dataSize);
+    }
+
+    if (group->blockSize > 0) {
+        root = parcJSON_AddInteger(root, "blockSize", group->blockSize);
+    }
+
+    if (group->treeHeight > 0) {
+        root = parcJSON_AddInteger(root, "treeHeight", group->treeHeight);
+    }
 
     return root;
 }
@@ -340,29 +360,6 @@ CCNxManifestHashGroup *
 ccnxManifestHashGroup_CreateFromJson(const PARCJSON *json)
 {
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
-
-    if (parcJSON_GetPairByName(json, "overallDataDigest") != NULL) {
-        PARCJSONValue *overallDataDigestValue = parcJSON_GetValueByName(json, "overallDataDigest");
-        group->overallDataDigest = parcJSONValue_GetString(overallDataDigestValue);
-    }
-
-    if (parcJSON_GetPairByName(json, "locator") != NULL) {
-        PARCJSONValue *locatorValue = parcJSON_GetValueByName(json, "locator");
-        PARCBuffer *buffer = parcJSONValue_GetString(locatorValue);
-        char *locator = parcBuffer_ToString(buffer);
-        group->locator = ccnxName_CreateFromCString(locator);
-        parcMemory_Deallocate(&locator);
-    }
-
-    if (parcJSON_GetPairByName(json, "entrySize") != NULL) {
-        PARCJSONValue *childBlockNodeSizeValue = parcJSON_GetValueByName(json, "entrySize");
-        group->entrySize = parcJSONValue_GetInteger(childBlockNodeSizeValue);
-    }
-
-    if (parcJSON_GetPairByName(json, "dataSize") != NULL) {
-        PARCJSONValue *totalSizeValue = parcJSON_GetValueByName(json, "dataSize");
-        group->dataSize = parcJSONValue_GetInteger(totalSizeValue);
-    }
 
     PARCJSONValue *ptrListValue = parcJSON_GetValueByName(json, "HashGroup");
     PARCJSONArray *ptrList = parcJSONValue_GetArray(ptrListValue);
@@ -388,8 +385,45 @@ ccnxManifestHashGroup_CreateFromJson(const PARCJSON *json)
         PARCBuffer *digest = parcBuffer_Flip(parcBuffer_ParseHexString(hexString));
         parcMemory_Deallocate(&hexString);
 
-        ccnxManifestHashGroup_AddPointer(group, type, digest);
+        ccnxManifestHashGroup_AppendPointer(group, type, digest);
         parcBuffer_Release(&digest);
+    }
+
+    if (parcJSON_GetPairByName(json, "overallDataDigest") != NULL) {
+        PARCJSONValue *overallDataDigestValue = parcJSON_GetValueByName(json, "overallDataDigest");
+        PARCBuffer *digestHex = parcJSONValue_GetString(overallDataDigestValue);
+
+        char *hexString = parcBuffer_ToString(digestHex);
+        group->overallDataDigest = parcBuffer_Flip(parcBuffer_ParseHexString(hexString));
+        parcMemory_Deallocate(&hexString);
+    }
+
+    if (parcJSON_GetPairByName(json, "locator") != NULL) {
+        PARCJSONValue *locatorValue = parcJSON_GetValueByName(json, "locator");
+        PARCBuffer *buffer = parcJSONValue_GetString(locatorValue);
+        char *locator = parcBuffer_ToString(buffer);
+        group->locator = ccnxName_CreateFromCString(locator);
+        parcMemory_Deallocate(&locator);
+    }
+
+    if (parcJSON_GetPairByName(json, "entrySize") != NULL) {
+        PARCJSONValue *childBlockNodeSizeValue = parcJSON_GetValueByName(json, "entrySize");
+        group->entrySize = parcJSONValue_GetInteger(childBlockNodeSizeValue);
+    }
+
+    if (parcJSON_GetPairByName(json, "dataSize") != NULL) {
+        PARCJSONValue *totalSizeValue = parcJSON_GetValueByName(json, "dataSize");
+        group->dataSize = parcJSONValue_GetInteger(totalSizeValue);
+    }
+
+    if (parcJSON_GetPairByName(json, "blockSize") != NULL) {
+        PARCJSONValue *blockSizeValue = parcJSON_GetValueByName(json, "blockSize");
+        group->blockSize = parcJSONValue_GetInteger(blockSizeValue);
+    }
+
+    if (parcJSON_GetPairByName(json, "treeHeight") != NULL) {
+        PARCJSONValue *treeHeightValue = parcJSON_GetValueByName(json, "treeHeight");
+        group->treeHeight = parcJSONValue_GetInteger(treeHeightValue);
     }
 
     return group;
@@ -519,4 +553,27 @@ void
 ccnxManifestHashGroup_SetTreeHeight(CCNxManifestHashGroup *group, size_t treeHeight)
 {
     group->treeHeight = treeHeight;
+}
+
+bool
+ccnxManifestHashGroup_HasMetadata(const CCNxManifestHashGroup *group)
+{
+    // Check the existence of each metadata value.
+    if (group->blockSize > 0) {
+        return true;
+    }
+    if (group->dataSize > 0) {
+        return true;
+    }
+    if (group->entrySize > 0) {
+        return true;
+    }
+    if (group->locator != NULL) {
+        return true;
+    }
+    if (group->overallDataDigest != NULL) {
+        return true;
+    }
+
+    return false;
 }
