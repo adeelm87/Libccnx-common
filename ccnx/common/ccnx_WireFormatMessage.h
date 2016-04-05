@@ -409,5 +409,9 @@ void ccnxWireFormatMessage_Release(CCNxWireFormatMessage **messageP);
  * <#example#>
  * @endcode
  */
-void ccnxWireFormatMessage_SetHopLimit(CCNxWireFormatMessage *message, uint32_t hoplimit);
+bool ccnxWireFormatMessage_SetHopLimit(CCNxWireFormatMessage *message, uint32_t hoplimit);
+
+// WALENDO: doc
+bool ccnxWireFormatMessage_ConvertInterestToInterestReturn(CCNxWireFormatMessage *message, uint8_t returnCode);
+
 #endif /* defined(__CCNx_Common__ccnx_WireFormatMessage__) */

@@ -62,6 +62,13 @@ _ccnxWireFormatFacadeV1_FromInterestPacketTypeIoVec(const CCNxCodecNetworkBuffer
     return dictionary;
 }
 
+static CCNxTlvDictionary *
+_ccnxWireFormatFacadeV1_FromInterestReturnPacketType(const PARCBuffer *wireFormat)
+{
+    CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterestReturn();
+    ccnxTlvDictionary_PutBuffer(dictionary, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_WireFormat, wireFormat);
+    return dictionary;
+}
 
 static CCNxTlvDictionary *
 _ccnxWireFormatFacadeV1_FromContentObjectPacketType(const PARCBuffer *wireFormat)
@@ -79,12 +86,12 @@ _ccnxWireFormatFacadeV1_FromControlPacketType(const PARCBuffer *wireFormat)
     return dictionary;
 }
 
-static void
-_ccnxWireFormatFacadeV1_SetHopLimit(const CCNxTlvDictionary *dictionary, uint32_t hopLimit)
+static CCNxCodecSchemaV1InterestHeader *
+_getWireFormatFixedHeader(CCNxTlvDictionary *dictionary)
 {
-    CCNxCodecSchemaV1InterestHeader *header;
-
     // Currently there is only one of either a PARCBuffer or an IoVec ...
+
+    CCNxCodecSchemaV1InterestHeader *header = NULL;
 
     // Update attached iovec
     CCNxCodecNetworkBufferIoVec *iovec = ccnxWireFormatMessage_GetIoVec(dictionary);
@@ -95,15 +102,42 @@ _ccnxWireFormatFacadeV1_SetHopLimit(const CCNxTlvDictionary *dictionary, uint32_
         assertTrue(iov[0].iov_len >= sizeof(CCNxCodecSchemaV1InterestHeader),
                    "Header not contained in first element of io vector");
         header = iov[0].iov_base;
-        header->hopLimit = hopLimit;
     } else {
         // Update attached buffer
         PARCBuffer *wireFormatBuffer = ccnxWireFormatMessage_GetWireFormatBuffer(dictionary);
         if (wireFormatBuffer) {
             header = parcBuffer_Overlay(wireFormatBuffer, 0);
-            header->hopLimit = hopLimit;
         }
     }
+
+    return header;
+}
+
+static bool
+_ccnxWireFormatFacadeV1_SetHopLimit(CCNxTlvDictionary *dictionary, uint32_t hopLimit)
+{
+    bool result = false;
+
+    CCNxCodecSchemaV1InterestHeader *header = _getWireFormatFixedHeader(dictionary);
+    if (header != NULL) {
+        header->hopLimit = hopLimit;
+        result = true;
+    }
+    return result;
+}
+
+static bool
+_ccnxWireFormatFacadeV1_ConvertInterestToInterestReturn(CCNxTlvDictionary *dictionary, uint8_t code)
+{
+    bool result = false;
+
+    CCNxCodecSchemaV1InterestHeader *header = _getWireFormatFixedHeader(dictionary);
+    if (header != NULL) {
+        header->returnCode = code;
+        header->packetType = CCNxCodecSchemaV1Types_PacketType_InterestReturn;
+        result = true;
+    }
+    return result;
 }
 
 static CCNxTlvDictionary *
@@ -122,7 +156,7 @@ _ccnxWireFormatFacadeV1_CreateFromV1(const PARCBuffer *wireFormat)
             dictionary = _ccnxWireFormatFacadeV1_FromInterestPacketType(wireFormat);
             break;
         case CCNxCodecSchemaV1Types_PacketType_InterestReturn:
-            // Add InterestReturn
+            dictionary = _ccnxWireFormatFacadeV1_FromInterestReturnPacketType(wireFormat);
             break;
         default:
             // will return NULL
@@ -457,4 +491,7 @@ CCNxWireFormatMessageInterface CCNxWireFormatFacadeV1_Implementation = {
     .computeContentObjectHash         = &_ccnxWireFormatFacadeV1_ComputeContentObjectHash,
 
     .setHopLimit                      = &_ccnxWireFormatFacadeV1_SetHopLimit,
+
+    .convertInterestToInterestReturn  = &_ccnxWireFormatFacadeV1_ConvertInterestToInterestReturn,
+
 };
