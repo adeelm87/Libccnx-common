@@ -120,22 +120,12 @@ typedef enum rta_tlv_schema_v1_ccnxmanifest_hashgroup_types {
 
 typedef enum rta_tlv_schema_v1_ccnxmanifest_hashgroup_metadata_types {
     CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator = 0x0000,
-    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_ExternalMetadata = 0x0001,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize = 0x0001,
     CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize = 0x0002,
-    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSize = 0x0003,
-    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256 = 0x0004,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize = 0x0003,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_TreeHeight = 0x0004,
+    CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256 = 0x0005,
 } CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata;
-
-//#define CCNX_MANIFEST_HASHGROUP                 1
-//#define CCNX_MANIFEST_HG_METADATA               1
-//#define CCNX_MANIFEST_HG_PTR2DATA               2
-//#define CCNX_MANIFEST_HG_PTR2MANIFEST           3
-//#define CCNX_MANIFEST_MT_LOCATOR                0 // == CCNX_TLV_M_Name
-//#define CCNX_MANIFEST_MT_EXTERNALMETADATA       1 // == CCNX_TLV_M_Name
-//#define CCNX_MANIFEST_MT_BLOCKSIZE              2
-//#define CCNX_MANIFEST_MT_OVERALLDATASIZE        3
-//#define CCNX_MANIFEST_MT_OVERALLDATASHA256      4
-
 
 // ==================================================
 // Fields in a Validation Algorithm
