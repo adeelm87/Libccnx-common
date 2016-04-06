@@ -223,14 +223,37 @@ void ccnxManifestHashGroup_AssertValid(const CCNxManifestHashGroup *manifest);
  *
  *     PARCBuffer *hashDigest = ...;
  *
- *     bool added = ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, hashDigest);
+ *     bool added = ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, hashDigest);
  *     // added == true if the group was not full
  *
  *     CCNxManifestHashGroup_Release(&group);
  * }
  * @endcode
  */
-bool ccnxManifestHashGroup_AddPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer);
+bool ccnxManifestHashGroup_AppendPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer);
+
+/**
+ * Prepend a new pointer to the {@link CCNxManifestHashGroup} with the specified type and hash digest.
+ *
+ * @param [in] group - A {@link CCNxManifestHashGroup} instance.
+ * @param [in] type - The {@link CCNxManifestHashGroupPointerType} type.
+ * @param [in] buffer - The {@link PARCBuffer} containing the pointer digest.
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxManifestHashGroup *group = CCNxManifestHashGroup_Create();
+ *
+ *     PARCBuffer *hashDigest = ...;
+ *
+ *     bool added = ccnxManifestHashGroup_PrependPointer(group, CCNxManifestHashGroupPointerType_Data, hashDigest);
+ *     // added == true if the group was not full
+ *
+ *     CCNxManifestHashGroup_Release(&group);
+ * }
+ * @endcode
+ */
+bool ccnxManifestHashGroup_PrependPointer(CCNxManifestHashGroup *group, CCNxManifestHashGroupPointerType type, const PARCBuffer *buffer);
 
 /**
  * Retrieve the {@link CCNxManifestHashGroupPointer} in the {@link CCNxManifestHashGroup} at
@@ -247,7 +270,7 @@ bool ccnxManifestHashGroup_AddPointer(CCNxManifestHashGroup *group, CCNxManifest
  *     CCNxManifestHashGroup *group = CCNxManifestHashGroup_Create();
  *
  *     PARCBuffer *hashDigest = ...;
- *     ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, hashDigest);
+ *     ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, hashDigest);
  *
  *     // ...
  *     CCNxManifestHashGroupPointer *pointer = ccnxManifestHashGroup_GetPointerAtIndex(group, 0);
@@ -614,7 +637,7 @@ void ccnxManifestHashGroup_SetTreeHeight(CCNxManifestHashGroup *group, size_t tr
  * {
  *     CCNxManifestHashGroup *group = ...
  *
- *     PARCBuffer *digest = ccnxManifestHashGroup_GetOverallDataDigest(group);
+ *     const PARCBuffer *digest = ccnxManifestHashGroup_GetOverallDataDigest(group);
  *     // use it
  * }
  * @endcode
@@ -631,11 +654,30 @@ const PARCBuffer *ccnxManifestHashGroup_GetOverallDataDigest(const CCNxManifestH
  * @code
  * {
  *     CCNxManifestHashGroup *group = ...
- *     PARCBuffer *digest = ...
+ *     const PARCBuffer *digest = ...
  *
  *     ccnxManifestHashGroup_SetOverallDataDigest(group, digest);
  * }
  * @endcode
  */
 void ccnxManifestHashGroup_SetOverallDataDigest(CCNxManifestHashGroup *group, const PARCBuffer *digest);
+
+/**
+ * Determine if this `CCNxManifestHashGroup` is carrying any metadata.
+ *
+ * @param [in] group A {@link CCNxManifestHashGroup} instance.
+ *
+ * @retval true If the `CCNxManifestHashGroup` has metadata.
+ * @retval false Otherwise
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxManifestHashGroup *group = ...
+ *
+ *     bool hasMetadata = ccnxManifestHashGroup_HasMetadata(group);
+ * }
+ * @endcode
+ */
+bool ccnxManifestHashGroup_HasMetadata(const CCNxManifestHashGroup *group);
 #endif // libccnx_ccnx_ManifestHashGroup_h

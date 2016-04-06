@@ -55,8 +55,8 @@ _commonSetup(void)
 
     PARCBuffer *digest1 = parcBuffer_Allocate(10);
     PARCBuffer *digest2 = parcBuffer_Allocate(10);
-    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, digest1);
-    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Manifest, digest1);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, digest1);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Manifest, digest1);
     parcBuffer_Release(&digest1);
     parcBuffer_Release(&digest2);
 
