@@ -35,12 +35,7 @@
 #include <LongBow/runtime.h>
 
 #include <ccnx/common/internal/ccnx_InterestReturnFacadeV1.h>
-#include <ccnx/common/internal/ccnx_InterestFacadeV1.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_TlvDictionary.h>
-
-
-#include <ccnx/common/ccnx_InterestReturn.h>
-#include <ccnx/common/ccnx_Interest.h>
 
 // =====================
 

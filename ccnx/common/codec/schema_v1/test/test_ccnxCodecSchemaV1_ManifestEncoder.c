@@ -62,6 +62,7 @@ LONGBOW_TEST_FIXTURE(Global)
 {
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeEmpty);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeSingleHashGroup);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeSingleHashGroup_WithMetadata);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_AddPointer);
 }
 
@@ -102,7 +103,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_AddPointer)
 
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
     PARCBuffer *pointer = parcBuffer_Flip(parcBuffer_ParseHexString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"));
-    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
 
     ccnxManifest_AddHashGroup(manifest, group);
 
@@ -141,7 +142,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeSingleHashGroup
 
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
     PARCBuffer *pointer = parcBuffer_Flip(parcBuffer_ParseHexString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"));
-    ccnxManifestHashGroup_AddPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
 
     ccnxManifest_AddHashGroup(manifest, group);
 
@@ -154,8 +155,13 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeSingleHashGroup
     CCNxCodecNetworkBufferIoVec *iovec = ccnxCodecTlvEncoder_CreateIoVec(encoder);
     const struct iovec *vector = ccnxCodecNetworkBufferIoVec_GetArray(iovec);
 
-    uint8_t expectedVector[24] = {0x00,0x07,0x00,0x14,0x00,0x02,0x00,0x10,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
-    assertTrue(vector->iov_len == 24, "Expected the IO vector to contain the encoded manifest");
+    uint8_t expectedVector[24] = { 0x00, 0x07, 0x00, 0x14,
+                                   0x00, 0x02, 0x00, 0x10,
+                                   0xFF, 0xFF, 0xFF, 0xFF,
+                                   0xFF, 0xFF, 0xFF, 0xFF,
+                                   0xFF, 0xFF, 0xFF, 0xFF,
+                                   0xFF, 0xFF, 0xFF, 0xFF };
+    assertTrue(vector->iov_len == expected, "Expected the IO vector to contain the encoded manifest");
     assertTrue(memcmp(vector->iov_base, expectedVector, vector->iov_len) == 0, "Expected the same pointer to be encoded");
 
     ccnxCodecNetworkBufferIoVec_Release(&iovec);
@@ -163,6 +169,138 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeSingleHashGroup
     // Cleanup
     parcBuffer_Release(&pointer);
     ccnxManifestHashGroup_Release(&group);
+
+    ccnxCodecTlvEncoder_Destroy(&encoder);
+    ccnxManifest_Release(&manifest);
+    ccnxName_Release(&locator);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1ManifestEncoder_EncodeSingleHashGroup_WithMetadata)
+{
+    CCNxName *locator = ccnxName_CreateFromCString("ccnx:/name");
+    CCNxManifest *manifest = ccnxManifest_Create(locator);
+
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
+    PARCBuffer *pointer = parcBuffer_Flip(parcBuffer_ParseHexString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"));
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, pointer);
+
+    // Set the metadata now
+    CCNxName *groupLocator = ccnxName_CreateFromCString("ccnx:/locator");
+    ccnxManifestHashGroup_SetLocator(group, groupLocator);
+
+    PARCBuffer *digest = parcBuffer_Allocate(16);
+    for (size_t i = 0; i < parcBuffer_Limit(digest); i++) {
+        parcBuffer_PutUint8(digest, 0);
+    }
+    parcBuffer_Flip(digest);
+    ccnxManifestHashGroup_SetOverallDataDigest(group, digest);
+
+    size_t entrySize = 1;
+    ccnxManifestHashGroup_SetEntrySize(group, entrySize);
+
+    size_t dataSize = 2;
+    ccnxManifestHashGroup_SetDataSize(group, dataSize);
+
+    size_t blockSize = 3;
+    ccnxManifestHashGroup_SetBlockSize(group, blockSize);
+
+    size_t treeHeight = 4;
+    ccnxManifestHashGroup_SetTreeHeight(group, treeHeight);
+
+    // Add the hash group to the manifest
+    ccnxManifest_AddHashGroup(manifest, group);
+
+    CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();
+    size_t result = ccnxCodecSchemaV1ManifestEncoder_Encode(encoder, manifest);
+
+    // Compute the expected size with all of the metadata.
+    // This packet was crafted by hand.
+    size_t expected = 4; // hash group TL
+    expected += 4 + parcBuffer_Remaining(pointer); // pointer TL, pointer V
+    expected += 4; // metadata TL
+    expected += 4 * (4 + 8); // 64-bit integer property TLs, Vs
+    expected += 4 + parcBuffer_Remaining(digest); // digest T and V
+    expected += 4 + strlen("ccnx:/locator"); // name TL, segment TL, and segment V
+
+    // Compute only the size of the metadata
+    size_t metadataSize = expected;
+    metadataSize -= 4; // top-level TL container
+    metadataSize -= (4 + parcBuffer_Remaining(pointer)); // pointer TLV
+    metadataSize -= 4; // metadata TL container
+
+    assertTrue(result == expected, "Expected an empty Manifest to be encoded to size %zu, got %zu", expected, result);
+
+    // Now do the encoding
+    CCNxCodecNetworkBufferIoVec *iovec = ccnxCodecTlvEncoder_CreateIoVec(encoder);
+    const struct iovec *vector = ccnxCodecNetworkBufferIoVec_GetArray(iovec);
+
+    uint8_t expectedVector[129] = { 0x00, 0x07,
+                                    0x00, expected - 4,
+                                    0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata,
+                                    0x00, metadataSize,
+                                    0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator,
+                                    0x00, strlen("ccnx:/locator"),
+                                    'c',  'c',
+                                    'n',  'x',
+                                    ':',  '/',
+                                    'l',  'o',
+                                    'c',  'a',
+                                    't',  'o',
+                                    'r',
+                                    0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize,
+                                    0x00, 0x08,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, dataSize,
+                                    0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize,
+                                    0x00, 0x08,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, blockSize,
+                                    0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize,
+                                    0x00, 0x08,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, entrySize,
+                                    0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_TreeHeight,
+                                    0x00, 0x08,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, treeHeight,
+                                    0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256,
+                                    0x00, parcBuffer_Remaining(digest),
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, 0x00,
+                                    0x00, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_DataPointer,
+                                    0x00, parcBuffer_Remaining(pointer),
+                                    0xFF, 0xFF,
+                                    0xFF, 0xFF,
+                                    0xFF, 0xFF,
+                                    0xFF, 0xFF,
+                                    0xFF, 0xFF,
+                                    0xFF, 0xFF,
+                                    0xFF, 0xFF,
+                                    0xFF, 0xFF };
+    assertTrue(vector->iov_len == expected, "Expected the IO vector to contain the encoded manifest");
+    assertTrue(memcmp(vector->iov_base, expectedVector, vector->iov_len) == 0, "Expected the same HashGroup to be encoded");
+
+    ccnxCodecNetworkBufferIoVec_Release(&iovec);
+
+    // Cleanup
+    parcBuffer_Release(&pointer);
+    parcBuffer_Release(&digest);
+    ccnxManifestHashGroup_Release(&group);
+    ccnxName_Release(&groupLocator);
 
     ccnxCodecTlvEncoder_Destroy(&encoder);
     ccnxManifest_Release(&manifest);

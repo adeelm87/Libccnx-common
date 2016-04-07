@@ -60,6 +60,59 @@ _appendPointer(CCNxCodecTlvEncoder *encoder, CCNxManifestHashGroupPointer *ptr)
 }
 
 ssize_t
+_appendMetadata(CCNxCodecTlvEncoder *encoder, CCNxManifestHashGroup *group)
+{
+    ssize_t length = 0;
+
+    // Pre-populate this field -- we'll come back and fill in the length after we're done
+    size_t startPosition = ccnxCodecTlvEncoder_Position(encoder);
+    ccnxCodecTlvEncoder_AppendContainer(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata, length);
+
+    // Now append all metadata that exists in the hash group.
+    const CCNxName *locator = ccnxManifestHashGroup_GetLocator(group);
+    if (locator != NULL) {
+        char *nameString = ccnxName_ToString(locator);
+        PARCBuffer *nameBuffer = parcBuffer_AllocateCString(nameString);
+        length += ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_Locator, nameBuffer);
+        parcBuffer_Release(&nameBuffer);
+        parcMemory_Deallocate(&nameString);
+    }
+
+    size_t dataSize = ccnxManifestHashGroup_GetDataSize(group);
+    if (dataSize > 0) {
+        length += ccnxCodecTlvEncoder_AppendUint64(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize, dataSize);
+    }
+
+    size_t blockSize = ccnxManifestHashGroup_GetBlockSize(group);
+    if (blockSize > 0) {
+        length += ccnxCodecTlvEncoder_AppendUint64(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_BlockSize, blockSize);
+    }
+
+    size_t entrySize = ccnxManifestHashGroup_GetEntrySize(group);
+    if (entrySize > 0) {
+        length += ccnxCodecTlvEncoder_AppendUint64(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_EntrySize, entrySize);
+    }
+
+    size_t treeSize = ccnxManifestHashGroup_GetTreeHeight(group);
+    if (treeSize > 0) {
+        length += ccnxCodecTlvEncoder_AppendUint64(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_TreeHeight, treeSize);
+    }
+
+    const PARCBuffer *dataDigest = ccnxManifestHashGroup_GetOverallDataDigest(group);
+    if (dataDigest != NULL) {
+        length += ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_OverallDataSha256, (PARCBuffer *) dataDigest);
+    }
+
+    // Rewind back to the container opening and fill in the length
+    size_t endPosition = ccnxCodecTlvEncoder_Position(encoder);
+    ccnxCodecTlvEncoder_PutUint16(encoder, startPosition, CCNxCodecSchemaV1Types_CCNxManifestHashGroup_Metadata);
+    ccnxCodecTlvEncoder_PutUint16(encoder, startPosition + 2, length);
+    ccnxCodecTlvEncoder_SetPosition(encoder, endPosition);
+
+    return endPosition - startPosition;
+}
+
+ssize_t
 ccnxCodecSchemaV1ManifestEncoder_Encode(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
 {
     ssize_t length = 0;
@@ -73,6 +126,11 @@ ccnxCodecSchemaV1ManifestEncoder_Encode(CCNxCodecTlvEncoder *encoder, CCNxTlvDic
 
         CCNxManifestInterface *interface = ccnxManifestInterface_GetInterface(packetDictionary);
         CCNxManifestHashGroup *group = interface->getHashGroup(packetDictionary, i);
+
+        // Encode any metadata, if present.
+        if (ccnxManifestHashGroup_HasMetadata(group)) {
+            groupLength += _appendMetadata(encoder, group);
+        }
 
         // Append the HashGroup pointers
         size_t numPointers = ccnxManifestHashGroup_GetNumberOfPointers(group);
