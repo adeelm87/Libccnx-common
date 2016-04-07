@@ -50,48 +50,6 @@ typedef struct crc32_signer {
     PARCCryptoHasher *hasher;
 } CRC32CSigner;
 
-// ==================================================
-// CRC32C Prototypes PARCSigner
-
-static PARCSigner      *_crc32cSignerInterface_Create(void);
-static void                  _crc32cSignerInterface_Destroy(void **interfaceContextPtr);
-static PARCSignature        *_crc32cSignerInterface_SignDigest(void *interfaceContext, const PARCCryptoHash *cryptoHash);
-static PARCSigningAlgorithm  _crc32cSignerInterface_GetSigningAlgorithm(void *interfaceContext);
-static PARCCryptoHashType    _crc32cSignerInterface_GetCryptoHashType(void *interfaceContext);
-static PARCCryptoHasher     *_crc32cSignerInterface_GetCryptoHasher(void *interfaceContext);
-
-static PARCSigningInterface crc32c_signerinterface_template = {
-        .GetCryptoHasher          = _crc32cSignerInterface_GetCryptoHasher,
-        .SignDigest               = _crc32cSignerInterface_SignDigest,
-        .GetSigningAlgorithm      = _crc32cSignerInterface_GetSigningAlgorithm,
-        .GetCryptoHashType        = _crc32cSignerInterface_GetCryptoHashType
-};
-
-// ==================================================
-// CRC32C Prototypes PARCVerifier
-
-static PARCVerifierInterface *_crc32cVerifierInterface_Create(void);
-static PARCCryptoHasher *_crc32cVerifierInterface_GetCryptoHasher(void *interfaceContext, PARCKeyId *keyid,
-                                                                  PARCCryptoHashType hashType);
-static bool              _crc32cVerifierInterface_VerifyDigest(void *interfaceContext, PARCKeyId *keyid,
-                                                               PARCCryptoHash *locallyComputedHash,
-                                                               PARCCryptoSuite suite, PARCSignature *signatureToVerify);
-static bool              _crc32cVerifierInterface_AllowedCryptoSuite(void *interfaceContext, PARCKeyId *keyid,
-                                                                     PARCCryptoSuite suite);
-static void              _crc32cVerifierInterface_Destroy(struct parc_verifier_interface **interfaceContextPtr);
-
-static const PARCVerifierInterface crc32c_verifierinterface_template = {
-        .interfaceContext   = NULL,
-        .GetCryptoHasher    = _crc32cVerifierInterface_GetCryptoHasher,
-        .VerifyDigest       = _crc32cVerifierInterface_VerifyDigest,
-        .AddKey             = NULL,
-        .RemoveKeyId        = NULL,
-        .AllowedCryptoSuite = _crc32cVerifierInterface_AllowedCryptoSuite,
-        .Destroy            = _crc32cVerifierInterface_Destroy,
-};
-
-// ========================================================================================
-
 bool
 ccnxValidationCRC32C_Set(CCNxTlvDictionary *message)
 {
@@ -255,3 +213,20 @@ _crc32cVerifierInterface_Destroy(struct parc_verifier_interface **interfaceConte
     parcMemory_Deallocate((void **) &interface);
     *interfaceContextPtr = NULL;
 }
+
+static PARCSigningInterface crc32c_signerinterface_template = {
+        .GetCryptoHasher          = _crc32cSignerInterface_GetCryptoHasher,
+        .SignDigest               = _crc32cSignerInterface_SignDigest,
+        .GetSigningAlgorithm      = _crc32cSignerInterface_GetSigningAlgorithm,
+        .GetCryptoHashType        = _crc32cSignerInterface_GetCryptoHashType
+};
+
+static const PARCVerifierInterface crc32c_verifierinterface_template = {
+        .interfaceContext   = NULL,
+        .GetCryptoHasher    = _crc32cVerifierInterface_GetCryptoHasher,
+        .VerifyDigest       = _crc32cVerifierInterface_VerifyDigest,
+        .AddKey             = NULL,
+        .RemoveKeyId        = NULL,
+        .AllowedCryptoSuite = _crc32cVerifierInterface_AllowedCryptoSuite,
+        .Destroy            = _crc32cVerifierInterface_Destroy,
+};
