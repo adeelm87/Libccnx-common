@@ -61,7 +61,6 @@ static PARCCryptoHashType    _crc32cSignerInterface_GetCryptoHashType(void *inte
 static PARCCryptoHasher     *_crc32cSignerInterface_GetCryptoHasher(void *interfaceContext);
 
 static PARCSigningInterface crc32c_signerinterface_template = {
-        .Release                  = (void (*)(void **)) _crc32cSignerInterface_Destroy,
         .GetCryptoHasher          = _crc32cSignerInterface_GetCryptoHasher,
         .SignDigest               = _crc32cSignerInterface_SignDigest,
         .GetSigningAlgorithm      = _crc32cSignerInterface_GetSigningAlgorithm,
@@ -128,6 +127,35 @@ ccnxValidationCRC32C_Test(const CCNxTlvDictionary *message)
     return false;
 }
 
+static bool
+_crc32cSigner_Destructor(CRC32CSigner **interfaceContextPtr)
+{
+    CRC32CSigner *signer = *interfaceContextPtr;
+    parcCryptoHasher_Release(&signer->hasher);
+    return true;
+}
+
+parcObject_ImplementAcquire(_crc32CSigner, CRC32CSigner);
+parcObject_ImplementRelease(_crc32CSigner, CRC32CSigner);
+
+parcObject_Override(CRC32CSigner, PARCObject,
+    .destructor = (PARCObjectDestructor *) _crc32cSigner_Destructor);
+
+// ==================================================
+// CRC32C Implementation PARCSigner
+
+static PARCSigner *
+_crc32cSignerInterface_Create(void)
+{
+    CRC32CSigner *crc32Signer = parcObject_CreateInstance(CRC32CSigner);
+
+    assertNotNull(crc32Signer, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(CRC32CSigner));
+    crc32Signer->hasher = parcCryptoHasher_Create(PARC_HASH_CRC32C);
+    PARCSigner *signer = parcSigner_Create(crc32Signer, &crc32c_signerinterface_template);
+
+    return signer;
+}
+
 PARCSigner *
 ccnxValidationCRC32C_CreateSigner(void)
 {
@@ -139,32 +167,6 @@ ccnxValidationCRC32C_CreateVerifier(void)
 {
     PARCVerifier *verifier = parcVerifier_Create(_crc32cVerifierInterface_Create());
     return verifier;
-}
-
-// ==================================================
-// CRC32C Implementation PARCSigner
-
-static PARCSigner *
-_crc32cSignerInterface_Create(void)
-{
-    CRC32CSigner *crc32Signer = parcMemory_AllocateAndClear(sizeof(CRC32CSigner));
-    assertNotNull(crc32Signer, "parcMemory_AllocateAndClear(%zu) returned NULL", sizeof(CRC32CSigner));
-    crc32Signer->hasher = parcCryptoHasher_Create(PARC_HASH_CRC32C);
-
-    PARCSigner *signer = parcSigner_Create(crc32Signer, &crc32c_signerinterface_template);
-
-    return signer;
-}
-
-static void
-_crc32cSignerInterface_Destroy(void **interfaceContextPtr)
-{
-    CRC32CSigner *signer = (CRC32CSigner *) *interfaceContextPtr;
-
-    parcCryptoHasher_Release(&(signer->hasher));
-
-    parcMemory_Deallocate((void **) &signer);
-    *interfaceContextPtr = NULL;
 }
 
 static PARCSignature *
