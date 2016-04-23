@@ -124,12 +124,11 @@ _ccnxCodecEncodingBufferLinkedArray_Display(const _CCNxCodecEncodingBufferLinked
     }
 }
 
-
 static _CCNxCodecEncodingBufferLinkedArray *
 _ccnxCodecEncodingBufferLinkedArray_Create(uint32_t capacity)
 {
     // one allocation for the object plus the array of buffers
-    size_t totalAllocation = sizeof(_CCNxCodecEncodingBufferLinkedArray) + sizeof(PARCBuffer *) * capacity;
+    size_t totalAllocation = sizeof(_CCNxCodecEncodingBufferLinkedArray) + sizeof(_ArrayEntry) * capacity;
     _CCNxCodecEncodingBufferLinkedArray *array = parcMemory_Allocate(totalAllocation);
     assertNotNull(array, "parcMemory_Allocate(%zu) returned NULL", totalAllocation);
     array->capacity = capacity;
@@ -172,7 +171,7 @@ _ccnxCodecEncodingBufferLinkedArray_Release(_CCNxCodecEncodingBufferLinkedArray 
 
     for (int i = 0; i < array->count; i++) {
         if (array->array[i].buffer) {
-            parcBuffer_Release(&array->array[i].buffer);
+            parcBuffer_Release(&(array->array[i].buffer));
         }
     }
 
@@ -375,6 +374,41 @@ _ccnxCodecEncodingBuffer_AppendLinkedArray(CCNxCodecEncodingBuffer *list, _CCNxC
 }
 
 size_t
+ccnxCodecEncodingBuffer_PrependBuffer(CCNxCodecEncodingBuffer *list, PARCBuffer *buffer)
+{
+    assertNotNull(list, "Parameter list must be non-null");
+    assertNotNull(buffer, "Parameter buffer must be non-null");
+
+    _CCNxCodecEncodingBufferLinkedArray *head = list->head;
+    if (head == NULL || list->head->count == list->head->capacity) {
+        head = _ccnxCodecEncodingBufferLinkedArray_Create(DEFAULT_CAPACITY);
+        _ccnxCodecEncodingBuffer_AppendLinkedArray(list, head);
+    }
+
+    assertTrue(head->count < head->capacity, "head does not have any room left")
+    {
+        _ccnxCodecEncodingBufferLinkedArray_Display(head, 0);
+    }
+
+    size_t position = list->totalCount;
+// XXX move everybody up
+    for (int i = 0; i < list->totalCount; i++) {
+        head->array[i + 1] = head->array[i];
+    }
+    head->array[0].buffer = parcBuffer_Acquire(buffer);
+    _ccnxCodecEncodingBufferEntry_SetIOVec(buffer, &head->array[0].vec);
+
+    size_t bytes = head->array[0].vec.iov_len;
+    head->bytes += bytes;
+    list->totalBytes += bytes;
+
+    head->count++;
+    list->totalCount++;
+
+    return position;
+}
+
+size_t
 ccnxCodecEncodingBuffer_AppendBuffer(CCNxCodecEncodingBuffer *list, PARCBuffer *buffer)
 {
     assertNotNull(list, "Parameter list must be non-null");
@@ -443,6 +477,50 @@ _ccnxCodecEncodingBufferEntry_SetIOVec(PARCBuffer *buffer, struct iovec *iov)
         iov->iov_base = NULL;
         iov->iov_len = 0;
     }
+}
+
+// Creates an iovec array pointing to the PARCBuffer contents at offset for length
+CCNxCodecEncodingBuffer *
+ccnxCodecEncodingBuffer_Slice(CCNxCodecEncodingBuffer *encodingBuffer, size_t offset, size_t length)
+{
+    CCNxCodecEncodingBuffer *listBuffer = parcObject_CreateInstance(CCNxCodecEncodingBuffer);
+    listBuffer->head = NULL;
+    listBuffer->tail = NULL;
+    listBuffer->totalCount = 0;
+    listBuffer->totalBytes = 0;
+
+    _CCNxCodecEncodingBufferLinkedArray *head;
+    head = _ccnxCodecEncodingBufferLinkedArray_Create(encodingBuffer->totalCount); // pessimistic
+    _ccnxCodecEncodingBuffer_AppendLinkedArray(listBuffer, head);
+
+    _CCNxCodecEncodingBufferLinkedArray *next = encodingBuffer->head;
+    int position = 0;
+    while (next && length) {
+        for (int i = 0; (i < next->count) && length; i++) {
+            if ((offset >= position) && (offset < (position + next->array[i].vec.iov_len))) {
+                printf("buffer=%p\n", next->array[i].buffer);
+                int remainder = 0;
+                head->array[head->count].buffer = parcBuffer_Acquire(next->array[i].buffer);
+                head->array[head->count].vec.iov_base = next->array[i].vec.iov_base + (offset - position);
+                remainder = next->array[i].vec.iov_len - (offset - position);
+                if (remainder > length) {
+                    remainder = length;
+                }
+                head->array[head->count].vec.iov_len = remainder;
+                offset += remainder;
+                length -= remainder;
+
+                head->count++;
+                head->bytes += remainder;
+                listBuffer->totalCount++;
+                listBuffer->totalBytes += remainder;
+            }
+            position += next->array[i].vec.iov_len;
+        }
+        next = next->next;
+    }
+
+    return listBuffer;
 }
 
 // Creates an iovec array pointing to the PARCBuffer contents

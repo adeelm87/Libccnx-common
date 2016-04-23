@@ -174,6 +174,7 @@ void ccnxCodecEncodingBuffer_Display(const CCNxCodecEncodingBuffer *encodingBuff
  * @endcode
  */
 size_t ccnxCodecEncodingBuffer_AppendBuffer(CCNxCodecEncodingBuffer *encodingBuffer, PARCBuffer *bufferToInsert);
+size_t ccnxCodecEncodingBuffer_PrependBuffer(CCNxCodecEncodingBuffer *encodingBuffer, PARCBuffer *bufferToPrepend);
 
 /**
  * Puts the value in scratch memory
@@ -250,6 +251,29 @@ size_t ccnxCodecEncodingBuffer_Length(const CCNxCodecEncodingBuffer *encodingBuf
 CCNxCodecEncodingBufferIOVec *ccnxCodecEncodingBuffer_CreateIOVec(CCNxCodecEncodingBuffer *encodingBuffer);
 
 /**
+ * Constructs an iovec array based on the buffers in the list that cooresponds to offset and length
+ *
+ * The elements of the iovec array will be in the list order.
+ * Each iovec entry will point to the backing array of each PARCBuffer
+ * based on that buffers current position.
+ *
+ * This object contains a reference counted copy to the encoding buffer, so
+ * the caller can release the encoding buffer and hold on to only this object
+ * until the writev (or similar function) is done.
+ *
+ * @param [<#in out in,out#>] <#name#> <#description#>
+ *
+ * @return non-null The allocated IOVec structure
+ * @return null An error, or the specified offset/length is not contained in the extent
+ 
+ * Example:
+ * @code
+ * <#example#>
+ * @endcode
+ */
+CCNxCodecEncodingBuffer *ccnxCodecEncodingBuffer_Slice(CCNxCodecEncodingBuffer *encodingBuffer, size_t offset, size_t length);
+
+/**
  * Release the iovec object.
  *
  * This will release the IOVec object and release its reference to the encoding
@@ -264,4 +288,5 @@ CCNxCodecEncodingBufferIOVec *ccnxCodecEncodingBuffer_CreateIOVec(CCNxCodecEncod
  * @endcode
  */
 void ccnxCodecEncodingBufferIOVec_Release(CCNxCodecEncodingBufferIOVec **iovecPtr);
+
 #endif // libccnx_ccnxCodec_EncodingBuffer_h

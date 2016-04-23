@@ -190,8 +190,8 @@ LONGBOW_TEST_CASE(Global, ccnxCodecEncodingBuffer_CreateIOVec)
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
     PARCBuffer *buffer_1 = parcBuffer_Wrap(foo, sizeof(foo), 0, sizeof(foo));
     PARCBuffer *buffer_2 = parcBuffer_Wrap(bar, sizeof(bar), 0, sizeof(bar));
-    ccnxCodecEncodingBuffer_AppendBuffer(data->encodingBuffer, buffer_1);
     ccnxCodecEncodingBuffer_AppendBuffer(data->encodingBuffer, buffer_2);
+    ccnxCodecEncodingBuffer_PrependBuffer(data->encodingBuffer, buffer_1);
 
     CCNxCodecEncodingBufferIOVec *iov = ccnxCodecEncodingBuffer_CreateIOVec(data->encodingBuffer);
     assertNotNull(iov, "Got null iov from CreateIOVec");
@@ -200,6 +200,15 @@ LONGBOW_TEST_CASE(Global, ccnxCodecEncodingBuffer_CreateIOVec)
     assertTrue(iov->iov[1].iov_base == bar, "WRong iov[1].iov_base, got %p exected %p", iov->iov[1].iov_base, bar);
     assertTrue(iov->iov[0].iov_len == sizeof(foo), "WRong iov[1].iov_base, got %zu exected %zu", iov->iov[0].iov_len, sizeof(foo));
     assertTrue(iov->iov[1].iov_len == sizeof(bar), "WRong iov[1].iov_base, got %zu exected %zu", iov->iov[1].iov_len, sizeof(bar));
+
+    CCNxCodecEncodingBuffer *bufferSlice = ccnxCodecEncodingBuffer_Slice(data->encodingBuffer, 1, 6);
+    CCNxCodecEncodingBufferIOVec *iovSlice = ccnxCodecEncodingBuffer_CreateIOVec(bufferSlice);
+    assertTrue(iovSlice->iovcnt == 2, "Wrong iovec count, got %d expected %d", iovSlice->iovcnt, 2);
+    assertTrue(iovSlice->iov[0].iov_base == foo + 1, "WRong iovSlice[0].iov_base, got %p exected %p", iovSlice->iov[0].iov_base, foo + 1);
+    assertTrue(iovSlice->iov[0].iov_len == sizeof(foo) - 1, "WRong iovSlice[1].iov_base, got %zu exected %zu", iovSlice->iov[0].iov_len, sizeof(foo) - 1);
+    assertTrue(iovSlice->iov[1].iov_len == 6 - (sizeof(foo) - 1), "WRong iovSlice[1].iov_base, got %zu exected %lu", iovSlice->iov[1].iov_len, 6 - (sizeof(foo) - 1));
+    ccnxCodecEncodingBufferIOVec_Release(&iovSlice);
+    ccnxCodecEncodingBuffer_Release(&bufferSlice);
 
     ccnxCodecEncodingBufferIOVec_Release(&iov);
 
