@@ -373,6 +373,15 @@ _ccnxCodecEncodingBuffer_AppendLinkedArray(CCNxCodecEncodingBuffer *list, _CCNxC
     list->tail = array;
 }
 
+static void
+_ccnxCodecEncodingBuffer_PrependLinkedArray(CCNxCodecEncodingBuffer *list, _CCNxCodecEncodingBufferLinkedArray *array)
+{
+    array->next = list->head;
+    array->prev = list->head->prev;
+    list->head->prev = array;
+    list->head = array;
+}
+
 size_t
 ccnxCodecEncodingBuffer_PrependBuffer(CCNxCodecEncodingBuffer *list, PARCBuffer *buffer)
 {
@@ -380,9 +389,9 @@ ccnxCodecEncodingBuffer_PrependBuffer(CCNxCodecEncodingBuffer *list, PARCBuffer 
     assertNotNull(buffer, "Parameter buffer must be non-null");
 
     _CCNxCodecEncodingBufferLinkedArray *head = list->head;
-    if (head == NULL || list->head->count == list->head->capacity) {
+    if ((head == NULL) || (list->head->count == list->head->capacity)) {
         head = _ccnxCodecEncodingBufferLinkedArray_Create(DEFAULT_CAPACITY);
-        _ccnxCodecEncodingBuffer_AppendLinkedArray(list, head);
+        _ccnxCodecEncodingBuffer_PrependLinkedArray(list, head);
     }
 
     assertTrue(head->count < head->capacity, "head does not have any room left")
@@ -518,6 +527,9 @@ ccnxCodecEncodingBuffer_Slice(CCNxCodecEncodingBuffer *encodingBuffer, size_t of
             position += next->array[i].vec.iov_len;
         }
         next = next->next;
+    }
+    if (listBuffer->totalCount == 0) {
+        ccnxCodecEncodingBuffer_Release(&listBuffer);
     }
 
     return listBuffer;
