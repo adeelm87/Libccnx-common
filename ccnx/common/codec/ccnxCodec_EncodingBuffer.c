@@ -74,7 +74,7 @@ struct ccnx_tlv_encoding_buffer_linked_array {
     size_t bytes;
 
     // each encoding buffer is an array of PARCbuffers
-    _ArrayEntry array[];
+    _ArrayEntry *array;
 };
 
 /**
@@ -127,15 +127,15 @@ _ccnxCodecEncodingBufferLinkedArray_Display(const _CCNxCodecEncodingBufferLinked
 static _CCNxCodecEncodingBufferLinkedArray *
 _ccnxCodecEncodingBufferLinkedArray_Create(uint32_t capacity)
 {
-    // one allocation for the object plus the array of buffers
-    size_t totalAllocation = sizeof(_CCNxCodecEncodingBufferLinkedArray) + sizeof(_ArrayEntry) * capacity;
-    _CCNxCodecEncodingBufferLinkedArray *array = parcMemory_Allocate(totalAllocation);
-    assertNotNull(array, "parcMemory_Allocate(%zu) returned NULL", totalAllocation);
+    // allocation for the object plus the array of buffers
+    _CCNxCodecEncodingBufferLinkedArray *array = parcMemory_Allocate(sizeof(_CCNxCodecEncodingBufferLinkedArray));
+    assertNotNull(array, "parcMemory_Allocate(%zu) returned NULL", sizeof(_CCNxCodecEncodingBufferLinkedArray));
     array->capacity = capacity;
     array->bytes = 0;
     array->count = 0;
     array->next = NULL;
     array->prev = NULL;
+    array->array = parcMemory_AllocateAndClear(sizeof(_ArrayEntry) * capacity);
     return array;
 }
 
@@ -175,6 +175,7 @@ _ccnxCodecEncodingBufferLinkedArray_Release(_CCNxCodecEncodingBufferLinkedArray 
         }
     }
 
+    parcMemory_Deallocate(&(array->array));
     parcMemory_Deallocate((void **) &array);
 }
 
