@@ -201,12 +201,36 @@ LONGBOW_TEST_CASE(Global, ccnxCodecEncodingBuffer_CreateIOVec)
     assertTrue(iov->iov[0].iov_len == sizeof(foo), "WRong iov[1].iov_base, got %zu exected %zu", iov->iov[0].iov_len, sizeof(foo));
     assertTrue(iov->iov[1].iov_len == sizeof(bar), "WRong iov[1].iov_base, got %zu exected %zu", iov->iov[1].iov_len, sizeof(bar));
 
+    // Slice crossing two iovec arrays
     CCNxCodecEncodingBuffer *bufferSlice = ccnxCodecEncodingBuffer_Slice(data->encodingBuffer, 1, 6);
     CCNxCodecEncodingBufferIOVec *iovSlice = ccnxCodecEncodingBuffer_CreateIOVec(bufferSlice);
     assertTrue(iovSlice->iovcnt == 2, "Wrong iovec count, got %d expected %d", iovSlice->iovcnt, 2);
     assertTrue(iovSlice->iov[0].iov_base == foo + 1, "WRong iovSlice[0].iov_base, got %p exected %p", iovSlice->iov[0].iov_base, foo + 1);
-    assertTrue(iovSlice->iov[0].iov_len == sizeof(foo) - 1, "WRong iovSlice[1].iov_base, got %zu exected %zu", iovSlice->iov[0].iov_len, sizeof(foo) - 1);
+    assertTrue(iovSlice->iov[0].iov_len == sizeof(foo) - 1, "WRong iovSlice[1].iov_len, got %zu exected %zu", iovSlice->iov[0].iov_len, sizeof(foo) - 1);
     assertTrue(iovSlice->iov[1].iov_len == 6 - (sizeof(foo) - 1), "WRong iovSlice[1].iov_base, got %zu exected %lu", iovSlice->iov[1].iov_len, 6 - (sizeof(foo) - 1));
+    ccnxCodecEncodingBufferIOVec_Release(&iovSlice);
+    ccnxCodecEncodingBuffer_Release(&bufferSlice);
+
+    // Slice within one iovec array
+    bufferSlice = ccnxCodecEncodingBuffer_Slice(data->encodingBuffer, 1, 1);
+    iovSlice = ccnxCodecEncodingBuffer_CreateIOVec(bufferSlice);
+    assertTrue(iovSlice->iovcnt == 1, "Wrong iovec count, got %d expected %d", iovSlice->iovcnt, 1);
+    assertTrue(iovSlice->iov[0].iov_base == foo + 1, "WRong iovSlice[0].iov_base, got %p exected %p", iovSlice->iov[0].iov_base, foo + 1);
+    assertTrue(iovSlice->iov[0].iov_len == 1, "WRong iovSlice[1].iov_len, got %zu exected %d", iovSlice->iov[0].iov_len, 1);
+    ccnxCodecEncodingBufferIOVec_Release(&iovSlice);
+    ccnxCodecEncodingBuffer_Release(&bufferSlice);
+
+    // Slice beyond contents
+    bufferSlice = ccnxCodecEncodingBuffer_Slice(data->encodingBuffer, sizeof(foo) + sizeof(bar), 1);
+    assertNull(bufferSlice, "ccnxCodecEncodingBuffer_Slice returned allocation for slice outside of buffer");
+
+    // Slice including all and beyond
+    bufferSlice = ccnxCodecEncodingBuffer_Slice(data->encodingBuffer, 0, sizeof(foo) + sizeof(bar) + 10);
+    iovSlice = ccnxCodecEncodingBuffer_CreateIOVec(bufferSlice);
+    assertTrue(iovSlice->iovcnt == 2, "Wrong iovec count, got %d expected %d", iovSlice->iovcnt, 2);
+    assertTrue(iovSlice->iov[0].iov_base == foo, "WRong iovSlice[0].iov_base, got %p exected %p", iovSlice->iov[0].iov_base, foo);
+    assertTrue(iovSlice->iov[0].iov_len == sizeof(foo), "WRong iovSlice[1].iov_len, got %zu exected %zu", iovSlice->iov[0].iov_len, sizeof(foo));
+    assertTrue(iovSlice->iov[1].iov_len == sizeof(bar), "WRong iovSlice[1].iov_base, got %zu exected %lu", iovSlice->iov[1].iov_len, sizeof(bar));
     ccnxCodecEncodingBufferIOVec_Release(&iovSlice);
     ccnxCodecEncodingBuffer_Release(&bufferSlice);
 
