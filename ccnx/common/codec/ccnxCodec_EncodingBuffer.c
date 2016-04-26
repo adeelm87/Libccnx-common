@@ -508,7 +508,6 @@ ccnxCodecEncodingBuffer_Slice(CCNxCodecEncodingBuffer *encodingBuffer, size_t of
     while (next && length) {
         for (int i = 0; (i < next->count) && length; i++) {
             if ((offset >= position) && (offset < (position + next->array[i].vec.iov_len))) {
-                printf("buffer=%p\n", next->array[i].buffer);
                 int remainder = 0;
                 head->array[head->count].buffer = parcBuffer_Acquire(next->array[i].buffer);
                 head->array[head->count].vec.iov_base = next->array[i].vec.iov_base + (offset - position);
