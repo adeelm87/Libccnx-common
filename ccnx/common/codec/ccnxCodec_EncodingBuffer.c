@@ -401,7 +401,6 @@ ccnxCodecEncodingBuffer_PrependBuffer(CCNxCodecEncodingBuffer *list, PARCBuffer 
     }
 
     size_t position = list->totalCount;
-// XXX move everybody up
     for (int i = 0; i < list->totalCount; i++) {
         head->array[i + 1] = head->array[i];
     }
