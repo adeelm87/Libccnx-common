@@ -49,7 +49,7 @@ _decodeHashGroupMetadata(CCNxCodecTlvDecoder *decoder, CCNxManifestHashGroup *gr
                 const CCNxName *locator = ccnxName_CreateFromCString(nameString);
                 ccnxManifestHashGroup_SetLocator(group, locator);
                 parcMemory_Deallocate(&nameString);
-                ccnxName_Release(&locator);
+                ccnxName_Release((CCNxName **) &locator);
                 break;
             }
             case CCNxCodecSchemaV1Types_CCNxManifestHashGroupMetadata_DataSize: {
