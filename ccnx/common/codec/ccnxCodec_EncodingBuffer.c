@@ -73,7 +73,8 @@ struct ccnx_tlv_encoding_buffer_linked_array {
     // The total bytes of this bufferArray
     size_t bytes;
 
-    // each encoding buffer is an array of PARCbuffers
+    // each encoding buffer is an array of _ArrayEntry structures containing
+    // a PARCBuffer reference and a vector referencing the PARCBuffer contents.
     _ArrayEntry *array;
 };
 

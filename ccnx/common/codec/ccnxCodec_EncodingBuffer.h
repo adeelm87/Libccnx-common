@@ -174,6 +174,27 @@ void ccnxCodecEncodingBuffer_Display(const CCNxCodecEncodingBuffer *encodingBuff
  * @endcode
  */
 size_t ccnxCodecEncodingBuffer_AppendBuffer(CCNxCodecEncodingBuffer *encodingBuffer, PARCBuffer *bufferToInsert);
+
+/**
+ * Prepends a PARCBuffer to the encoding buffer
+ *
+ * Prepends to the encoding buffer a reference count to the given buffer.
+ * The return value is the storage node used in the internal data structure.
+ *
+ * The buffer will be used from its position at the time of use (i.e. when
+ * ccnxCodecEncodingBuffer_CreateIOVec() is called).  It is important that no other
+ * use of the PARCBuffer move the Position.
+ *
+ * @param [in] encodingBuffer The buffer to prepend to
+ * @param [in] bufferToInsert The PARCBuffer to insert at the head of the encoding buffer.
+ *
+ * @return number The position in the encoding buffer list
+ *
+ * Example:
+ * @code
+ * <#example#>
+ * @endcode
+ */
 size_t ccnxCodecEncodingBuffer_PrependBuffer(CCNxCodecEncodingBuffer *encodingBuffer, PARCBuffer *bufferToPrepend);
 
 /**
