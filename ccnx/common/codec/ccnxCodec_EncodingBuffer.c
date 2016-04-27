@@ -401,8 +401,8 @@ ccnxCodecEncodingBuffer_PrependBuffer(CCNxCodecEncodingBuffer *list, PARCBuffer 
         _ccnxCodecEncodingBufferLinkedArray_Display(head, 0);
     }
 
-    size_t position = list->totalCount;
-    for (int i = 0; i < list->totalCount; i++) {
+    size_t position = list->head->count;
+    for (int i = 0; i < list->head->count; i++) {
         head->array[i + 1] = head->array[i];
     }
     head->array[0].buffer = parcBuffer_Acquire(buffer);
