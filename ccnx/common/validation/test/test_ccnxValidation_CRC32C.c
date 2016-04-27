@@ -178,7 +178,7 @@ LONGBOW_TEST_CASE(Global, ccnxValidationCRC32C_CreateVerifier)
             verifierHash = parcCryptoHasher_Finalize(verifyHasher);
         }
 
-        bool success = parcVerifier_VerifySignature(verifier, NULL, verifierHash, PARCCryptoSuite_NULL_CRC32C, sig);
+        bool success = parcVerifier_VerifyDigestSignature(verifier, NULL, verifierHash, PARCCryptoSuite_NULL_CRC32C, sig);
 
         assertTrue(success,
                    "Failed to verify signature, index %d expected 0x%08x\n",
@@ -188,7 +188,7 @@ LONGBOW_TEST_CASE(Global, ccnxValidationCRC32C_CreateVerifier)
         parcCryptoHash_Release(&verifierHash);
     }
     parcSigner_Release(&signer);
-    parcVerifier_Destroy(&verifier);
+    parcVerifier_Release(&verifier);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxValidationCRC32C_DictionaryCryptoSuiteValue)
