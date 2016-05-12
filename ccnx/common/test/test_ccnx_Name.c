@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2013-2015, Xerox Corporation (Xerox) and Palo Alto Research Center, Inc (PARC)
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * * Redistributions of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
  * * Redistributions in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -21,7 +21,7 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * ################################################################################
  * #
  * # PATENT NOTICE
@@ -44,7 +44,7 @@
  * # Do not remove this header notification.  The contents of this section must be
  * # present in all distributions of the software.  You may only modify your own
  * # intellectual property statements.  Please provide contact information.
- * 
+ *
  * - Palo Alto Research Center, Inc
  * This software distribution does not grant any rights to patents owned by Palo
  * Alto Research Center, Inc (PARC). Rights to these patents are available via
@@ -633,7 +633,7 @@ LONGBOW_TEST_CASE(Global, ParseTest2)
     assertTrue(ccnxName_Equals(a, b), "Expected to be equal");
     ccnxName_Release(&a);
     ccnxName_Release(&b);
-    
+   
     char *expected = "ccnx:/test/Name=MiISAg%3D%3D";
     CCNxName *name = ccnxName_CreateFromCString(expected);
     assertNotNull(name, "Expected non-null value from ccnxName_CreateFromCString");
@@ -641,7 +641,7 @@ LONGBOW_TEST_CASE(Global, ParseTest2)
     printf("%s\n", actual);
     assertTrue(strcmp(expected, actual) == 0, "Expected '%s' actual '%s'", expected, actual);
     parcMemory_Deallocate(&actual);
-    
+   
     ccnxName_Display(name, 0);
 
     ccnxName_Release(&name);
@@ -692,9 +692,9 @@ LONGBOW_TEST_CASE(Specialization, ccnxName_Prefix)
 {
     CCNxName *a = ccnxName_CreateFromCString("ccnx:/a/b/c");
     CCNxName *expected = ccnxName_CreateFromCString("ccnx:/a");
-    
+   
     CCNxName *actual = ccnxName_CreatePrefix(a, 1);
-    
+   
     assertTrue(ccnxName_Equals(expected, actual), "Mismatched results.");
 
     ccnxName_Release(&a);
@@ -706,11 +706,11 @@ LONGBOW_TEST_CASE(Specialization, ccnxName_Prefix_Excess)
 {
     CCNxName *a = ccnxName_CreateFromCString("ccnx:/a/b/c");
     CCNxName *expected = ccnxName_CreateFromCString("ccnx:/a/b/c");
-    
+   
     CCNxName *actual = ccnxName_CreatePrefix(a, 100);
-    
+   
     assertTrue(ccnxName_Equals(expected, actual), "Mismatched results.");
-    
+   
     ccnxName_Release(&a);
     ccnxName_Release(&expected);
     ccnxName_Release(&actual);
@@ -720,11 +720,11 @@ LONGBOW_TEST_CASE(Specialization, ccnxName_Prefix_0)
 {
     CCNxName *a = ccnxName_CreateFromCString("ccnx:/a/b/c");
     CCNxName *expected = ccnxName_CreateFromCString("ccnx:");
-    
+   
     CCNxName *actual = ccnxName_CreatePrefix(a, 0);
-    
+   
     assertTrue(ccnxName_Equals(expected, actual), "Mismatched results.");
-    
+   
     ccnxName_Release(&a);
     ccnxName_Release(&expected);
     ccnxName_Release(&actual);

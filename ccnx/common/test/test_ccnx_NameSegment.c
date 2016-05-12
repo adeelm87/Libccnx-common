@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2013-2015, Xerox Corporation (Xerox) and Palo Alto Research Center, Inc (PARC)
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * * Redistributions of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimer.
  * * Redistributions in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -21,7 +21,7 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * ################################################################################
  * #
  * # PATENT NOTICE
@@ -44,7 +44,7 @@
  * # Do not remove this header notification.  The contents of this section must be
  * # present in all distributions of the software.  You may only modify your own
  * # intellectual property statements.  Please provide contact information.
- * 
+ *
  * - Palo Alto Research Center, Inc
  * This software distribution does not grant any rights to patents owned by Palo
  * Alto Research Center, Inc (PARC). Rights to these patents are available via
@@ -103,7 +103,7 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_APP0);
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_NAME);
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_NAME_NotDefault);
-    
+   
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_SERIAL);
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ParseURISegment_RawNAME);
     LONGBOW_RUN_TEST_CASE(Global, ccnxNameSegment_ToString_APP256);
@@ -664,7 +664,7 @@ LONGBOW_TEST_CASE(Global, ccnxNameSegment_ToString_NAME_NotDefault)
 {
     PARCBuffer *value = parcBuffer_WrapCString("MiISAg==");
     CCNxNameSegment *segment = ccnxNameSegment_CreateTypeValue(CCNxNameLabelType_NAME, value);
-    
+   
     // Note that this is different than the other tests for segments because a NAME name segment
     // is the default type and as such the string representation doesn't include the leading label specification.
     char *expected = CCNxNameLabel_Name "=" "MiISAg%3D%3D";
@@ -672,7 +672,7 @@ LONGBOW_TEST_CASE(Global, ccnxNameSegment_ToString_NAME_NotDefault)
     assertTrue(strcmp(expected, actual) == 0,
                "Expected %s, actual %s", expected, actual);
     parcMemory_Deallocate((void **) &actual);
-    
+   
     ccnxNameSegment_Release(&segment);
     parcBuffer_Release(&value);
 }
