@@ -70,6 +70,7 @@
 #include <parc/algol/parc_Memory.h>
 #include <parc/algol/parc_JSON.h>
 #include <parc/algol/parc_Iterator.h>
+#include <parc/algol/parc_LinkedList.h>
 
 #include <parc/security/parc_Signature.h>
 
@@ -708,4 +709,25 @@ void ccnxManifestHashGroup_SetOverallDataDigest(CCNxManifestHashGroup *group, co
  * @endcode
  */
 bool ccnxManifestHashGroup_HasMetadata(const CCNxManifestHashGroup *group);
+
+/**
+ * Create a list of `CCNxInterest` instances that can be created from this single
+ * `CCNxManifestHashGroup` instance.
+ *
+ * @param [in] group A pointer to an instance of `CCNxManifestHashGroup`.
+ * @param [in] name A `CCNxName` locator for the interests in this list.
+ *
+ * @return A `PARCLinkedList` containing the set of all Interests that can be
+ *         constructed from this HashGroup.
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxManifestHashGroup *group = ...;
+ *
+ *     PARCLinkedList *interests = ccnxManifestHashGroup_CreateInterestList(group);
+ * }
+ * @endcode
+ */
+PARCLinkedList *ccnxManifestHashGroup_CreateInterestList(const CCNxManifestHashGroup *group, const CCNxName *locator);
 #endif // libccnx_ccnx_ManifestHashGroup_h

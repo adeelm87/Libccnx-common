@@ -66,8 +66,16 @@
 
 #include <parc/testing/parc_ObjectTesting.h>
 
+#include <ccnx/common/ccnx_Interest.h>
+
 typedef struct test_data {
     CCNxManifest *object;
+    CCNxManifest *manifestWithNamelessGroup;
+    CCNxManifest *nameless;
+    PARCLinkedList *interestListFromGroupLocator;
+    PARCLinkedList *interestListFromManifestLocator;
+    PARCLinkedList *interestListFromOverrideLocator;
+    CCNxName *overrideLocator;
 } ManifestTestData;
 
 static ManifestTestData *
@@ -75,27 +83,79 @@ _commonSetup(void)
 {
     ManifestTestData *data = parcMemory_AllocateAndClear(sizeof(ManifestTestData));
 
+    data->overrideLocator = ccnxName_CreateFromCString("ccnx:/override");
+
     CCNxName *name = ccnxName_CreateFromCString("ccnx:/my/manifest");
     CCNxManifest *manifest = ccnxManifest_Create(name);
-    ccnxName_Release(&name);
+    CCNxManifest *nameless = ccnxManifest_CreateNameless();
+    CCNxManifest *manifestWithNamelessGroup = ccnxManifest_Create(name);
+
+    data->interestListFromGroupLocator = parcLinkedList_Create();
+    data->interestListFromManifestLocator = parcLinkedList_Create();
+    data->interestListFromOverrideLocator = parcLinkedList_Create();
+    data->object = manifest;
+    data->nameless = nameless;
+    data->manifestWithNamelessGroup = manifestWithNamelessGroup;
 
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
-
-    PARCBuffer *digest1 = parcBuffer_Allocate(10);
-    PARCBuffer *digest2 = parcBuffer_Allocate(10);
-    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, digest1);
-    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Manifest, digest1);
-    parcBuffer_Release(&digest1);
-    parcBuffer_Release(&digest2);
+    CCNxManifestHashGroup *namelessGroup = ccnxManifestHashGroup_Create();
 
     CCNxName *locator = ccnxName_CreateFromCString("ccnx:/locator");
     ccnxManifestHashGroup_SetLocator(group, locator);
+
+    // Create pointers for the pieces of data
+    PARCBuffer *digest1 = parcBuffer_Allocate(10);
+    PARCBuffer *digest2 = parcBuffer_Allocate(10);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, digest1);
+    ccnxManifestHashGroup_AppendPointer(namelessGroup, CCNxManifestHashGroupPointerType_Data, digest1);
+    ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Manifest, digest2);
+    ccnxManifestHashGroup_AppendPointer(namelessGroup, CCNxManifestHashGroupPointerType_Data, digest2);
+
+    // Create the corresponding interests based on the three locator cases
+    // 1. The locator is inherited from the hash group
+    // 2. The locator is inherited from the manifest
+    // 3. The locator is overridden
+    CCNxInterest *interest1 = ccnxInterest_CreateSimple(locator);
+    ccnxInterest_SetContentObjectHashRestriction(interest1, digest1);
+    parcLinkedList_Append(data->interestListFromGroupLocator, interest1);
+    ccnxInterest_Release(&interest1);
+
+    interest1 = ccnxInterest_CreateSimple(name);
+    ccnxInterest_SetContentObjectHashRestriction(interest1, digest1);
+    parcLinkedList_Append(data->interestListFromManifestLocator, interest1);
+    ccnxInterest_Release(&interest1);
+
+    interest1 = ccnxInterest_CreateSimple(data->overrideLocator);
+    ccnxInterest_SetContentObjectHashRestriction(interest1, digest1);
+    parcLinkedList_Append(data->interestListFromOverrideLocator, interest1);
+    ccnxInterest_Release(&interest1);
+
+    CCNxInterest *interest2 = ccnxInterest_CreateSimple(locator);
+    ccnxInterest_SetContentObjectHashRestriction(interest2, digest2);
+    parcLinkedList_Append(data->interestListFromGroupLocator, interest2);
+    ccnxInterest_Release(&interest2);
+
+    interest2 = ccnxInterest_CreateSimple(name);
+    ccnxInterest_SetContentObjectHashRestriction(interest2, digest2);
+    parcLinkedList_Append(data->interestListFromManifestLocator, interest2);
+    ccnxInterest_Release(&interest2);
+
+    interest2 = ccnxInterest_CreateSimple(data->overrideLocator);
+    ccnxInterest_SetContentObjectHashRestriction(interest2, digest2);
+    parcLinkedList_Append(data->interestListFromOverrideLocator, interest2);
+    ccnxInterest_Release(&interest2);
+
+    ccnxName_Release(&name);
     ccnxName_Release(&locator);
+    parcBuffer_Release(&digest1);
+    parcBuffer_Release(&digest2);
 
     ccnxManifest_AddHashGroup(manifest, group);
-    ccnxManifestHashGroup_Release(&group);
+    ccnxManifest_AddHashGroup(manifestWithNamelessGroup, namelessGroup);
+    ccnxManifest_AddHashGroup(nameless, namelessGroup);
 
-    data->object = manifest;
+    ccnxManifestHashGroup_Release(&group);
+    ccnxManifestHashGroup_Release(&namelessGroup);
 
     return data;
 }
@@ -104,6 +164,14 @@ static void
 _commonTeardown(ManifestTestData *data)
 {
     ccnxManifest_Release(&data->object);
+    ccnxManifest_Release(&data->nameless);
+    ccnxManifest_Release(&data->manifestWithNamelessGroup);
+
+    parcLinkedList_Release(&data->interestListFromGroupLocator);
+    parcLinkedList_Release(&data->interestListFromManifestLocator);
+    parcLinkedList_Release(&data->interestListFromOverrideLocator);
+
+    ccnxName_Release(&data->overrideLocator);
     parcMemory_Deallocate((void **) &data);
 }
 
@@ -135,6 +203,11 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_GetName);
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_Equals);
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_ToString);
+
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_OverrideLocator);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_ManifestLocator);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_GroupLocator);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_NoLocator);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
@@ -226,6 +299,47 @@ LONGBOW_TEST_CASE(Global, ccnxManifest_GetNumberOfHashGroups)
     assertTrue(expected == actual, "Expected %zu, got %zu", expected, actual);
 
     ccnxManifestHashGroup_Release(&group);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifest_CreateInterestList_NoLocator)
+{
+    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
+    CCNxManifest *nameless = data->nameless;
+
+    PARCLinkedList *interestList = ccnxManifest_CreateInterestList(nameless, NULL);
+    assertTrue(parcLinkedList_Size(interestList) == 0, "Expected the interest list to be empty since there was no valid locator");
+    parcLinkedList_Release(&interestList);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifest_CreateInterestList_GroupLocator)
+{
+    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
+    CCNxManifest *manifest = data->object;
+
+    PARCLinkedList *interestList = ccnxManifest_CreateInterestList(manifest, NULL);
+    assertTrue(parcLinkedList_Equals(interestList, data->interestListFromGroupLocator), "Expected the interest lists to be equal");
+    parcLinkedList_Release(&interestList);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifest_CreateInterestList_ManifestLocator)
+{
+    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
+    CCNxManifest *manifestWithNamelessGroup = data->manifestWithNamelessGroup;
+
+    PARCLinkedList *interestList = ccnxManifest_CreateInterestList(manifestWithNamelessGroup, NULL);
+    assertTrue(parcLinkedList_Equals(interestList, data->interestListFromManifestLocator), "Expected the interest lists to be equal");
+    parcLinkedList_Release(&interestList);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifest_CreateInterestList_OverrideLocator)
+{
+    ManifestTestData *data = longBowTestCase_GetClipBoardData(testCase);
+    CCNxManifest *nameless = data->nameless;
+    CCNxName *overrideLocator = data->overrideLocator;
+
+    PARCLinkedList *interestList = ccnxManifest_CreateInterestList(nameless, overrideLocator);
+    assertTrue(parcLinkedList_Equals(interestList, data->interestListFromOverrideLocator), "Expected the interest lists to be equal");
+    parcLinkedList_Release(&interestList);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxManifest_GetName)

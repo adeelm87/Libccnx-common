@@ -104,6 +104,10 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_ToJson);
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_IsFull);
 
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_GroupLocator);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_OverrideLocator);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_NoLocator);
+
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_Equals);
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifestHashGroup_Iterator);
 
@@ -328,6 +332,82 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_IsFull)
     bool isFull = ccnxManifestHashGroup_IsFull(group);
     assertTrue(isFull, "Expected the group to be full after %ul pointers", MAX_NUMBER_OF_POINTERS);
 
+    ccnxManifestHashGroup_Release(&group);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_OverrideLocator)
+{
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
+    assertNotNull(group, "Expected non-null CCNxManifestHashGroup");
+
+    PARCLinkedList *interestList = parcLinkedList_Create();
+    CCNxName *locator = ccnxName_CreateFromCString("ccnx:/locator");
+    for (size_t i = 0; i < 10; i++) {
+        PARCBuffer *buffer = parcBuffer_Allocate(10);
+        assertTrue(ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer), "Expected the insertion to succeed");
+
+        CCNxInterest *interest = ccnxInterest_CreateSimple(locator);
+        ccnxInterest_SetContentObjectHashRestriction(interest, buffer);
+        parcLinkedList_Append(interestList, interest);
+
+        ccnxInterest_Release(&interest);
+        parcBuffer_Release(&buffer);
+    }
+
+    PARCLinkedList *extractedList = ccnxManifestHashGroup_CreateInterestList(group, locator);
+    assertTrue(parcLinkedList_Equals(interestList, extractedList), "Expected the interest lists to be equal");
+
+    parcLinkedList_Release(&interestList);
+    parcLinkedList_Release(&extractedList);
+    ccnxName_Release(&locator);
+    ccnxManifestHashGroup_Release(&group);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_GroupLocator)
+{
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
+    assertNotNull(group, "Expected non-null CCNxManifestHashGroup");
+
+    CCNxName *locator = ccnxName_CreateFromCString("ccnx:/group/locator");
+    ccnxManifestHashGroup_SetLocator(group, locator);
+
+    PARCLinkedList *interestList = parcLinkedList_Create();
+    for (size_t i = 0; i < 10; i++) {
+        PARCBuffer *buffer = parcBuffer_Allocate(10);
+        assertTrue(ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer), "Expected the insertion to succeed");
+
+        CCNxInterest *interest = ccnxInterest_CreateSimple(locator);
+        ccnxInterest_SetContentObjectHashRestriction(interest, buffer);
+        parcLinkedList_Append(interestList, interest);
+
+        ccnxInterest_Release(&interest);
+        parcBuffer_Release(&buffer);
+    }
+
+    PARCLinkedList *extractedList = ccnxManifestHashGroup_CreateInterestList(group, locator);
+    assertTrue(parcLinkedList_Equals(interestList, extractedList), "Expected the interest lists to be equal");
+
+    parcLinkedList_Release(&interestList);
+    parcLinkedList_Release(&extractedList);
+    ccnxName_Release(&locator);
+    ccnxManifestHashGroup_Release(&group);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_NoLocator)
+{
+    CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
+    assertNotNull(group, "Expected non-null CCNxManifestHashGroup");
+
+    for (size_t i = 0; i < 10; i++) {
+        PARCBuffer *buffer = parcBuffer_Allocate(10);
+        assertTrue(ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer), "Expected the insertion to succeed");
+        parcBuffer_Release(&buffer);
+    }
+
+    PARCLinkedList *extractedList = ccnxManifestHashGroup_CreateInterestList(group, NULL);
+    assertTrue(parcLinkedList_Size(extractedList) == 0, "Expected the interest list to be empty since there was no valid locator");
+
+    parcLinkedList_Release(&extractedList);
     ccnxManifestHashGroup_Release(&group);
 }
 

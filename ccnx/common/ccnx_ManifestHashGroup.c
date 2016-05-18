@@ -65,10 +65,11 @@
 #include <parc/algol/parc_Object.h>
 #include <parc/algol/parc_LinkedList.h>
 
+#include <ccnx/common/ccnx_Interest.h>
 #include <ccnx/common/ccnx_ManifestHashGroup.h>
 #include <ccnx/common/internal/ccnx_WireFormatMessageInterface.h>
 
-#define MAX_NUMBER_OF_POINTERS 1500
+#define MAX_NUMBER_OF_POINTERS 1500 // loose upper bound imposed by packet format
 
 struct ccnx_manifest_hash_group {
     PARCLinkedList *pointers;
@@ -604,4 +605,29 @@ ccnxManifestHashGroup_HasMetadata(const CCNxManifestHashGroup *group)
     }
 
     return false;
+}
+
+PARCLinkedList *
+ccnxManifestHashGroup_CreateInterestList(const CCNxManifestHashGroup *group, const CCNxName *locator)
+{
+    PARCLinkedList *interestList = parcLinkedList_Create();
+
+    PARCIterator *itr = ccnxManifestHashGroup_Iterator(group);
+    while (parcIterator_HasNext(itr)) {
+        // Extract the name and digest
+        CCNxManifestHashGroupPointer *ptr = parcIterator_Next(itr);
+        const PARCBuffer *digest = ccnxManifestHashGroupPointer_GetDigest(ptr);
+        const CCNxName *name = group->locator == NULL ? locator : group->locator;
+
+        // Build the interest and append it to the running list
+        if (name != NULL) {
+            CCNxInterest *interest = ccnxInterest_CreateSimple(name);
+            ccnxInterest_SetContentObjectHashRestriction(interest, digest);
+            parcLinkedList_Append(interestList, interest);
+            ccnxInterest_Release(&interest);
+        }
+    }
+    parcIterator_Release(&itr);
+
+    return interestList;
 }
