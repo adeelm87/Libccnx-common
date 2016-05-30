@@ -73,7 +73,6 @@
 #include <parc/algol/parc_Memory.h>
 #include <parc/algol/parc_LinkedList.h>
 #include <parc/algol/parc_Buffer.h>
-#include <parc/algol/parc_LinkedList.h>
 
 struct ccnx_manifest;
 
