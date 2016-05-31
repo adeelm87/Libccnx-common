@@ -76,12 +76,12 @@ static size_t _ccnxManifestFacadeV1_GetNumberOfHashGroups(const CCNxTlvDictionar
 static CCNxTlvDictionary *
 _ccnxManifestFacadeV1_Create(const CCNxName *name)
 {
-    assertNotNull(name, "Parameter name must be non-null");
-
     CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateManifest();
 
-    if (dictionary) {
-        ccnxTlvDictionary_PutName(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_NAME, name);
+    if (dictionary != NULL) {
+        if (name != NULL) {
+            ccnxTlvDictionary_PutName(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_NAME, name);
+        }
     } else {
         trapOutOfMemory("Could not allocate an Manifest");
     }

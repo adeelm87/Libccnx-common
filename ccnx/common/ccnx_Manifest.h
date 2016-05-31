@@ -71,6 +71,7 @@
 
 #include <parc/security/parc_Signature.h>
 #include <parc/algol/parc_Memory.h>
+#include <parc/algol/parc_LinkedList.h>
 #include <parc/algol/parc_Buffer.h>
 
 struct ccnx_manifest;
@@ -100,6 +101,20 @@ typedef CCNxTlvDictionary CCNxManifest;
  * @endcode
  */
 CCNxManifest *ccnxManifest_Create(const CCNxName *name);
+
+/**
+ * Create a new nameless `CCNxManifest` instance.
+ *
+ * @return A pointer to a `CCNxManifest` instance, or NULL if an error or out of memory.
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxManifest *object = ccnxManifest_CreateNameless();
+ * }
+ * @endcode
+ */
+CCNxManifest *ccnxManifest_CreateNameless(void);
 
 /**
  * Increase the number of references to an instance of this object.
@@ -231,6 +246,28 @@ CCNxManifestHashGroup *ccnxManifest_GetHashGroupByIndex(const CCNxManifest *mani
  * @endcode
  */
 size_t ccnxManifest_GetNumberOfHashGroups(const CCNxManifest *manifest);
+
+/**
+ * Create a list of `CCNxInterest` instances that can be created from this single
+ * `CCNxManifest` instance.
+ *
+ * @param [in] manifest A pointer to an instance of `CCNxManifest`.
+ * @param [in] name A `CCNxName` locator for the interests in this list.
+ *
+ * @return A `PARCLinkedList` containing the set of all Interests that can be
+ *         constructed from this Manifest
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxManifest *manifest = ...;
+ *     CCNxName *locator = ...;
+ *
+ *     PARCLinkedList *interests = ccnxManifest_CreateInterestList(manifest, locator);
+ * }
+ * @endcode
+ */
+PARCLinkedList *ccnxManifest_CreateInterestList(const CCNxManifest *manifest, const CCNxName *name);
 
 /**
  * Get the `CCNxName` for the given `CCNxManifest`.
