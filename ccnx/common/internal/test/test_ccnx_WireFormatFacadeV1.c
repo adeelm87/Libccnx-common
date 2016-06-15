@@ -398,7 +398,7 @@ LONGBOW_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_HashProtectedRegion_Buffer)
     _ccnxWireFormatFacadeV1_SetProtectedRegionStart(packet, start);
     _ccnxWireFormatFacadeV1_SetProtectedRegionLength(packet, length);
 
-    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARC_HASH_SHA256);
+    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARCCryptoHashType_SHA256);
     PARCCryptoHash *hash = _ccnxWireFormatFacadeV1_HashProtectedRegion(packet, hasher);
 
     // the correctness of the has is tested in _ccnxWireFormatFacadeV1_ComputeHash
@@ -425,7 +425,7 @@ LONGBOW_TEST_CASE(SchemaV1, ccnxWireFormatFacadeV1_HashProtectedRegion_IoVec)
     _ccnxWireFormatFacadeV1_SetProtectedRegionStart(packet, 0);
     _ccnxWireFormatFacadeV1_SetProtectedRegionLength(packet, 64);
 
-    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARC_HASH_SHA256);
+    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARCCryptoHashType_SHA256);
     PARCCryptoHash *hash = _ccnxWireFormatFacadeV1_HashProtectedRegion(packet, hasher);
 
     // the correctness of the has is tested in _ccnxWireFormatFacadeV1_ComputeHash
@@ -595,7 +595,7 @@ LONGBOW_TEST_CASE(Local, _ccnxWireFormatFacadeV1_ComputeHash)
 
 
     // compute the true hash
-    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARC_HASH_SHA256);
+    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARCCryptoHashType_SHA256);
     parcCryptoHasher_Init(hasher);
     parcCryptoHasher_UpdateBytes(hasher, substring, length);
     PARCCryptoHash *truthHash = parcCryptoHasher_Finalize(hasher);

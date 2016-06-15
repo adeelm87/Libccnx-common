@@ -192,10 +192,10 @@ _ccnxContentObjectFacadeV1_SetSignature(CCNxTlvDictionary *contentObject, const 
     CCNxTlvDictionary *contentObjectDictionary = (CCNxTlvDictionary *) contentObject;
 
     if (parcSignature_GetSigningAlgorithm(signature) == PARCSigningAlgorithm_RSA
-        && parcSignature_GetHashType(signature) == PARC_HASH_SHA256) {
+        && parcSignature_GetHashType(signature) == PARCCryptoHashType_SHA256) {
         ccnxValidationRsaSha256_Set(contentObjectDictionary, keyId, keyLocator);
     } else if (parcSignature_GetSigningAlgorithm(signature) == PARCSigningAlgorithm_HMAC
-               && parcSignature_GetHashType(signature) == PARC_HASH_SHA256) {
+               && parcSignature_GetHashType(signature) == PARCCryptoHashType_SHA256) {
         ccnxValidationHmacSha256_Set(contentObjectDictionary, keyId);
     } else {
         trapNotImplemented("Have not implemented the signature parameters");

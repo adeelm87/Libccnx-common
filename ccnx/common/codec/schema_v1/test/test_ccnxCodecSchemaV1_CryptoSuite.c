@@ -163,9 +163,9 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1CryptoSuite_SignAndHashToTlv)
         bool success;
         bool sentinel;
     } vectors[] = {
-        { .signAlg = PARCSigningAlgorithm_RSA,  .hashType = PARC_HASH_SHA256, .output = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_RsaSha256,  .success = true,  .sentinel = false },
-        { .signAlg = PARCSigningAlgorithm_HMAC, .hashType = PARC_HASH_SHA256, .output = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_HmacSha256, .success = true,  .sentinel = false },
-        { .signAlg = PARCSigningAlgortihm_NULL, .hashType = PARC_HASH_CRC32C, .output = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_CRC32C,     .success = true,  .sentinel = false },
+        { .signAlg = PARCSigningAlgorithm_RSA,  .hashType = PARCCryptoHashType_SHA256, .output = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_RsaSha256,  .success = true,  .sentinel = false },
+        { .signAlg = PARCSigningAlgorithm_HMAC, .hashType = PARCCryptoHashType_SHA256, .output = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_HmacSha256, .success = true,  .sentinel = false },
+        { .signAlg = PARCSigningAlgortihm_NULL, .hashType = PARCCryptoHashType_CRC32C, .output = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_CRC32C,     .success = true,  .sentinel = false },
         { .signAlg = PARCSigningAlgorithm_RSA,  .hashType = 12345,            .output = 0,                                                     .success = false, .sentinel = false },
         { .signAlg = PARCSigningAlgorithm_HMAC, .hashType = 12345,            .output = 0,                                                     .success = false, .sentinel = false },
         { .signAlg = PARCSigningAlgortihm_NULL, .hashType = 12345,            .output = 0,                                                     .success = false, .sentinel = false },

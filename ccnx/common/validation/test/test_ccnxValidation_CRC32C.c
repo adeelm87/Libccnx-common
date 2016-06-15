@@ -200,7 +200,7 @@ LONGBOW_TEST_CASE(Global, ccnxValidationCRC32C_CreateVerifier)
         // Now do the verification stage
         PARCCryptoHash *verifierHash = NULL;
         {
-            PARCCryptoHasher *verifyHasher = parcVerifier_GetCryptoHasher(verifier, NULL, PARC_HASH_CRC32C);
+            PARCCryptoHasher *verifyHasher = parcVerifier_GetCryptoHasher(verifier, NULL, PARCCryptoHashType_CRC32C);
             parcCryptoHasher_Init(verifyHasher);
             parcCryptoHasher_UpdateBytes(verifyHasher, vectors[i].buffer, vectors[i].length);
             verifierHash = parcCryptoHasher_Finalize(verifyHasher);

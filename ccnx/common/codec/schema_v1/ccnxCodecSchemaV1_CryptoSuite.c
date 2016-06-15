@@ -139,7 +139,7 @@ ccnxCodecSchemaV1CryptoSuite_SignAndHashToTlv(PARCSigningAlgorithm signAlgorithm
     switch (signAlgorithm) {
         case PARCSigningAlgorithm_RSA: {
             switch (hashType) {
-                case PARC_HASH_SHA256:
+                case PARCCryptoHashType_SHA256:
                     *outputValue = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_RsaSha256;
                     matchFound = true;
 
@@ -151,7 +151,7 @@ ccnxCodecSchemaV1CryptoSuite_SignAndHashToTlv(PARCSigningAlgorithm signAlgorithm
 
         case PARCSigningAlgorithm_HMAC: {
             switch (hashType) {
-                case PARC_HASH_SHA256:
+                case PARCCryptoHashType_SHA256:
                     *outputValue = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_HmacSha256;
                     matchFound = true;
                 default:
@@ -162,7 +162,7 @@ ccnxCodecSchemaV1CryptoSuite_SignAndHashToTlv(PARCSigningAlgorithm signAlgorithm
 
         case PARCSigningAlgortihm_NULL: {
             switch (hashType) {
-                case PARC_HASH_CRC32C:
+                case PARCCryptoHashType_CRC32C:
                     *outputValue = CCNxCodecSchemaV1TlvDictionary_CryptoSuite_CRC32C;
                     matchFound = true;
                 default:

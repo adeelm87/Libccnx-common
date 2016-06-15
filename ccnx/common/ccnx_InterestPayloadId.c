@@ -112,7 +112,7 @@ ccnxInterestPayloadId_CreateAsSHA256Hash(const PARCBuffer *data)
 {
     CCNxInterestPayloadId *result = parcObject_CreateInstance(CCNxInterestPayloadId);
 
-    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARC_HASH_SHA256);
+    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARCCryptoHashType_SHA256);
     parcCryptoHasher_Init(hasher);
     parcCryptoHasher_UpdateBuffer(hasher, data);
     PARCCryptoHash *hash = parcCryptoHasher_Finalize(hasher);
