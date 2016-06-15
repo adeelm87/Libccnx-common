@@ -375,7 +375,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_SetSignature)
 
     PARCBuffer *keyId = parcBuffer_WrapCString("keyhash");
     PARCBuffer *sigbits = parcBuffer_WrapCString("siggybits");
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, parcBuffer_Flip(sigbits));
+    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARCCryptoHashType_SHA256, parcBuffer_Flip(sigbits));
 
     ccnxContentObject_SetSignature(contentObject, keyId, signature, NULL);
 
@@ -398,7 +398,7 @@ LONGBOW_TEST_CASE(Global, ccnxContentObject_GetKeyId)
 
     PARCBuffer *testKeyId = parcBuffer_WrapCString("keyhash");
     PARCBuffer *sigbits = parcBuffer_WrapCString("siggybits");
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, parcBuffer_Flip(sigbits));
+    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARCCryptoHashType_SHA256, parcBuffer_Flip(sigbits));
 
     ccnxContentObject_SetSignature(contentObject, testKeyId, signature, NULL);
 

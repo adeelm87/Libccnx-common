@@ -351,7 +351,7 @@ LONGBOW_TEST_CASE(Global, ccnxWireFormatMessage_HashProtectedRegion)
     ccnxWireFormatMessage_SetProtectedRegionStart(message, start);
     ccnxWireFormatMessage_SetProtectedRegionLength(message, length);
 
-    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARC_HASH_SHA256);
+    PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARCCryptoHashType_SHA256);
     PARCCryptoHash *hash = ccnxWireFormatMessage_HashProtectedRegion(message, hasher);
 
     // the correctness of the has is tested in _ccnxWireFormatFacadeV1_ComputeHash

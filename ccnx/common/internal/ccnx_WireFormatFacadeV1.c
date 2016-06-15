@@ -453,7 +453,7 @@ _ccnxWireFormatFacadeV1_ComputeContentObjectHash(CCNxTlvDictionary *dictionary)
 
     if (ccnxTlvDictionary_IsValueInteger(dictionary, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_ContentObjectHashRegionStart)
         && ccnxTlvDictionary_IsValueInteger(dictionary, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_ContentObjectHashRegionLength)) {
-        PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARC_HASH_SHA256);
+        PARCCryptoHasher *hasher = parcCryptoHasher_Create(PARCCryptoHashType_SHA256);
         size_t startPosition = ccnxTlvDictionary_GetInteger(dictionary, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_ContentObjectHashRegionStart);
         size_t length = ccnxTlvDictionary_GetInteger(dictionary, CCNxCodecSchemaV1TlvDictionary_HeadersFastArray_ContentObjectHashRegionLength);
 

@@ -362,7 +362,7 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_SetSignature)
     char *rawsig = "siggybits";
     PARCBuffer *sigbits = parcBuffer_CreateFromArray((void *) rawsig, strlen(rawsig));
 
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, parcBuffer_Flip(sigbits));
+    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARCCryptoHashType_SHA256, parcBuffer_Flip(sigbits));
     parcBuffer_Release(&sigbits);
 
     assertTrue(_ccnxContentObjectFacadeV1_SetSignature(contentObject, keyId, signature, NULL),
@@ -389,7 +389,7 @@ LONGBOW_TEST_CASE(ImplInterface, ccnxContentObjectFacadeV1_GetKeyId)
     char *rawsig = "siggybits";
     PARCBuffer *sigbits = parcBuffer_CreateFromArray((void *) rawsig, strlen(rawsig));
 
-    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, parcBuffer_Flip(sigbits));
+    PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARCCryptoHashType_SHA256, parcBuffer_Flip(sigbits));
     parcBuffer_Release(&sigbits);
 
     assertTrue(_ccnxContentObjectFacadeV1_SetSignature(contentObject, testKeyId, signature, NULL),

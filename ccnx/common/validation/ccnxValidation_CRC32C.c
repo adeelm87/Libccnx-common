@@ -150,7 +150,7 @@ static PARCSignature *
 _crc32Signer_SignDigest(_CRC32Signer *interfaceContext, const PARCCryptoHash *cryptoHash)
 {
     PARCSignature *signature =
-            parcSignature_Create(PARCSigningAlgortihm_NULL, PARC_HASH_CRC32C, parcCryptoHash_GetDigest(cryptoHash));
+            parcSignature_Create(PARCSigningAlgortihm_NULL, PARCCryptoHashType_CRC32C, parcCryptoHash_GetDigest(cryptoHash));
     return signature;
 }
 
@@ -163,7 +163,7 @@ _crc32Signer_GetSigningAlgorithm(_CRC32Signer *interfaceContext)
 static PARCCryptoHashType
 _crc32Signer_GetCryptoHashType(_CRC32Signer *interfaceContext)
 {
-    return PARC_HASH_CRC32C;
+    return PARCCryptoHashType_CRC32C;
 }
 
 static PARCCryptoHasher *
@@ -175,7 +175,7 @@ _crc32Signer_GetCryptoHasher(_CRC32Signer *signer)
 static PARCCryptoHasher *
 _crc32Verifier_GetCryptoHasher(_CRC32Verifier *verifier, PARCKeyId *keyid, PARCCryptoHashType hashType)
 {
-    assertTrue(hashType == PARC_HASH_CRC32C, "Only supports PARC_HASH_CRC32C, got request for %s", parcCryptoHashType_ToString(hashType));
+    assertTrue(hashType == PARCCryptoHashType_CRC32C, "Only supports PARCCryptoHashType_CRC32C, got request for %s", parcCryptoHashType_ToString(hashType));
 
     return verifier->hasher;
 }
@@ -221,7 +221,7 @@ _crc32Signer_Create(void)
     _CRC32Signer *crc32Signer = parcObject_CreateInstance(_CRC32Signer);
     assertNotNull(crc32Signer, "parcObject_CreateInstance returned NULL");
 
-    crc32Signer->hasher = parcCryptoHasher_Create(PARC_HASH_CRC32C);
+    crc32Signer->hasher = parcCryptoHasher_Create(PARCCryptoHashType_CRC32C);
     PARCSigner *signer = parcSigner_Create(crc32Signer, CRC32SignerAsPARCSigner);
     _crc32CSigner_Release(&crc32Signer);
 
@@ -240,7 +240,7 @@ _crc32Verifier_Create(void)
     _CRC32Verifier *crcVerifier = parcObject_CreateInstance(_CRC32Verifier);
     assertNotNull(crcVerifier, "parcObject_CreateInstance returned NULL");
 
-    crcVerifier->hasher = parcCryptoHasher_Create(PARC_HASH_CRC32C);
+    crcVerifier->hasher = parcCryptoHasher_Create(PARCCryptoHashType_CRC32C);
 
     PARCVerifier *verifier = parcVerifier_Create(crcVerifier, CRC32VerifierAsPARCVerifier);
     _crc32Verifier_Release(&crcVerifier);

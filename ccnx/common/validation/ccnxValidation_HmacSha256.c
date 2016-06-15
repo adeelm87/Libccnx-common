@@ -125,7 +125,7 @@ PARCSigner *
 ccnxValidationHmacSha256_CreateSigner(PARCBuffer *secretKey)
 {
     PARCSymmetricKeyStore *keyStore = parcSymmetricKeyStore_Create(secretKey);
-    PARCSymmetricKeySigner *symmetricSigner = parcSymmetricKeySigner_Create(keyStore, PARC_HASH_SHA256);
+    PARCSymmetricKeySigner *symmetricSigner = parcSymmetricKeySigner_Create(keyStore, PARCCryptoHashType_SHA256);
     parcSymmetricKeyStore_Release(&keyStore);
 
     PARCSigner *signer = parcSigner_Create(symmetricSigner, PARCSymmetricKeySignerAsSigner);
