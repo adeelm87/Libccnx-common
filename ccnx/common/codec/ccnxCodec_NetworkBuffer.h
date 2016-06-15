@@ -565,7 +565,7 @@ PARCBuffer *ccnxCodecNetworkBuffer_CreateParcBuffer(CCNxCodecNetworkBuffer *buff
  * @code
  * {
  *     parcSecurity_Init();
- *     PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("test_rsa.p12", "blueberry", PARC_HASH_SHA256));
+ *     PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("test_rsa.p12", "blueberry", PARCCryptoHashType_SHA256));
  *
  *     uint8_t *packet_buffer;
  *     packet_buffer = parcMemory_Allocate(msg_length);
