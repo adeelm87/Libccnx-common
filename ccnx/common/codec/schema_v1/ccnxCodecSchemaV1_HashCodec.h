@@ -100,7 +100,7 @@ ssize_t ccnxCodecSchemaV1HashCodec_Encode(CCNxCodecTlvEncoder *encoder, const PA
  * No additional fields are allowed in the Link.
  *
  * @param [in] decoder The Tlv Decoder pointing to the start of the Name value
- * @param [in] length the length of the Link value
+ * @param [in] length the length of the Hash value
  *
  * @return non-null A parsed name
  * @return null An error, check the decoder's error message
@@ -110,6 +110,6 @@ ssize_t ccnxCodecSchemaV1HashCodec_Encode(CCNxCodecTlvEncoder *encoder, const PA
  * <#example#>
  * @endcode
  */
-PARCCryptoHash *ccnxCodecSchemaV1HashCodec_DecodeValue(CCNxCodecTlvDecoder *decoder, uint16_t length);
+PARCCryptoHash *ccnxCodecSchemaV1HashCodec_DecodeValue(CCNxCodecTlvDecoder *decoder, size_t length);
 
 #endif // __CCNx_Common__ccnxCodecSchemaV1_HashCodec__

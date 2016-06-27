@@ -118,10 +118,10 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue)
     PARCBuffer *payloadBuffer = parcBuffer_Wrap(encoded + 4, sizeof(encoded) - 4, 0, sizeof(encoded) - 4);
 
     CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(tlvBuffer);
-    PARCCryptoHash *hash = ccnxCodecSchemaV1LinkCodec_DecodeValue(decoder, sizeof(encoded));
-    assertNotNull(hash, "got non-null link when it should have been an error (null)");
+    PARCCryptoHash *hash = ccnxCodecSchemaV1HashCodec_DecodeValue(decoder, sizeof(encoded));
+    assertNotNull(hash, "got non-NULL hash when it should have been an error (null)");
 
-    assertTrue(parcCryptoHash_GetDigestType(hash) == PARCCryptoHash_SHA256, "Expected to decode the correct hash type.");
+    assertTrue(parcCryptoHash_GetDigestType(hash) == PARCCryptoHashType_SHA256, "Expected to decode the correct hash type.");
     assertTrue(parcBuffer_Equals(payloadBuffer, parcCryptoHash_GetDigest(hash)), "Expected the digest to match.");
 
     CCNxCodecError *error = ccnxCodecTlvDecoder_GetError(decoder);
@@ -130,6 +130,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue)
     parcCryptoHash_Release(&hash);
     ccnxCodecTlvDecoder_Destroy(&decoder);
     parcBuffer_Release(&tlvBuffer);
+    parcBuffer_Release(&payloadBuffer);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
@@ -146,11 +147,11 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
 
     // Create the hash
     PARCBuffer *payloadBuffer = parcBuffer_Allocate(0x20);
-    PARCCryptoHash *expectedHash = parcCryptoHash_Create(PARCCryptoHash_SHA256, payloadBuffer);
+    PARCCryptoHash *expectedHash = parcCryptoHash_Create(PARCCryptoHashType_SHA256, payloadBuffer);
 
     // Encode it
     CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();
-    ssize_t length = ccnxCodecSchemaV1LinkCodec_Encode(encoder, link);
+    ssize_t length = ccnxCodecSchemaV1HashCodec_Encode(encoder, expectedHash);
     assertFalse(length < 0, "Got error on encode: %s", ccnxCodecError_ToString(ccnxCodecTlvEncoder_GetError(encoder)));
     assertTrue(length == sizeof(encoded), "Wrong length, expected %zd got %zd", sizeof(encoded), length);
 

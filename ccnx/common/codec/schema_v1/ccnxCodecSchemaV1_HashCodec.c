@@ -78,6 +78,7 @@ ccnxCodecSchemaV1HashCodec_Encode(CCNxCodecTlvEncoder *encoder, const PARCCrypto
 
     PARCBuffer *digest = parcCryptoHash_GetDigest(hash);
     PARCCryptoHashType hashType = parcCryptoHash_GetDigestType(hash);
+    size_t digestLength = parcBuffer_Remaining(digest);
 
     switch (hashType) {
         case PARCCryptoHashType_SHA256:
@@ -86,21 +87,28 @@ ccnxCodecSchemaV1HashCodec_Encode(CCNxCodecTlvEncoder *encoder, const PARCCrypto
         case PARCCryptoHashType_SHA512:
             ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_HashType_SHA512, digest);
             break;
+        default:
+            break;
     }
 
-    return length;
+    return digestLength + 4;
 }
 
 PARCCryptoHash *
-ccnxCodecSchemaV1HashCodec_DecodeValue(CCNxCodecTlvDecoder *decoder)
+ccnxCodecSchemaV1HashCodec_DecodeValue(CCNxCodecTlvDecoder *decoder, size_t limit)
 {
-    int errorCode = TLV_ERR_NO_ERROR;
-
     PARCCryptoHash *hash = NULL;
 
     if (ccnxCodecTlvDecoder_EnsureRemaining(decoder, 4)) {
         uint16_t type = ccnxCodecTlvDecoder_GetType(decoder);
         uint16_t length = ccnxCodecTlvDecoder_GetLength(decoder);
+
+        if (length > limit) {
+            CCNxCodecError *error = ccnxCodecError_Create(TLV_MISSING_MANDATORY, __func__, __LINE__, ccnxCodecTlvDecoder_Position(decoder));
+            ccnxCodecTlvDecoder_SetError(decoder, error);
+            ccnxCodecError_Release(&error);
+            return NULL;
+        }
 
         if (ccnxCodecTlvDecoder_EnsureRemaining(decoder, length)) {
             PARCBuffer *value = ccnxCodecTlvDecoder_GetValue(decoder, length);
@@ -112,9 +120,10 @@ ccnxCodecSchemaV1HashCodec_DecodeValue(CCNxCodecTlvDecoder *decoder)
                     hash = parcCryptoHash_Create(PARCCryptoHashType_SHA512, value);
                     break;
                 case CCNxCodecSchemaV1Types_HashType_App:
-                    hash = parcCryptoHash_Create(PARC_HASH_NULL, value);
+                    hash = parcCryptoHash_Create(PARCCryptoHashType_NULL, value);
                     break;
             }
+            parcBuffer_Release(&value);
         }
     }
 
