@@ -82,11 +82,13 @@ LONGBOW_TEST_RUNNER_TEARDOWN(ccnxTlvCodec_Hash)
 LONGBOW_TEST_FIXTURE(Global)
 {
     LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue);
-    // LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidHash);
-    // LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidHash);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_SHA256);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_SHA512);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_App);
 
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode);
-    // LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode_InvalidLength);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode_InvalidLength);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
@@ -133,6 +135,86 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue)
     parcBuffer_Release(&payloadBuffer);
 }
 
+LONGBOW_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidHash)
+{
+    // -- 32-byte hash
+    uint8_t encoded[] = {
+        0x00, 0xFF, 0x00, 0x20,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    };
+
+    PARCBuffer *tlvBuffer = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
+
+    CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(tlvBuffer);
+    PARCCryptoHash *hash = ccnxCodecSchemaV1HashCodec_DecodeValue(decoder, sizeof(encoded));
+    assertNull(hash, "Should not have decoded an incorrect hash digest");
+
+    ccnxCodecTlvDecoder_Destroy(&decoder);
+    parcBuffer_Release(&tlvBuffer);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_SHA256)
+{
+    // -- 32-byte hash
+    uint8_t encoded[] = {
+        0x00, CCNxCodecSchemaV1Types_HashType_SHA256, 0x00, 0x18,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    };
+
+    PARCBuffer *tlvBuffer = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
+
+    CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(tlvBuffer);
+    PARCCryptoHash *hash = ccnxCodecSchemaV1HashCodec_DecodeValue(decoder, sizeof(encoded));
+    assertNull(hash, "Should not have decoded a SHA256 hash digest with an incorrect length");
+
+    ccnxCodecTlvDecoder_Destroy(&decoder);
+    parcBuffer_Release(&tlvBuffer);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_SHA512)
+{
+    // -- 32-byte hash
+    uint8_t encoded[] = {
+        0x00, CCNxCodecSchemaV1Types_HashType_SHA512, 0x00, 0x18,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    };
+
+    PARCBuffer *tlvBuffer = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
+
+    CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(tlvBuffer);
+    PARCCryptoHash *hash = ccnxCodecSchemaV1HashCodec_DecodeValue(decoder, sizeof(encoded));
+    assertNull(hash, "Should not have decoded a SHA512 hash digest with an incorrect length");
+
+    ccnxCodecTlvDecoder_Destroy(&decoder);
+    parcBuffer_Release(&tlvBuffer);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_App)
+{
+    // -- 32-byte hash
+    uint8_t encoded[] = {
+        0x00, CCNxCodecSchemaV1Types_HashType_App, 0x00, 0x08,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+
+    PARCBuffer *tlvBuffer = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
+
+    CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(tlvBuffer);
+    PARCCryptoHash *hash = ccnxCodecSchemaV1HashCodec_DecodeValue(decoder, sizeof(encoded));
+    assertNotNull(hash, "Should have decoded an application hash digest with an arbitrary length");
+
+    parcCryptoHash_Release(&hash);
+    ccnxCodecTlvDecoder_Destroy(&decoder);
+    parcBuffer_Release(&tlvBuffer);
+}
+
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
 {
     uint8_t encoded[] = {
@@ -173,6 +255,11 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
     parcBuffer_Release(&payloadBuffer);
 
     ccnxCodecTlvEncoder_Destroy(&encoder);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode_InvalidLength)
+{
+    
 }
 
 int

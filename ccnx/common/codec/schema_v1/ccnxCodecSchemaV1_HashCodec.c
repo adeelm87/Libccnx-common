@@ -71,37 +71,92 @@
 
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_HashCodec.h>
 
+/**
+ * These are the accepted sizes for the pre-defined hash types.
+ * Hash TLVs with lengths that do not match one of these values will be deemed
+ * invalid and not parse correctly.
+ */
+static const size_t _PARCCryptoHashType_SHA256_Sizes[] = { 32 };
+static const size_t _PARCCryptoHashType_SHA512_Sizes[] = { 32, 64 };
+
+static bool
+_ccnxCodecSchemaV1HashCodec_ValidHashSize(size_t size, size_t numSizes, size_t sizes[numSizes])
+{
+    for (size_t i = 0; i < numSizes; i++) {
+        if (sizes[i] == size) {
+            return true;
+        }
+    }
+    return false;
+}
+
 ssize_t
 ccnxCodecSchemaV1HashCodec_Encode(CCNxCodecTlvEncoder *encoder, const PARCCryptoHash *hash)
 {
-    ssize_t length = 0;
-
     PARCBuffer *digest = parcCryptoHash_GetDigest(hash);
     PARCCryptoHashType hashType = parcCryptoHash_GetDigestType(hash);
     size_t digestLength = parcBuffer_Remaining(digest);
 
+    uint16_t tlvHashType = CCNxCodecSchemaV1Types_HashType_App;
+    bool validHash = true;
     switch (hashType) {
         case PARCCryptoHashType_SHA256:
-            ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_HashType_SHA256, digest);
+            tlvHashType = CCNxCodecSchemaV1Types_HashType_SHA256;
+            validHash = _ccnxCodecSchemaV1HashCodec_ValidHashSize(digestLength,
+                sizeof(_PARCCryptoHashType_SHA256_Sizes) / sizeof(size_t), (size_t *) _PARCCryptoHashType_SHA256_Sizes);
             break;
         case PARCCryptoHashType_SHA512:
-            ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_HashType_SHA512, digest);
+            tlvHashType = CCNxCodecSchemaV1Types_HashType_SHA512;
+            validHash = _ccnxCodecSchemaV1HashCodec_ValidHashSize(digestLength,
+                sizeof(_PARCCryptoHashType_SHA512_Sizes) / sizeof(size_t), (size_t *) _PARCCryptoHashType_SHA512_Sizes);
             break;
         default:
             break;
     }
 
-    return digestLength + 4;
+    if (validHash) {
+        ccnxCodecTlvEncoder_AppendBuffer(encoder, tlvHashType, digest);
+        return digestLength + 4;
+    } else {
+        CCNxCodecError *error = ccnxCodecError_Create(TLV_MISSING_MANDATORY, __func__, __LINE__, ccnxCodecTlvEncoder_Position(encoder));
+        ccnxCodecTlvEncoder_SetError(encoder, error);
+        ccnxCodecError_Release(&error);
+
+        return -1;
+    }
+}
+
+static bool
+_ccnxCodecSchemaV1HashCodec_ValidHash(uint16_t hashType, uint16_t hashSize)
+{
+    bool validHash = true;
+
+    switch (hashType) {
+        case CCNxCodecSchemaV1Types_HashType_SHA256:
+            validHash = _ccnxCodecSchemaV1HashCodec_ValidHashSize(hashSize,
+                sizeof(_PARCCryptoHashType_SHA256_Sizes) / sizeof(size_t), (size_t *) _PARCCryptoHashType_SHA256_Sizes);
+            break;
+        case CCNxCodecSchemaV1Types_HashType_SHA512:
+            validHash = _ccnxCodecSchemaV1HashCodec_ValidHashSize(hashSize,
+                sizeof(_PARCCryptoHashType_SHA512_Sizes) / sizeof(size_t), (size_t *) _PARCCryptoHashType_SHA512_Sizes);
+            break;
+        default:
+            break;
+    }
+
+    return validHash;
 }
 
 PARCCryptoHash *
 ccnxCodecSchemaV1HashCodec_DecodeValue(CCNxCodecTlvDecoder *decoder, size_t limit)
 {
     PARCCryptoHash *hash = NULL;
+    uint16_t hashType = 0;
+    uint16_t length = 0;
 
     if (ccnxCodecTlvDecoder_EnsureRemaining(decoder, 4)) {
-        uint16_t type = ccnxCodecTlvDecoder_GetType(decoder);
-        uint16_t length = ccnxCodecTlvDecoder_GetLength(decoder);
+        hashType = ccnxCodecTlvDecoder_GetType(decoder);
+        length = ccnxCodecTlvDecoder_GetLength(decoder);
 
         if (length > limit) {
             CCNxCodecError *error = ccnxCodecError_Create(TLV_MISSING_MANDATORY, __func__, __LINE__, ccnxCodecTlvDecoder_Position(decoder));
@@ -112,7 +167,7 @@ ccnxCodecSchemaV1HashCodec_DecodeValue(CCNxCodecTlvDecoder *decoder, size_t limi
 
         if (ccnxCodecTlvDecoder_EnsureRemaining(decoder, length)) {
             PARCBuffer *value = ccnxCodecTlvDecoder_GetValue(decoder, length);
-            switch (type) {
+            switch (hashType) {
                 case CCNxCodecSchemaV1Types_HashType_SHA256:
                     hash = parcCryptoHash_Create(PARCCryptoHashType_SHA256, value);
                     break;
@@ -125,6 +180,11 @@ ccnxCodecSchemaV1HashCodec_DecodeValue(CCNxCodecTlvDecoder *decoder, size_t limi
             }
             parcBuffer_Release(&value);
         }
+    }
+
+    // Verify the hash size, if one was parsed correctly.
+    if (hash != NULL && !_ccnxCodecSchemaV1HashCodec_ValidHash(hashType, length)) {
+        parcCryptoHash_Release(&hash);
     }
 
     return hash;
