@@ -255,7 +255,7 @@ LONGBOW_TEST_CASE(Global, ccnxInterestFacadeV1_GetContentObjectHash)
 {
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
     PARCBuffer *test = _ccnxInterestFacadeV1_GetContentObjectHashRestriction(data->interest);
-    assertTrue(parcBuffer_Equals(test, data->contentObjectHash), "KeyIDs do not match")
+    assertTrue(parcBuffer_Equals(test, data->contentObjectHash), "ContentObjectHashes do not match")
     {
         printf("\ngot     : \n"); parcBuffer_Display(test, 3);
         printf("\nexpected: \n"); parcBuffer_Display(data->contentObjectHash, 3);

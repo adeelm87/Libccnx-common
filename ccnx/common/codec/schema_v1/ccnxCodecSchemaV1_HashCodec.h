@@ -53,7 +53,7 @@
  * contact PARC at cipo@parc.com for more information or visit http://www.ccnx.org
  */
 /**
- * @file ccnxCodecSchemaV1_LinkCodec.h
+ * @file ccnxCodecSchemaV1_HashCodec.h
  * @brief A cryptographic hash digest encoded
  *
  * @author Christopher A. Wood, Palo Alto Research Center (Xerox PARC)
@@ -69,15 +69,15 @@
 #include <parc/security/parc_CryptoHash.h>
 
 /**
- * Encodes the link, but without a "TL" container
+ * Encodes the hash, but without a "TL" container
  *
  * Will append the Link in it's well-known TLV format, but without any
  * "TL" container.
  *
  * If the link does not have a name, will return -1 with the error TLV_MISSING_MANDATORY.
  *
- * @param [in] encoder The link will be appended to the encoder
- * @param [in] link The link to append
+ * @param [in] encoder The hash will be appended to the encoder
+ * @param [in] hash The hash to append
  *
  * @retval non-negative The number of bytes appended to the encoder
  * @retval negative An error, look at the CCNxCodecError of the encoder
@@ -87,7 +87,7 @@
  * <#example#>
  * @endcode
  */
-ssize_t ccnxCodecSchemaV1HashCodec_Encode(CCNxCodecTlvEncoder *encoder, const PARCCryptoHash *link);
+ssize_t ccnxCodecSchemaV1HashCodec_Encode(CCNxCodecTlvEncoder *encoder, const PARCCryptoHash *hash);
 
 /**
  * The decoder points to the first byte of the "value" of something that is a Link

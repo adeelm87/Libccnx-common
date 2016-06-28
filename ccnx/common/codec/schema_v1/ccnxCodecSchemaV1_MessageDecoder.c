@@ -136,11 +136,11 @@ _decodeType(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictionary, u
             break;
 
         case CCNxCodecSchemaV1Types_CCNxMessage_KeyIdRestriction:
-            success = ccnxCodecTlvUtilities_PutAsBuffer(decoder, packetDictionary, type, length, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
+            success = ccnxCodecTlvUtilities_PutAsHash(decoder, packetDictionary, type, length, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
             break;
 
         case CCNxCodecSchemaV1Types_CCNxMessage_ContentObjectHashRestriction:
-            success = ccnxCodecTlvUtilities_PutAsBuffer(decoder, packetDictionary, type, length, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
+            success = ccnxCodecTlvUtilities_PutAsHash(decoder, packetDictionary, type, length, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
             break;
 
         case CCNxCodecSchemaV1Types_CCNxMessage_PayloadType:
@@ -178,4 +178,3 @@ ccnxCodecSchemaV1MessageDecoder_Decode(CCNxCodecTlvDecoder *decoder, CCNxTlvDict
 {
     return ccnxCodecTlvUtilities_DecodeContainer(decoder, packetDictionary, _decodeType);
 }
-

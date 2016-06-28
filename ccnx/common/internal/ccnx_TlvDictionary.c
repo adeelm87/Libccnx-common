@@ -1,61 +1,33 @@
 /*
- * Copyright (c) 2013-2015, Xerox Corporation (Xerox) and Palo Alto Research Center, Inc (PARC)
+ * Copyright (c) 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Patent rights are not granted under this agreement. Patent rights are
+ *       available under FRAND terms.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL XEROX OR PARC BE LIABLE FOR ANY
+ * DISCLAIMED. IN NO EVENT SHALL XEROX or PARC BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * ################################################################################
- * #
- * # PATENT NOTICE
- * #
- * # This software is distributed under the BSD 2-clause License (see LICENSE
- * # file).  This BSD License does not make any patent claims and as such, does
- * # not act as a patent grant.  The purpose of this section is for each contributor
- * # to define their intentions with respect to intellectual property.
- * #
- * # Each contributor to this source code is encouraged to state their patent
- * # claims and licensing mechanisms for any contributions made. At the end of
- * # this section contributors may each make their own statements.  Contributor's
- * # claims and grants only apply to the pieces (source code, programs, text,
- * # media, etc) that they have contributed directly to this software.
- * #
- * # There is no guarantee that this section is complete, up to date or accurate. It
- * # is up to the contributors to maintain their portion of this section and up to
- * # the user of the software to verify any claims herein.
- * #
- * # Do not remove this header notification.  The contents of this section must be
- * # present in all distributions of the software.  You may only modify your own
- * # intellectual property statements.  Please provide contact information.
- *
- * - Palo Alto Research Center, Inc
- * This software distribution does not grant any rights to patents owned by Palo
- * Alto Research Center, Inc (PARC). Rights to these patents are available via
- * various mechanisms. As of January 2016 PARC has committed to FRAND licensing any
- * intellectual property used by its contributions to this software. You may
- * contact PARC at cipo@parc.com for more information or visit http://www.ccnx.org
  */
 /**
  *
  * @author Marc Mosko, Palo Alto Research Center (Xerox PARC)
- * @copyright (c) 2013-2015, Xerox Corporation (Xerox) and Palo Alto Research Center, Inc (PARC).  All rights reserved.
+ * @copyright 2013-2015, Xerox Corporation (Xerox)and Palo Alto Research Center (PARC).  All rights reserved.
  */
 
 #include <config.h>
@@ -103,6 +75,7 @@ struct ccnx_tlv_list_entry {
 #define ENTRY_INTEGER ((int) 3)
 #define ENTRY_IOVEC   ((int) 4)
 #define ENTRY_JSON    ((int) 5)
+#define ENTRY_OBJECT  ((int) 6)
 
 static struct dictionary_type_string {
     _CCNxTlvDictionaryType type;
@@ -126,7 +99,8 @@ static struct dictionary_entry_type_string {
     { .type = ENTRY_NAME,    .string = "Name"    },
     { .type = ENTRY_INTEGER, .string = "Integer" },
     { .type = ENTRY_IOVEC,   .string = "IoVec"   },
-    { .type = ENTRY_JSON,    .string = "Json"    },
+    { .type = ENTRY_JSON,    .string = "JSON"    },
+    { .type = ENTRY_OBJECT,  .string = "Object"  },
     { .type = UINT32_MAX,    .string = NULL      },
 };
 
@@ -163,6 +137,7 @@ typedef struct ccnx_tlv_dictionary_entry {
         CCNxName   *name;
         CCNxCodecNetworkBufferIoVec *vec;
         PARCJSON   *json;
+        PARCObject *object;
     } _entry;
 } _CCNxTlvDictionaryEntry;
 
@@ -250,6 +225,9 @@ _ccnxTlvDictionary_FinalRelease(CCNxTlvDictionary **dictionaryPtr)
             case ENTRY_JSON:
                 parcJSON_Release(&dictionary->directArray[i]._entry.json);
                 break;
+            case ENTRY_OBJECT:
+                parcObject_Release(&dictionary->directArray[i]._entry.object);
+                break;
             default:
                 // other types are direct storage
                 break;
@@ -302,9 +280,6 @@ _ccnxTlvDictionary_GetTimeOfDay(struct timeval *outputTime)
 CCNxTlvDictionary *
 ccnxTlvDictionary_Create(size_t bufferCount, size_t listCount)
 {
-//    size_t allocation = sizeof(CCNxTlvDictionary) + sizeof(_CCNxTlvDictionaryEntry) * bufferCount;
-//    CCNxTlvDictionary *dictionary = (CCNxTlvDictionary *)parcObject_CreateAndClearInstanceImpl(allocation, &parcObject_DescriptorName(CCNxTlvDictionary));
-   
     CCNxTlvDictionary *dictionary = (CCNxTlvDictionary *) parcObject_CreateAndClearInstance(CCNxTlvDictionary);
 
     if (dictionary != NULL) {
@@ -344,7 +319,7 @@ ccnxTlvDictionary_ShallowCopy(const CCNxTlvDictionary *source)
         newDictionary->info = source->info;
         newDictionary->infoFreeFunction = source->infoFreeFunction;
 
-        //Update listHeads
+        // Update listHeads
         for (uint32_t key = 0; key < source->listSize; ++key) {
             size_t listSize = ccnxTlvDictionary_ListSize(source, key);
             for (size_t i = 0; i < listSize; ++i) {
@@ -357,7 +332,7 @@ ccnxTlvDictionary_ShallowCopy(const CCNxTlvDictionary *source)
             }
         }
 
-        //Update directArray
+        // Update directArray
         for (uint32_t key = 0; key < source->fastArraySize; ++key) {
             switch (source->directArray[key].entryType) {
                 case ENTRY_BUFFER:
@@ -374,6 +349,9 @@ ccnxTlvDictionary_ShallowCopy(const CCNxTlvDictionary *source)
                     break;
                 case ENTRY_INTEGER:
                     ccnxTlvDictionary_PutInteger(newDictionary, key, ccnxTlvDictionary_GetInteger(source, key));
+                    break;
+                case ENTRY_OBJECT:
+                    ccnxTlvDictionary_PutObject(newDictionary, key, ccnxTlvDictionary_GetObject(source, key));
                     break;
                 default:
                     break;
@@ -394,6 +372,21 @@ ccnxTlvDictionary_PutBuffer(CCNxTlvDictionary *dictionary, uint32_t key, const P
     if (dictionary->directArray[key].entryType == ENTRY_UNSET) {
         dictionary->directArray[key].entryType = ENTRY_BUFFER;
         dictionary->directArray[key]._entry.buffer = parcBuffer_Acquire(buffer);
+        return true;
+    }
+    return false;
+}
+
+bool
+ccnxTlvDictionary_PutObject(CCNxTlvDictionary *dictionary, uint32_t key, const PARCObject *object)
+{
+    assertNotNull(dictionary, "Parameter dictionary must be non-null");
+    assertNotNull(object, "Parameter object must be non-null");
+    assertTrue(key < dictionary->fastArraySize, "Parameter key %zu must be less than %zu", key, dictionary->fastArraySize);
+
+    if (dictionary->directArray[key].entryType == ENTRY_UNSET) {
+        dictionary->directArray[key].entryType = ENTRY_OBJECT;
+        dictionary->directArray[key]._entry.object = parcObject_Acquire(object);
         return true;
     }
     return false;
@@ -523,6 +516,14 @@ ccnxTlvDictionary_IsValueBuffer(const CCNxTlvDictionary *dictionary, uint32_t ke
 }
 
 bool
+ccnxTlvDictionary_IsValueObject(const CCNxTlvDictionary *dictionary, uint32_t key)
+{
+    assertNotNull(dictionary, "Parameter dictionary must be non-null");
+    assertTrue(key < dictionary->fastArraySize, "Parameter key must be less than %zu", dictionary->fastArraySize);
+    return (dictionary->directArray[key].entryType == ENTRY_OBJECT);
+}
+
+bool
 ccnxTlvDictionary_IsValueInteger(const CCNxTlvDictionary *dictionary, uint32_t key)
 {
     assertNotNull(dictionary, "Parameter dictionary must be non-null");
@@ -608,6 +609,18 @@ ccnxTlvDictionary_GetJson(const CCNxTlvDictionary *dictionary, uint32_t key)
     return NULL;
 }
 
+PARCObject *
+ccnxTlvDictionary_GetObject(const CCNxTlvDictionary *dictionary, uint32_t key)
+{
+    assertNotNull(dictionary, "Parameter dictionary must be non-null");
+    assertTrue(key < dictionary->fastArraySize, "Parameter key must be less than %zu", dictionary->fastArraySize);
+
+    if (dictionary->directArray[key].entryType == ENTRY_OBJECT) {
+        return dictionary->directArray[key]._entry.object;
+    }
+
+    return NULL;
+}
 
 bool
 ccnxTlvDictionary_ListGetByPosition(const CCNxTlvDictionary *dictionary, uint32_t listKey, size_t listPosition, PARCBuffer **bufferPtr, uint32_t *keyPtr)
@@ -888,6 +901,10 @@ _ccnxTlvDictionaryEntry_Equals(const _CCNxTlvDictionaryEntry *a, const _CCNxTlvD
 
             case ENTRY_BUFFER:
                 equals = parcBuffer_Equals(a->_entry.buffer, b->_entry.buffer);
+                break;
+
+            case ENTRY_OBJECT:
+                equals = parcObject_Equals(a->_entry.object, b->_entry.object);
                 break;
 
             case ENTRY_INTEGER:

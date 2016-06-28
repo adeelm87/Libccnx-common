@@ -192,9 +192,9 @@ static ssize_t
 _encodeKeyIdRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
 {
     ssize_t length = 0;
-    PARCBuffer *buffer = ccnxTlvDictionary_GetBuffer(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
-    if (buffer != NULL) {
-        length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_KeyIdRestriction, buffer);
+    PARCCryptoHash *hash = ccnxTlvDictionary_GetObject(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
+    if (hash != NULL) {
+        length = ccnxCodecSchemaV1HashCodec_Encode(encoder, hash);
     }
     return length;
 }
@@ -203,9 +203,9 @@ static ssize_t
 _encodeContentObjectHashRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
 {
     ssize_t length = 0;
-    PARCBuffer *buffer = ccnxTlvDictionary_GetBuffer(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
-    if (buffer != NULL) {
-        length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_ContentObjectHashRestriction, buffer);
+    PARCCryptoHash *hash = ccnxTlvDictionary_GetObject(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
+    if (hash != NULL) {
+        length = ccnxCodecSchemaV1HashCodec_Encode(encoder, hash);
     }
     return length;
 }

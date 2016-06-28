@@ -241,6 +241,52 @@ bool
 ccnxCodecTlvUtilities_PutAsBuffer(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictionary, uint16_t type, uint16_t length, int dictionaryKey);
 
 /**
+ * Decodes a `PARCCryptoHash` value of 'length' bytes from the decoder and puts it in the dictionary.
+ *
+ * It is an error if there are not 'length' bytes remaining in the decoder.
+ *
+ * @param [in] decoder The input to read
+ * @param [in] packetDictionary The output dictionary to save the buffer in
+ * @param [in] key The TLV key of the value being read (NOT USED)
+ * @param [in] length The byte length to read
+ * @param [in] dictionaryKey The key to use in the packetDictionary
+ *
+ * @return true 'length' bytes were read and saved in the packetDictionary
+ * @return false An error
+ *
+ * Example:
+ * @code
+ *    {
+ *       // A list of 2 TLV containers (types 0x000C and 0x000D)
+ *       uint8_t hashContainer[] = {
+ *          0x00, 0x01, 0x00, 0x20,     // SHA256 hash, length = 0x20
+ *          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ *          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ *          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ *          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ *       };
+ *
+ *       PARCBuffer *buffer = parcBuffer_Wrap(hashContainer, sizeof(hashContainer), 0, sizeof(hashContainer) );
+ *
+ *       // now decode that snippit
+ *       CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(buffer);
+ *       CCNxTlvDictionary *dictionary = ccnxTlvDictionary_Create(10,10);
+ *
+ *       uint16_t tlvtype = ccnxCodecTlvDecoder_GetType(decoder);
+ *       uint16_t tlvlength = ccnxCodecTlvDecoder_GetLength(decoder);
+ *
+ *       bool success = ccnxCodecTlvUtilities_PutAsHash(decoder, dictionary, tlvtype, tlvlength, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
+ *
+ *       ccnxTlvDictionary_Release(&dictionary);
+ *       ccnxCodecTlvDecoder_Destroy(&decoder);
+ *       parcBuffer_Release(&buffer);
+ *    }
+ * @endcode
+ */
+bool
+ccnxCodecTlvUtilities_PutAsHash(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictionary, uint16_t type, uint16_t length, int dictionaryKey);
+
+/**
  * Decodes the value as a VarInt and saves it as an Integer in the Dictionary
  *
  * <#Paragraphs Of Explanation#>
