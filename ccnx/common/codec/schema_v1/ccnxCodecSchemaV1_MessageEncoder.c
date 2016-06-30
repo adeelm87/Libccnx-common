@@ -194,7 +194,11 @@ _encodeKeyIdRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetD
     ssize_t length = 0;
     PARCCryptoHash *hash = ccnxTlvDictionary_GetObject(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
     if (hash != NULL) {
+        size_t startPosition = ccnxCodecTlvEncoder_Position(encoder);
+        ccnxCodecTlvEncoder_AppendContainer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_KeyIdRestriction, 0);
         length = ccnxCodecSchemaV1HashCodec_Encode(encoder, hash);
+        ccnxCodecTlvEncoder_SetContainerLength(encoder, startPosition, length);
+        length += 4;
     }
     return length;
 }
@@ -205,7 +209,11 @@ _encodeContentObjectHashRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDiction
     ssize_t length = 0;
     PARCCryptoHash *hash = ccnxTlvDictionary_GetObject(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
     if (hash != NULL) {
+        size_t startPosition = ccnxCodecTlvEncoder_Position(encoder);
+        ccnxCodecTlvEncoder_AppendContainer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_ContentObjectHashRestriction, 0);
         length = ccnxCodecSchemaV1HashCodec_Encode(encoder, hash);
+        ccnxCodecTlvEncoder_SetContainerLength(encoder, startPosition, length);
+        length += 4;
     }
     return length;
 }

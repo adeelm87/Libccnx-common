@@ -129,8 +129,9 @@ LONGBOW_TEST_CASE(ContentObject, Interest)
     uint32_t lifetime = CCNxInterestDefault_LifetimeMilliseconds;
     uint32_t hoplimit = CCNxInterestDefault_HopLimit;
 
-    PARCBuffer *keyid = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), keyidExtent.offset, keyidExtent.offset + keyidExtent.length);
-    PARCBuffer *hash = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), hashExtent.offset, hashExtent.offset + hashExtent.length);
+    printf("%d %d\n", keyidExtent.offset + 4, keyidExtent.offset + keyidExtent.length - 4);
+    PARCBuffer *keyid = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), keyidExtent.offset + 4, keyidExtent.offset + keyidExtent.length);
+    PARCBuffer *hash = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), hashExtent.offset + 4, hashExtent.offset + hashExtent.length);
     PARCBuffer *payload = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), payloadExtent.offset, payloadExtent.offset + payloadExtent.length);
 
     CCNxTlvDictionary *interest =
@@ -170,8 +171,8 @@ LONGBOW_TEST_CASE(InterestReturn, InterestReturn)
     uint32_t lifetime = CCNxInterestDefault_LifetimeMilliseconds;
     uint32_t hoplimit = CCNxInterestDefault_HopLimit;
 
-    PARCBuffer *keyid = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), keyidExtent.offset, keyidExtent.offset + keyidExtent.length);
-    PARCBuffer *hash = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), hashExtent.offset, hashExtent.offset + hashExtent.length);
+    PARCBuffer *keyid = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), keyidExtent.offset + 4, keyidExtent.offset + keyidExtent.length);
+    PARCBuffer *hash = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), hashExtent.offset + 4, hashExtent.offset + hashExtent.length);
     PARCBuffer *payload = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), payloadExtent.offset, payloadExtent.offset + payloadExtent.length);
 
     CCNxTlvDictionary *interest =
@@ -553,18 +554,22 @@ LONGBOW_TEST_CASE(Local, _encodeEndChunkNumber)
 
 LONGBOW_TEST_CASE(Local, _encodeKeyIdRestriction)
 {
-    uint8_t keyid[] = { 0xf1, 0xf2, 0xf3 };
     uint8_t encoded[] = {
-        0x00, 0x02, 0x00, 3,
-        0xf1, 0xf2, 0xf3
+        0x00, 0x02, 0x00, 0x24,
+        0x00, 0x01, 0x00, 0x20,
+        0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0,
+        0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0,
+        0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0,
+        0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0,
     };
 
-    PARCBuffer *buffer = parcBuffer_Wrap(keyid, sizeof(keyid), 0, sizeof(keyid));
+    PARCBuffer *buffer = parcBuffer_Wrap(encoded, sizeof(encoded), 8, sizeof(encoded));
+    PARCCryptoHash *hash = parcCryptoHash_Create(PARCCryptoHashType_SHA256, buffer);
 
     CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();
     CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterest();
 
-    ccnxTlvDictionary_PutBuffer(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION, buffer);
+    ccnxTlvDictionary_PutObject(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION, hash);
 
     _encodeKeyIdRestriction(encoder, dictionary);
 
@@ -584,22 +589,27 @@ LONGBOW_TEST_CASE(Local, _encodeKeyIdRestriction)
     parcBuffer_Release(&buffer);
     ccnxCodecTlvEncoder_Destroy(&encoder);
     ccnxTlvDictionary_Release(&dictionary);
+    parcCryptoHash_Release(&hash);
 }
 
 LONGBOW_TEST_CASE(Local, _encodeContentObjectHashRestriction)
 {
-    uint8_t keyid[] = { 0xf1, 0xf2, 0xf3 };
     uint8_t encoded[] = {
-        0x00, 0x03, 0x00, 3,
-        0xf1, 0xf2, 0xf3
+        0x00, 0x03, 0x00, 0x24,
+        0x00, 0x01, 0x00, 0x20,
+        0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0,
+        0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0,
+        0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0,
+        0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0,
     };
 
-    PARCBuffer *buffer = parcBuffer_Wrap(keyid, sizeof(keyid), 0, sizeof(keyid));
+    PARCBuffer *buffer = parcBuffer_Wrap(encoded, sizeof(encoded), 8, sizeof(encoded));
+    PARCCryptoHash *hash = parcCryptoHash_Create(PARCCryptoHashType_SHA256, buffer);
 
     CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();
     CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateInterest();
 
-    ccnxTlvDictionary_PutBuffer(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION, buffer);
+    ccnxTlvDictionary_PutObject(dictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION, hash);
 
     _encodeContentObjectHashRestriction(encoder, dictionary);
 
@@ -619,6 +629,7 @@ LONGBOW_TEST_CASE(Local, _encodeContentObjectHashRestriction)
     parcBuffer_Release(&buffer);
     ccnxCodecTlvEncoder_Destroy(&encoder);
     ccnxTlvDictionary_Release(&dictionary);
+    parcCryptoHash_Release(&hash);
 }
 
 

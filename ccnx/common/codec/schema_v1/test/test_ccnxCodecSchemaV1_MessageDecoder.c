@@ -125,17 +125,17 @@ _getEndChunkNumber(CCNxTlvDictionary *contentObjectDictionary)
                                                   CCNxCodecSchemaV1TlvDictionary_MessageFastArray_ENDSEGMENT);
 }
 
-static PARCBuffer *
-_getKeyIdRestriction(const CCNxTlvDictionary *contentObjectDictionary)
+static PARCCryptoHash *
+_getKeyIdRestriction(const CCNxTlvDictionary *messageDictionary)
 {
-    return ccnxTlvDictionary_GetBuffer(contentObjectDictionary,
+    return (PARCCryptoHash *) ccnxTlvDictionary_GetObject(messageDictionary,
                                        CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
 }
 
-static PARCBuffer *
-_getHashRestriction(const CCNxTlvDictionary *contentObjectDictionary)
+static PARCCryptoHash *
+_getHashRestriction(const CCNxTlvDictionary *messageDictionary)
 {
-    return ccnxTlvDictionary_GetBuffer(contentObjectDictionary,
+    return (PARCCryptoHash *) ccnxTlvDictionary_GetObject(messageDictionary,
                                        CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
 }
 
@@ -284,14 +284,14 @@ LONGBOW_TEST_CASE(Interest, KeyIdRestriction)
 {
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
 
-    testBufferGetter(data, V1_MANIFEST_INT_KEYID, ccnxCodecSchemaV1MessageDecoder_Decode, _getKeyIdRestriction);
+    testHashGetter(data, V1_MANIFEST_INT_KEYID, ccnxCodecSchemaV1MessageDecoder_Decode, _getKeyIdRestriction);
 }
 
 LONGBOW_TEST_CASE(Interest, HashRestriction)
 {
     TestData *data = longBowTestCase_GetClipBoardData(testCase);
 
-    testBufferGetter(data, V1_MANIFEST_INT_OBJHASH, ccnxCodecSchemaV1MessageDecoder_Decode, _getHashRestriction);
+    testHashGetter(data, V1_MANIFEST_INT_OBJHASH, ccnxCodecSchemaV1MessageDecoder_Decode, _getHashRestriction);
 }
 
 

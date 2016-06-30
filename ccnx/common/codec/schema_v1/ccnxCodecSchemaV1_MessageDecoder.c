@@ -166,6 +166,7 @@ _decodeType(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictionary, u
         ccnxCodecTlvDecoder_SetError(decoder, error);
         ccnxCodecError_Release(&error);
     }
+    
     return success;
 }
 
