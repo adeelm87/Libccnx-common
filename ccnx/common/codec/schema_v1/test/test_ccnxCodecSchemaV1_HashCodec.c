@@ -56,6 +56,9 @@
 // Include the file(s) containing the functions to be tested.
 // This permits internal static functions to be visible to this Test Framework.
 #include "../ccnxCodecSchemaV1_HashCodec.c"
+
+#include <stdio.h>
+
 #include <parc/algol/parc_SafeMemory.h>
 #include <LongBow/unit-test.h>
 
@@ -259,7 +262,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
 
 LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode_InvalidLength)
 {
-    
+
 }
 
 int

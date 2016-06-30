@@ -126,14 +126,14 @@ _getEndChunkNumber(CCNxTlvDictionary *contentObjectDictionary)
 }
 
 static PARCCryptoHash *
-_getKeyIdRestriction(const CCNxTlvDictionary *messageDictionary)
+_getKeyIdRestriction(CCNxTlvDictionary *messageDictionary)
 {
     return (PARCCryptoHash *) ccnxTlvDictionary_GetObject(messageDictionary,
                                        CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
 }
 
 static PARCCryptoHash *
-_getHashRestriction(const CCNxTlvDictionary *messageDictionary)
+_getHashRestriction(CCNxTlvDictionary *messageDictionary)
 {
     return (PARCCryptoHash *) ccnxTlvDictionary_GetObject(messageDictionary,
                                        CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);

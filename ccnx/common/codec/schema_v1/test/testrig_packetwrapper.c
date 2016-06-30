@@ -435,6 +435,7 @@ testBufferGetter(TestData *data, int truthTableKey, bool containerDecoder(CCNxCo
     parcBuffer_Release(&truth);
 }
 
+void
 testHashGetter(TestData *data, int truthTableKey, bool containerDecoder(CCNxCodecTlvDecoder *, CCNxTlvDictionary *),
                PARCCryptoHash *(*getter)(CCNxTlvDictionary *))
 {
