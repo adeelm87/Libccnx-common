@@ -90,8 +90,8 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_SHA512);
     LONGBOW_RUN_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_App);
 
-    LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode_InvalidLength);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1HashCodec_Encode);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxCodecSchemaV1HashCodec_Encode_InvalidLength);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)
@@ -218,7 +218,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecHash_DecodeValue_InvalidLength_App)
     parcBuffer_Release(&tlvBuffer);
 }
 
-LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
+LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1HashCodec_Encode)
 {
     uint8_t encoded[] = {
         0x00, CCNxCodecSchemaV1Types_HashType_SHA256, 0x00, 0x20,
@@ -260,7 +260,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
     ccnxCodecTlvEncoder_Destroy(&encoder);
 }
 
-LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode_InvalidLength)
+LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1HashCodec_Encode_InvalidLength)
 {
 
 }
