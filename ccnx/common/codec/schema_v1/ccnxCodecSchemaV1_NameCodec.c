@@ -81,9 +81,6 @@ ccnxCodecSchemaV1NameCodec_Encode(CCNxCodecTlvEncoder *encoder, uint16_t type, c
     size_t innerLength = 0;
     for (int i = 0; i < segmentCount; i++) {
         CCNxNameSegment *segment = ccnxName_GetSegment(name, i);
-        char *seg = ccnxNameSegment_ToString(segment);
-        printf("Segment: %s\n", seg);
-        parcMemory_Deallocate(&seg);
         innerLength += ccnxCodecSchemaV1NameSegmentCodec_Encode(encoder, segment);
     }
 

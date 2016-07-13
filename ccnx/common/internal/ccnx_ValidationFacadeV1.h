@@ -395,7 +395,7 @@ bool ccnxValidationFacadeV1_SetKeyName(CCNxTlvDictionary *message, const CCNxLin
  *    CCNxContentObject *object = ccnxContentObject_CreateWithNameAndPayload(name, NULL);
  *    ccnxName_Release(&name);
  *
- *    PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("keystore.p12", "password", PARC_HASH_SHA256));
+ *    PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("keystore.p12", "password", PARCCryptoHashType_SHA256));
  *
  *    PARCBuffer *publicKey = parcSigner_GetDEREncodedPublicKey(signer);
  *
@@ -425,7 +425,7 @@ bool ccnxValidationFacadeV1_SetPublicKey(CCNxTlvDictionary *message, const PARCB
  *    CCNxContentObject *object = ccnxContentObject_CreateWithNameAndPayload(name, NULL);
  *    ccnxName_Release(&name);
  *
- *    PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("keystore.p12", "password", PARC_HASH_SHA256));
+ *    PARCSigner *signer = parcSigner_Create(parcPublicKeySignerPkcs12Store_Open("keystore.p12", "password", PARCCryptoHashType_SHA256));
  *
  *    PARCBuffer *cert = parcSigner_GetDEREncodedCertificate(signer);
  *
