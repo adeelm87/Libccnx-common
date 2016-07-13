@@ -76,12 +76,12 @@ static struct CCNxNameLabelMnemonic {
     const CCNxNameLabelType type;
 } CCNxNameLabelMnemonic[] = {
     { CCNxNameLabel_Name,              CCNxNameLabelType_NAME      },
+    { CCNxNameLabel_InterestPayloadId, CCNxNameLabelType_PAYLOADID },
     { CCNxNameLabel_Serial,            CCNxNameLabelType_SERIAL    },
     { CCNxNameLabel_Chunk,             CCNxNameLabelType_CHUNK     },
     { CCNxNameLabel_ChunkMeta,         CCNxNameLabelType_CHUNKMETA },
     { CCNxNameLabel_App,               CCNxNameLabelType_APP0      },
     { CCNxNameLabel_Time,              CCNxNameLabelType_TIME      },
-    { CCNxNameLabel_InterestPayloadId, CCNxNameLabelType_PAYLOADID },
     { NULL,                            CCNxNameLabelType_Unknown   },
 };
 
@@ -115,6 +115,8 @@ ccnxNameLabel_Create(CCNxNameLabelType type, const PARCBuffer *parameter)
             result->type = type;
             result->parameter = parameter == NULL ? NULL : parcBuffer_Acquire(parameter);
         }
+    } else {
+        printf("invalid type! %d\n", type);
     }
     return result;
 }

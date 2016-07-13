@@ -105,7 +105,7 @@
     0x00, 0x01, 0x00, 0x15,     /* type = interest, length = 21 */                    \
     /* ------------------------ */                                                    \
     0x00, 0x00, 0x00, 0x11,     /* type = name, length = 17 */                        \
-    0x00, 0x02, 0x00, 0x05,     /* type = binary, length = 5 */                       \
+    0x00, 0x03, 0x00, 0x05,     /* type = binary, length = 5 */                       \
     'h',  'e',  'l',  'l',      /* "hello" */                                         \
     'o',                                                                              \
     0xF0, 0x00, 0x00, 0x04,     /* type = app, length = 4 */                          \
@@ -115,7 +115,7 @@
     0x00, 0x02, 0x00, 0x00,     /* CRC32C */                                          \
     /* ------------------------ */                                                    \
     0x00, 0x04, 0x00,    4,     /* validation payload */                              \
-    0x6A, 0xD7, 0xB1, 0xF2      /* 6AD7B1F2 */                                        \
+    0xD0, 0x98, 0x73, 0x7C,     /* D098737C */                                        \
 }
 
 __attribute__((unused))
@@ -138,6 +138,6 @@ static uint8_t v1_interest_nameA_crc32c_returned[] = NAME_A_CRC32_PACKET(0x02, 0
 
 #define v1_interest_nameA_crc32c_truthTable TABLEENTRY(v1_interest_nameA_crc32c, TLV_ERR_NO_ERROR)
 
-#define v1_interest_nameA_crc32c_URI "lci:/2=hello/0xf000=ouch"
+#define v1_interest_nameA_crc32c_URI "lci:/3=hello/0xf000=ouch"
 
 #endif

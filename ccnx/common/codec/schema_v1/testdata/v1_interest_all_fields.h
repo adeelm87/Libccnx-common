@@ -82,10 +82,10 @@ static uint8_t v1_interest_all_fields[] = {
     0x00, 0x01, 0x00, 114,      // type = interest, length = 114
     // ------------------------
     0x00, 0x00, 0x00, 45,       // type = name, length = 45
-    0x00, 0x02, 0x00, 4,        // type = binary, length = 4
+    0x00, 0x03, 0x00, 4,        // type = binary, length = 4
     'c',  'o',  'o',  'l',      // "cool"
     // ----- segment 2 --------
-    0x00, 0x08, 0x00, 33,       // type = payload id, length = 33
+    0x00, 0x02, 0x00, 33,       // type = payload id, length = 33
     0x01, // payloadID type = sha256
     0x89, 0x87, 0x69, 0xfc,     // hash bytes based on payload
     0x8c, 0xff, 0x16, 0xff,
@@ -132,6 +132,6 @@ TRUTHTABLENAME(v1_interest_all_fields)[] =
 
 #define v1_interest_all_fields_truthTable TABLEENTRY(v1_interest_all_fields, TLV_ERR_NO_ERROR)
 
-#define v1_interest_all_fields_URI "lci:/2=cool/8=\x01\x89\x87\x69\xfc\x8c\xff\x16\xff\x3d\xfc\xe7\xfa\x02\xd2\x6d\x26\xf0\x91\x86\x27\xcf\x18\xc1\x9b\x0b\x5f\xe3\x93\xce\x1a\xa3\x56"
+#define v1_interest_all_fields_URI "lci:/3=cool/2=\x01\x89\x87\x69\xfc\x8c\xff\x16\xff\x3d\xfc\xe7\xfa\x02\xd2\x6d\x26\xf0\x91\x86\x27\xcf\x18\xc1\x9b\x0b\x5f\xe3\x93\xce\x1a\xa3\x56"
 #define v1_interest_all_fields_Lifetime 0xEAEB
 #endif

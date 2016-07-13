@@ -368,7 +368,7 @@ uint64_t ccnxContentObject_GetFinalChunkNumber(const CCNxContentObject *contentO
  *
  *     PARCBuffer *keyId = parcBuffer_WrapCString("keyhash");
  *     PARCBuffer *sigbits = parcBuffer_CreateFromArray((void *) "siggybits", strlen("siggybits"));
- *     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARCCryptoHashType_SHA256, parcBuffer_Flip(sigbits));
+ *     PARCSignature *signature = parcSignature_Create(PARCSigningAlgorithm_RSA, PARC_HASH_SHA256, parcBuffer_Flip(sigbits));
  *
  *     ccnxContentObject_SetSignature(contentObject, keyId, signature, NULL);
  *
