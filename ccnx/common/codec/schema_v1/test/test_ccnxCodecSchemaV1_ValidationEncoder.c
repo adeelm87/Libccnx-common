@@ -576,7 +576,6 @@ LONGBOW_TEST_CASE(EncodePayload, payload_Generated)
 
     ccnxCodecTlvEncoder_Finalize(encoder);
     PARCBuffer *test = ccnxCodecTlvEncoder_CreateBuffer(encoder);
-    // printf("test = %s\n", parcBuffer_ToHexString(test));
 
     // Tests that we got the right signature (CRC32c in this case)
     assertTrue(parcBuffer_Equals(truth, test), "Wrong buffer")

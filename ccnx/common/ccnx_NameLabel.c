@@ -115,9 +115,8 @@ ccnxNameLabel_Create(CCNxNameLabelType type, const PARCBuffer *parameter)
             result->type = type;
             result->parameter = parameter == NULL ? NULL : parcBuffer_Acquire(parameter);
         }
-    } else {
-        printf("invalid type! %d\n", type);
     }
+
     return result;
 }
 
