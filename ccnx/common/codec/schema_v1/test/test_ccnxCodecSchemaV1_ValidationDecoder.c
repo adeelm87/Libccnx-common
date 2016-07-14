@@ -288,10 +288,10 @@ LONGBOW_TEST_CASE(DecodeAlg, KeyName)
         0x00, 0x0E, 0x00, 40,
         // --- name
         0x00, 0x00, 0x00, 16,
-        0x00, 0x02, 0x00, 5,
+        0x00, 0x03, 0x00, 5,
         'a',  'p',  'p',  'l',
         'e',
-        0x00, 0x02, 0x00, 3,
+        0x00, 0x03, 0x00, 3,
         'p',  'i',  'e',
         // --- keyid
         0x00, 0x01, 0x00, 4,
@@ -303,7 +303,7 @@ LONGBOW_TEST_CASE(DecodeAlg, KeyName)
     };
 
     PARCBuffer *buffer = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
-    CCNxName *name = ccnxName_CreateFromCString("lci:/2=apple/2=pie");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/3=apple/3=pie");
     PARCBuffer *keyid = parcBuffer_Wrap(encoded, sizeof(encoded), 32, 36);
     PARCBuffer *hash = parcBuffer_Wrap(encoded, sizeof(encoded), 40, 48);
 

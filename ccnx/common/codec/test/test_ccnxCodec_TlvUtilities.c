@@ -312,7 +312,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsName)
     // A list of 2 TLV containers (types 0x000C and 0x000D)
     uint8_t nameContainer[] = {
         0x00, 0x00, 0x00, 9,        // type = name, length = 9
-        0x00, 0x02, 0x00, 5,        // type = binary, length = 5
+        0x00, 0x03, 0x00, 5,        // type = binary, length = 5
         'h',  'e',  'l', 'l',       // "hello"
         'o',
     };
@@ -326,7 +326,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsName)
     uint16_t tlvtype = ccnxCodecTlvDecoder_GetType(decoder);
     uint16_t tlvlength = ccnxCodecTlvDecoder_GetLength(decoder);
 
-    // Saves "lci:/2=hello"
+    // Saves "lci:/3=hello"
     bool success = ccnxCodecTlvUtilities_PutAsName(decoder, dictionary, tlvtype, tlvlength, 1);
 
     ccnxCodecTlvDecoder_Destroy(&decoder);
@@ -334,7 +334,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsName)
 
     assertTrue(success, "The Name failed to decode or some other error");
 
-    CCNxName *truth = ccnxName_CreateFromCString("lci:/2=hello");
+    CCNxName *truth = ccnxName_CreateFromCString("lci:/3=hello");
     CCNxName *test = ccnxTlvDictionary_GetName(dictionary, 1);
     assertTrue(ccnxName_Equals(truth, test), "Names not equal")
     {

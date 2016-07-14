@@ -377,10 +377,10 @@ LONGBOW_TEST_CASE(EncodeAlg, _encodeKeyName)
         0x00, 0x0E, 0x00, 40,
         // --- name
         0x00, 0x00, 0x00, 16,
-        0x00, 0x02, 0x00, 5,
+        0x00, 0x03, 0x00, 5,
         'a',  'p',  'p',  'l',
         'e',
-        0x00, 0x02, 0x00, 3,
+        0x00, 0x03, 0x00, 3,
         'p',  'i',  'e',
         // --- keyid
         0x00, 0x01, 0x00, 4,
@@ -397,7 +397,7 @@ LONGBOW_TEST_CASE(EncodeAlg, _encodeKeyName)
 
     CCNxCodecTlvEncoder *encoder = ccnxCodecTlvEncoder_Create();
 
-    CCNxName *name = ccnxName_CreateFromCString("lci:/2=apple/2=pie");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/3=apple/3=pie");
     CCNxLink *link = ccnxLink_Create(name, keyid, hash);
 
     CCNxTlvDictionary *dictionary = ccnxCodecSchemaV1TlvDictionary_CreateContentObject();

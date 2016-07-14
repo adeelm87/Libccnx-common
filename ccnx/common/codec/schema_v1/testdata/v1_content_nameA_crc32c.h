@@ -120,7 +120,7 @@ static uint8_t v1_content_nameA_crc32c[] = {
     0x00, 0x02, 0x00,   21,     // type = content object, length = 21
     // ------------------------
     0x00, 0x00, 0x00, 0x11,     // type = name, length = 17
-    0x00, 0x02, 0x00, 0x05,     // type = binary, length = 5
+    0x00, 0x03, 0x00, 0x05,     // type = binary, length = 5
     'h',  'e',  'l',  'l',      // "hello"
     'o',
     0xF0, 0x00, 0x00, 0x04,     // type = app, length = 4
@@ -148,6 +148,6 @@ static TruthTableEntry TRUTHTABLENAME(v1_content_nameA_crc32c)[] = {
 
 #define v1_content_nameA_crc32c_truthTable TABLEENTRY(v1_content_nameA_crc32c, TLV_ERR_NO_ERROR)
 
-#define v1_content_nameA_crc32c_URI "lci:/2=hello/0xf000=ouch"
+#define v1_content_nameA_crc32c_URI "lci:/3=hello/0xf000=ouch"
 
 #endif
