@@ -32,6 +32,9 @@ include_directories(${LIBEVENT_INCLUDE_DIRS})
 find_package( Libparc REQUIRED )
 include_directories(${LIBPARC_INCLUDE_DIRS})
 
+find_package( LibSodium REQUIRED )
+include_directories(${LIBSODIUM_INCLUDE_DIRS})
+
 find_package ( Threads REQUIRED )
 
 find_package ( OpenSSL REQUIRED )
@@ -50,6 +53,7 @@ macro(AddTest testFile)
   target_link_libraries(${ARGV0} ${LIBEVENT_LIBRARIES})
   target_link_libraries(${ARGV0} ${LIBPARC_LIBRARIES})
   target_link_libraries(${ARGV0} ${OPENSSL_LIBRARIES})
+  target_link_libraries(${ARGV0} ${LIBSODIUM_LIBRARIES})
   target_link_libraries(${ARGV0} ${CMAKE_THREAD_LIBS_INIT})
   add_test(${ARGV0} ${ARGV0})
   set_target_properties(${ARGV0} PROPERTIES FOLDER Test)
