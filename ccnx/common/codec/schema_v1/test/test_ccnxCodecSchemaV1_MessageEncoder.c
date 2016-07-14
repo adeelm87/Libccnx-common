@@ -125,7 +125,7 @@ LONGBOW_TEST_CASE(ContentObject, Interest)
     TlvExtent payloadExtent = getTruthTableExtent(TRUTHTABLENAME(v1_interest_all_fields), V1_MANIFEST_INT_PAYLOAD);
     TlvExtent interestExtent = getTruthTableExtent(TRUTHTABLENAME(v1_interest_all_fields), V1_MANIFEST_INT_INTEREST);
 
-    CCNxName *name = ccnxName_CreateFromCString("lci:/2=cool");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/3=cool");
     uint32_t lifetime = CCNxInterestDefault_LifetimeMilliseconds;
     uint32_t hoplimit = CCNxInterestDefault_HopLimit;
 
@@ -167,7 +167,7 @@ LONGBOW_TEST_CASE(InterestReturn, InterestReturn)
     TlvExtent payloadExtent = getTruthTableExtent(TRUTHTABLENAME(v1_interest_all_fields), V1_MANIFEST_INT_PAYLOAD);
     TlvExtent interestExtent = getTruthTableExtent(TRUTHTABLENAME(v1_interest_all_fields), V1_MANIFEST_INT_INTEREST);
 
-    CCNxName *name = ccnxName_CreateFromCString("lci:/2=cool");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/3=cool");
     uint32_t lifetime = CCNxInterestDefault_LifetimeMilliseconds;
     uint32_t hoplimit = CCNxInterestDefault_HopLimit;
 
@@ -244,7 +244,7 @@ LONGBOW_TEST_CASE(ContentObject, ContentObject)
     TlvExtent payloadExtent = getTruthTableExtent(TRUTHTABLENAME(v1_content_nameA_keyid1_rsasha256), V1_MANIFEST_OBJ_PAYLOAD);
     TlvExtent contentObjectExtent = getTruthTableExtent(TRUTHTABLENAME(v1_content_nameA_keyid1_rsasha256), V1_MANIFEST_OBJ_CONTENTOBJECT);
 
-    CCNxName *name = ccnxName_CreateFromCString("lci:/2=hello/0xf000=ouch");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/3=hello/0xf000=ouch");
 
     PARCBuffer *payload = parcBuffer_Wrap(v1_content_nameA_keyid1_rsasha256, sizeof(v1_content_nameA_keyid1_rsasha256), payloadExtent.offset, payloadExtent.offset + payloadExtent.length);
 

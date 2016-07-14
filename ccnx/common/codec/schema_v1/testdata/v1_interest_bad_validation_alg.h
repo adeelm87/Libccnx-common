@@ -85,7 +85,7 @@ static uint8_t v1_interest_bad_validation_alg[] = {
     0x00, 0x01, 0x00, 0x15,     // type = interest, length = 21
     // ------------------------
     0x00, 0x00, 0x00, 0x11,     // type = name, length = 17
-    0x00, 0x02, 0x00, 0x05,     // type = binary, length = 5
+    0x00, 0x03, 0x00, 0x05,     // type = binary, length = 5
     'h',  'e',  'l',  'l',      // "hello"
     'o',
     0xF0, 0x00, 0x00, 0x04,     // type = app, length = 4

@@ -110,11 +110,11 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_NameOnly)
 {
-    CCNxName *truth = ccnxName_CreateFromCString("lci:/2=rope");
+    CCNxName *truth = ccnxName_CreateFromCString("lci:/3=rope");
 
     uint8_t encoded[] = {
         0x00, 0x00, 0x00, 8,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e'
     };
 
@@ -146,12 +146,12 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_NameOnly)
 
 LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_AllFields)
 {
-    CCNxName *truth = ccnxName_CreateFromCString("lci:/2=rope");
+    CCNxName *truth = ccnxName_CreateFromCString("lci:/3=rope");
 
     uint8_t encoded[] = {
         // -- name
         0x00, 0x00, 0x00, 8,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e',
         // -- keyid
         0x00, 0x01, 0x00, 8,
@@ -246,7 +246,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_ExtraField)
     uint8_t encoded[] = {
         // -- name
         0x00, 0x00, 0x00, 8,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e',
         // -- keyid
         0x00, 0x01, 0x00, 8,
@@ -280,7 +280,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_DupName)
     uint8_t encoded[] = {
         // -- name
         0x00, 0x00, 0x00, 8,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e',
         // -- keyid
         0x00, 0x01, 0x00, 8,
@@ -294,7 +294,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_DupName)
         0xbc, 0xbd, 0xbe, 0xbf,
         // -- name
         0x00, 0x00, 0x00, 8,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e',
     };
 
@@ -315,7 +315,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_DupKeyId)
     uint8_t encoded[] = {
         // -- name
         0x00, 0x00, 0x00, 8,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e',
         // -- keyid
         0x00, 0x01, 0x00, 8,
@@ -350,7 +350,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_DupHash)
     uint8_t encoded[] = {
         // -- name
         0x00, 0x00, 0x00, 8,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e',
         // -- keyid
         0x00, 0x01, 0x00, 8,
@@ -387,7 +387,7 @@ LONGBOW_TEST_CASE(Global, ccnxTlvCodecLink_DecodeValue_FieldOverrun)
     // name length is beyond end of fragment
     uint8_t encoded[] = {
         0x00, 0x00, 0x00, 30,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e'
     };
 
@@ -431,7 +431,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
     uint8_t encoded[] = {
         // -- name
         0x00, 0x00, 0x00, 8,
-        0x00, 0x02, 0x00, 4,
+        0x00, 0x03, 0x00, 4,
         'r',  'o',  'p',  'e',
         // -- keyid
         0x00, 0x01, 0x00, 8,
@@ -445,7 +445,7 @@ LONGBOW_TEST_CASE(Global, ccnxCodecSchemaV1LinkCodec_Encode)
         0xbc, 0xbd, 0xbe, 0xbf,
     };
 
-    CCNxName *trueName = ccnxName_CreateFromCString("lci:/2=rope");
+    CCNxName *trueName = ccnxName_CreateFromCString("lci:/3=rope");
     PARCBuffer *trueKeyId = parcBuffer_Wrap(encoded, sizeof(encoded), 16, 24);
     PARCBuffer *trueHash = parcBuffer_Wrap(encoded, sizeof(encoded), 28, 44);
     PARCBuffer *trueEncoding = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));

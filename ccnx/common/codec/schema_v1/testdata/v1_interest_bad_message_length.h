@@ -82,7 +82,7 @@ static uint8_t v1_interest_bad_message_length[] = {
     0x00, 0x01, 0x00,   13,     // type = interest, length = 13 (1 byte too far)
     // ------------------------
     0x00, 0x00, 0x00,    8,     // type = name, length = 8
-    0x00, 0x02, 0x00,    4,     // type = binary, length = 4
+    0x00, 0x03, 0x00,    4,     // type = binary, length = 4
     'c',  'o',  'o',   'l',     // "cool"
 };
 

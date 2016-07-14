@@ -91,7 +91,8 @@
 typedef enum {
     CCNxNameLabelType_BADNAME = 0x0000,
     CCNxNameLabelType_NAME = 0x0001,      // Name: CCNx Messages in TLV Format
-    CCNxNameLabelType_PAYLOADID = 0x0008, // Payload Hash: CCNx Messages in TLV Format
+    CCNxNameLabelType_PAYLOADID = 0x0002, // Payload Hash: CCNx Messages in TLV Format
+    CCNxNameLabelType_BINARY = 0x0003,    // Binary segment
     CCNxNameLabelType_CHUNK = 0x0010,     // Segment Number: CCNx Content Object Segmentation
     CCNxNameLabelType_CHUNKMETA = 0x0011, // Metadata
     CCNxNameLabelType_TIME = 0x0012,      // Time: CCNx Publisher Serial Versioning
