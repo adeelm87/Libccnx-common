@@ -243,10 +243,10 @@ ccnxNameSegment_GetValue(const CCNxNameSegment *segment)
     return segment->value;
 }
 
-static inline char *
+static inline bool
 _ccnxNameSegment_IsEscapable(const char c)
 {
-    return (c == 0 || index("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~", c) == NULL);
+    return (c == 0 || strchr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~", c) == NULL);
 }
 
 static inline bool
