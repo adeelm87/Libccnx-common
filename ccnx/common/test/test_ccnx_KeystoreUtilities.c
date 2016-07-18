@@ -62,6 +62,7 @@
 
 #include <LongBow/unit-test.h>
 #include <parc/algol/parc_SafeMemory.h>
+#include <parc/security/parc_Security.h>
 
 #include <errno.h>
 #include <ftw.h>
