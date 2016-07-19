@@ -22,7 +22,6 @@ include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR}/ccnx/common)
 include_directories($ENV{CCNX_DEPENDENCIES}/include)
 set(OPENSSL_ROOT_DIR $ENV{CCNX_DEPENDENCIES})
 
-
 find_package( LongBow REQUIRED )
 include_directories(${LONGBOW_INCLUDE_DIRS})
 
@@ -31,9 +30,6 @@ include_directories(${LIBEVENT_INCLUDE_DIRS})
 
 find_package( Libparc REQUIRED )
 include_directories(${LIBPARC_INCLUDE_DIRS})
-
-find_package( LibSodium REQUIRED )
-include_directories(${LIBSODIUM_INCLUDE_DIRS})
 
 find_package ( Threads REQUIRED )
 
