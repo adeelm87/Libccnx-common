@@ -197,8 +197,12 @@ _encodeKeyIdRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetD
         size_t startPosition = ccnxCodecTlvEncoder_Position(encoder);
         ccnxCodecTlvEncoder_AppendContainer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_KeyIdRestriction, 0);
         length = ccnxCodecSchemaV1HashCodec_Encode(encoder, hash);
+        if (length < 0) {
+            return length;
+        }
+
         ccnxCodecTlvEncoder_SetContainerLength(encoder, startPosition, length);
-        length += 4;
+        length += 4; // this accounts for the TL fields
     }
     return length;
 }
@@ -212,8 +216,12 @@ _encodeContentObjectHashRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDiction
         size_t startPosition = ccnxCodecTlvEncoder_Position(encoder);
         ccnxCodecTlvEncoder_AppendContainer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_ContentObjectHashRestriction, 0);
         length = ccnxCodecSchemaV1HashCodec_Encode(encoder, hash);
+        if (length < 0) {
+            return length;
+        }
+
         ccnxCodecTlvEncoder_SetContainerLength(encoder, startPosition, length);
-        length += 4;
+        length += 4; // this accounts for the TL fields
     }
     return length;
 }

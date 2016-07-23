@@ -115,8 +115,7 @@ ccnxCodecSchemaV1HashCodec_Encode(CCNxCodecTlvEncoder *encoder, const PARCCrypto
     }
 
     if (validHash) {
-        ccnxCodecTlvEncoder_AppendBuffer(encoder, tlvHashType, digest);
-        return digestLength + 4;
+        return ccnxCodecTlvEncoder_AppendBuffer(encoder, tlvHashType, digest);
     } else {
         CCNxCodecError *error = ccnxCodecError_Create(TLV_MISSING_MANDATORY, __func__, __LINE__, ccnxCodecTlvEncoder_Position(encoder));
         ccnxCodecTlvEncoder_SetError(encoder, error);
