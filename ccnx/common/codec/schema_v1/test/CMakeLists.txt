@@ -6,6 +6,7 @@ set(TestsExpectedToPass
   test_ccnxCodecSchemaV1_CryptoSuite
   test_ccnxCodecSchemaV1_FixedHeaderDecoder
   test_ccnxCodecSchemaV1_FixedHeaderEncoder
+  test_ccnxCodecSchemaV1_HashCodec
   test_ccnxCodecSchemaV1_LinkCodec
   test_ccnxCodecSchemaV1_ManifestDecoder
   test_ccnxCodecSchemaV1_ManifestEncoder
@@ -22,8 +23,7 @@ set(TestsExpectedToPass
   test_ccnxCodecSchemaV1_ValidationEncoder
 )
 
-  
+
 foreach(test ${TestsExpectedToPass})
    AddTest(${test})
 endforeach()
-

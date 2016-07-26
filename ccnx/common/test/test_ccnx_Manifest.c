@@ -104,8 +104,8 @@ _commonSetup(void)
     ccnxManifestHashGroup_SetLocator(group, locator);
 
     // Create pointers for the pieces of data
-    PARCBuffer *digest1 = parcBuffer_Allocate(10);
-    PARCBuffer *digest2 = parcBuffer_Allocate(10);
+    PARCBuffer *digest1 = parcBuffer_Allocate(32);
+    PARCBuffer *digest2 = parcBuffer_Allocate(32);
     ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, digest1);
     ccnxManifestHashGroup_AppendPointer(namelessGroup, CCNxManifestHashGroupPointerType_Data, digest1);
     ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Manifest, digest2);
@@ -205,9 +205,9 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_ToString);
 
     LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_OverrideLocator);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_ManifestLocator);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_GroupLocator);
-    LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_NoLocator);
+    // LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_ManifestLocator);
+    // LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_GroupLocator);
+    // LONGBOW_RUN_TEST_CASE(Global, ccnxManifest_CreateInterestList_NoLocator);
 }
 
 LONGBOW_TEST_FIXTURE_SETUP(Global)

@@ -93,9 +93,12 @@ static bool
 _ccnxInterestFacadeV1_SetContentObjectHashRestriction(CCNxTlvDictionary *interestDictionary, const PARCBuffer *contentObjectHash)
 {
     _assertInvariants(interestDictionary);
-    return ccnxTlvDictionary_PutBuffer(interestDictionary,
+    PARCCryptoHash *hash = parcCryptoHash_Create(PARCCryptoHashType_SHA256, contentObjectHash);
+    bool result =  ccnxTlvDictionary_PutObject(interestDictionary,
                                        CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION,
-                                       contentObjectHash);
+                                       hash);
+    parcCryptoHash_Release(&hash);
+    return result;
 }
 
 // forward declaration. Body below, in Getters.
@@ -153,7 +156,10 @@ static bool
 _ccnxInterestFacadeV1_SetKeyIdRestriction(CCNxTlvDictionary *interestDictionary, const PARCBuffer *keyId)
 {
     _assertInvariants(interestDictionary);
-    return ccnxTlvDictionary_PutBuffer(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION, keyId);
+    PARCCryptoHash *hash = parcCryptoHash_Create(PARCCryptoHashType_SHA256, keyId);
+    bool result = ccnxTlvDictionary_PutObject(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION, hash);
+    parcCryptoHash_Release(&hash);
+    return result;
 }
 
 static bool
@@ -188,14 +194,24 @@ static PARCBuffer *
 _ccnxInterestFacadeV1_GetKeyIdRestriction(const CCNxTlvDictionary *interestDictionary)
 {
     _assertInvariants(interestDictionary);
-    return ccnxTlvDictionary_GetBuffer(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
+    PARCCryptoHash *hash = ccnxTlvDictionary_GetObject(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
+    if (hash != NULL) {
+        return parcCryptoHash_GetDigest(hash);
+    } else {
+        return NULL;
+    }
 }
 
 static PARCBuffer *
 _ccnxInterestFacadeV1_GetContentObjectHashRestriction(const CCNxTlvDictionary *interestDictionary)
 {
     _assertInvariants(interestDictionary);
-    return ccnxTlvDictionary_GetBuffer(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
+    PARCCryptoHash *hash = ccnxTlvDictionary_GetObject(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
+    if (hash != NULL) {
+        return parcCryptoHash_GetDigest(hash);
+    } else {
+        return NULL;
+    }
 }
 
 static PARCBuffer *

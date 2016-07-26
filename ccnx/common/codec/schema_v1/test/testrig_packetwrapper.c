@@ -110,6 +110,7 @@
 
 #include <ccnx/common/codec/ccnxCodec_TlvUtilities.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_NameCodec.h>
+#include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_HashCodec.h>
 #include <ccnx/common/codec/schema_v1/testdata/v1_testrig_truthTable.h>
 
 /**
@@ -432,6 +433,34 @@ testBufferGetter(TestData *data, int truthTableKey, bool containerDecoder(CCNxCo
     }
 
     parcBuffer_Release(&truth);
+}
+
+void
+testHashGetter(TestData *data, int truthTableKey, bool containerDecoder(CCNxCodecTlvDecoder *, CCNxTlvDictionary *),
+               PARCCryptoHash *(*getter)(CCNxTlvDictionary *))
+{
+    containerDecoder(data->decoder, data->dictionary);
+    PARCCryptoHash *testHash = getter(data->dictionary);
+
+    // look up the true hash buffer from the truth table
+    TlvExtent extent = getTruthTableExtent(data->truthTable, truthTableKey);
+    PARCBuffer *truthBuffer = parcBuffer_Wrap(data->packet, data->packetLength, extent.offset, extent.offset + extent.length);
+
+    // decode the hash value
+    CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(truthBuffer);
+    PARCCryptoHash *truthHash = ccnxCodecSchemaV1HashCodec_DecodeValue(decoder, extent.length);
+    ccnxCodecTlvDecoder_Destroy(&decoder);
+
+    // compare the decoded value against the expected value
+    assertTrue(parcCryptoHash_Equals(testHash, truthHash), "Hashes not equal") {
+        printf("Expected:\n");
+        printf("   %s\n", parcBuffer_ToHexString(parcCryptoHash_GetDigest(truthHash)));
+        printf("Got:\n");
+        printf("   %s\n", parcBuffer_ToHexString(parcCryptoHash_GetDigest(testHash)));
+    }
+
+    parcCryptoHash_Release(&truthHash);
+    parcBuffer_Release(&truthBuffer);
 }
 
 void

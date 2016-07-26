@@ -192,9 +192,17 @@ static ssize_t
 _encodeKeyIdRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
 {
     ssize_t length = 0;
-    PARCBuffer *buffer = ccnxTlvDictionary_GetBuffer(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
-    if (buffer != NULL) {
-        length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_KeyIdRestriction, buffer);
+    PARCCryptoHash *hash = ccnxTlvDictionary_GetObject(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_KEYID_RESTRICTION);
+    if (hash != NULL) {
+        size_t startPosition = ccnxCodecTlvEncoder_Position(encoder);
+        ccnxCodecTlvEncoder_AppendContainer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_KeyIdRestriction, 0);
+        length = ccnxCodecSchemaV1HashCodec_Encode(encoder, hash);
+        if (length < 0) {
+            return length;
+        }
+
+        ccnxCodecTlvEncoder_SetContainerLength(encoder, startPosition, length);
+        length += 4; // this accounts for the TL fields
     }
     return length;
 }
@@ -203,9 +211,17 @@ static ssize_t
 _encodeContentObjectHashRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
 {
     ssize_t length = 0;
-    PARCBuffer *buffer = ccnxTlvDictionary_GetBuffer(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
-    if (buffer != NULL) {
-        length = ccnxCodecTlvEncoder_AppendBuffer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_ContentObjectHashRestriction, buffer);
+    PARCCryptoHash *hash = ccnxTlvDictionary_GetObject(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
+    if (hash != NULL) {
+        size_t startPosition = ccnxCodecTlvEncoder_Position(encoder);
+        ccnxCodecTlvEncoder_AppendContainer(encoder, CCNxCodecSchemaV1Types_CCNxMessage_ContentObjectHashRestriction, 0);
+        length = ccnxCodecSchemaV1HashCodec_Encode(encoder, hash);
+        if (length < 0) {
+            return length;
+        }
+
+        ccnxCodecTlvEncoder_SetContainerLength(encoder, startPosition, length);
+        length += 4; // this accounts for the TL fields
     }
     return length;
 }

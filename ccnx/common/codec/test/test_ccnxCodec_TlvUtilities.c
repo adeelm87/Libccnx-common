@@ -154,6 +154,7 @@ LONGBOW_TEST_FIXTURE(Global)
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecTlvUtilities_DecodeSubcontainer);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsName);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsBuffer);
+    LONGBOW_RUN_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsHash);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsListBuffer);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecTlvUtilities_NestedEncode);
     LONGBOW_RUN_TEST_CASE(Global, ccnxCodecTlvUtilities_EncodeCustomList);
@@ -191,6 +192,30 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsBuffer)
 
     int version = ccnxCodecSchemaV1FixedHeaderDecoder_GetVersion(data->dictionary);
     assertTrue(version == data->version, "Wrong version, got %d expected %d", version, data->version);
+}
+
+LONGBOW_TEST_CASE(Global, ccnxCodecTlvUtilities_PutAsHash)
+{
+    uint8_t encoded[] = {
+        0x00, 0x01, 0x00, 0x20, // 0x01 = CCNxCodecSchemaV1Types_HashType_SHA256
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    };
+
+    PARCBuffer *tlvBuffer = parcBuffer_Wrap(encoded, sizeof(encoded), 0, sizeof(encoded));
+    CCNxCodecTlvDecoder *decoder = ccnxCodecTlvDecoder_Create(tlvBuffer);
+
+    uint16_t type = 0x01;
+    CCNxTlvDictionary *dictionary = ccnxTlvDictionary_Create(CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END, 10);
+    bool success = ccnxCodecTlvUtilities_PutAsHash(decoder, dictionary, type, sizeof(encoded),
+        CCNxCodecSchemaV1TlvDictionary_MessageFastArray_OBJHASH_RESTRICTION);
+    assertTrue(success, "Failed to save hash");
+
+    parcBuffer_Release(&tlvBuffer);
+    ccnxCodecTlvDecoder_Destroy(&decoder);
+    ccnxTlvDictionary_Release(&dictionary);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvUtilities_GetVarInt)

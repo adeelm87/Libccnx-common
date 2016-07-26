@@ -175,8 +175,8 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_AppendGetPointer)
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
     assertNotNull(group, "Expected non-null CCNxManifestHashGroup");
 
-    PARCBuffer *buffer1 = parcBuffer_Allocate(10);
-    PARCBuffer *buffer2 = parcBuffer_Allocate(10);
+    PARCBuffer *buffer1 = parcBuffer_Allocate(32);
+    PARCBuffer *buffer2 = parcBuffer_Allocate(32);
 
     ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer1);
     ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Manifest, buffer2);
@@ -199,8 +199,8 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_PrependGetPointer)
     CCNxManifestHashGroup *group = ccnxManifestHashGroup_Create();
     assertNotNull(group, "Expected non-null CCNxManifestHashGroup");
 
-    PARCBuffer *buffer1 = parcBuffer_Allocate(10);
-    PARCBuffer *buffer2 = parcBuffer_Allocate(10);
+    PARCBuffer *buffer1 = parcBuffer_Allocate(32);
+    PARCBuffer *buffer2 = parcBuffer_Allocate(32);
 
     ccnxManifestHashGroup_PrependPointer(group, CCNxManifestHashGroupPointerType_Data, buffer1);
     ccnxManifestHashGroup_PrependPointer(group, CCNxManifestHashGroupPointerType_Manifest, buffer2);
@@ -228,7 +228,7 @@ _createHashGroup(CCNxName *locator, size_t n, size_t blockSize, size_t dataSize,
     }
 
     for (size_t i = 0; i < n; i++) {
-        PARCBuffer *buffer = parcBuffer_AllocateCString("random");
+        PARCBuffer *buffer = parcBuffer_Allocate(32);
         ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer);
         parcBuffer_Release(&buffer);
     }
@@ -320,12 +320,12 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_IsFull)
     assertNotNull(group, "Expected non-null CCNxManifestHashGroup");
 
     for (size_t i = 0; i < MAX_NUMBER_OF_POINTERS; i++) {
-        PARCBuffer *buffer = parcBuffer_Allocate(1024);
+        PARCBuffer *buffer = parcBuffer_Allocate(32);
         assertTrue(ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer), "Expected the insertion to succeed");
         parcBuffer_Release(&buffer);
     }
 
-    PARCBuffer *buffer = parcBuffer_Allocate(1024);
+    PARCBuffer *buffer = parcBuffer_Allocate(32);
     assertFalse(ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer), "Expected the insertion to fail since the HashGroup is full.");
     parcBuffer_Release(&buffer);
 
@@ -343,7 +343,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_OverrideLocat
     PARCLinkedList *interestList = parcLinkedList_Create();
     CCNxName *locator = ccnxName_CreateFromCString("ccnx:/locator");
     for (size_t i = 0; i < MAX_NUMBER_OF_POINTERS; i++) {
-        PARCBuffer *buffer = parcBuffer_Allocate(1024);
+        PARCBuffer *buffer = parcBuffer_Allocate(32);
         assertTrue(ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer), "Expected the insertion to succeed");
 
         CCNxInterest *interest = ccnxInterest_CreateSimple(locator);
@@ -373,7 +373,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_GroupLocator)
 
     PARCLinkedList *interestList = parcLinkedList_Create();
     for (size_t i = 0; i < MAX_NUMBER_OF_POINTERS; i++) {
-        PARCBuffer *buffer = parcBuffer_Allocate(1024);
+        PARCBuffer *buffer = parcBuffer_Allocate(32);
         assertTrue(ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer), "Expected the insertion to succeed");
 
         CCNxInterest *interest = ccnxInterest_CreateSimple(locator);
@@ -401,7 +401,7 @@ LONGBOW_TEST_CASE(Global, ccnxManifestHashGroup_CreateInterestList_NoLocator)
     assertNotNull(group, "Expected non-null CCNxManifestHashGroup");
 
     for (size_t i = 0; i < MAX_NUMBER_OF_POINTERS; i++) {
-        PARCBuffer *buffer = parcBuffer_Allocate(1024);
+        PARCBuffer *buffer = parcBuffer_Allocate(32);
         assertTrue(ccnxManifestHashGroup_AppendPointer(group, CCNxManifestHashGroupPointerType_Data, buffer), "Expected the insertion to succeed");
         parcBuffer_Release(&buffer);
     }

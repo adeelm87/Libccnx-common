@@ -22,7 +22,6 @@ include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR}/ccnx/common)
 include_directories($ENV{CCNX_DEPENDENCIES}/include)
 set(OPENSSL_ROOT_DIR $ENV{CCNX_DEPENDENCIES})
 
-
 find_package( LongBow REQUIRED )
 include_directories(${LONGBOW_INCLUDE_DIRS})
 

@@ -234,4 +234,18 @@ typedef enum rta_tlv_schema_v1_interestreturncode_types {
     CCNxCodecSchemaV1Types_InterestReturnCode_MTUTooLarge = 0x07,
 } CCNxCodecSchemaV1Types_InterestReturnCode;
 
+// ==================================================
+// Hash function types
+/**
+ * @typedef CCNxCodecSchemaV1Types_HashTypes
+ * @abstract The values of the InterestReturn ReturnCode field
+ * @constant <#name#> <#description#>
+ * @discussion <#Discussion#>
+ */
+typedef enum rta_tlv_schema_v1_hash_types {
+    CCNxCodecSchemaV1Types_HashType_SHA256 = 0x01,
+    CCNxCodecSchemaV1Types_HashType_SHA512 = 0x02,
+    CCNxCodecSchemaV1Types_HashType_App
+} CCNxCodecSchemaV1Types_HashType;
+
 #endif //TransportRTA_ccnxCodecSchemaV1_Types_h

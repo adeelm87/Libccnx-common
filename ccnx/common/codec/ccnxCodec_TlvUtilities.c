@@ -59,6 +59,7 @@
 #include <config.h>
 #include <stdio.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_NameCodec.h>
+#include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_HashCodec.h>
 #include <ccnx/common/codec/ccnxCodec_TlvUtilities.h>
 #include <LongBow/runtime.h>
 
@@ -124,6 +125,18 @@ ccnxCodecTlvUtilities_PutAsBuffer(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionar
     PARCBuffer *buffer = ccnxCodecTlvDecoder_GetValue(decoder, length);
     bool success = ccnxTlvDictionary_PutBuffer(packetDictionary, arrayKey, buffer);
     parcBuffer_Release(&buffer);
+    return success;
+}
+
+bool
+ccnxCodecTlvUtilities_PutAsHash(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictionary, uint16_t type, uint16_t length, int arrayKey)
+{
+    PARCCryptoHash *hash = ccnxCodecSchemaV1HashCodec_DecodeValue(decoder, length);
+    bool success = false;
+    if (hash != NULL) {
+        success = ccnxTlvDictionary_PutObject(packetDictionary, arrayKey, (const PARCObject *) hash);
+        parcCryptoHash_Release(&hash);
+    }
     return success;
 }
 
