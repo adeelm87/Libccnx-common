@@ -266,13 +266,24 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_DictionaryEncode_VFF)
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_Decode_V1)
 {
+    PARCBufferComposer *composer = parcBufferComposer_Create();
     PARCBuffer *packetBuffer = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), 0, sizeof(v1_interest_all_fields));
+    parcBufferComposer_PutBuffer(composer, packetBuffer);
 
-    CCNxTlvDictionary *dict = ccnxCodecTlvPacket_Decode(packetBuffer);
+    // Append extraneous data to the end of the buffer to make sure the decoder terminates at the end of the CCNx message.
+    PARCBuffer *padding = parcBuffer_AllocateCString("ThisShouldNeverBeParsed");
+    parcBufferComposer_PutBuffer(composer, padding);
+    PARCBuffer *composedBuffer = parcBufferComposer_CreateBuffer(composer);
+    parcBuffer_Rewind(composedBuffer);
+
+    CCNxTlvDictionary *dict = ccnxCodecTlvPacket_Decode(composedBuffer);
     assertNotNull(dict, "Got null dictionary decoding good packet");
 
     ccnxTlvDictionary_Release(&dict);
     parcBuffer_Release(&packetBuffer);
+    parcBuffer_Release(&padding);
+    parcBuffer_Release(&composedBuffer);
+    parcBufferComposer_Release(&composer);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_Decode_VFF)
