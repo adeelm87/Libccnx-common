@@ -143,7 +143,20 @@ LONGBOW_TEST_FIXTURE_TEARDOWN(Global)
 
 LONGBOW_TEST_CASE(Global, rtaTlvPacket_BufferDecode_V1)
 {
-    PARCBuffer *packetBuffer = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), 0, sizeof(v1_interest_all_fields));
+    PARCBufferComposer *composer = parcBufferComposer_Create();
+    PARCBuffer *interestMessage = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), 0, sizeof(v1_interest_all_fields));
+    parcBufferComposer_PutBuffer(composer, interestMessage);
+    parcBuffer_Release(&interestMessage);
+
+    // Append extraneous data to the end of the buffer to make sure the decoder terminates at the end of the CCNx message.
+    PARCBuffer *padding = parcBuffer_AllocateCString("ThisShouldNeverBeParsed");
+    parcBufferComposer_PutBuffer(composer, padding);
+    parcBuffer_Release(&padding);
+    PARCBuffer *packetBuffer = parcBufferComposer_CreateBuffer(composer);
+    parcBufferComposer_Release(&composer);
+    parcBuffer_Rewind(packetBuffer);
+
+    //PARCBuffer *packetBuffer = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), 0, sizeof(v1_interest_all_fields));
     CCNxTlvDictionary *dict = ccnxCodecSchemaV1TlvDictionary_CreateInterest();
     bool success = ccnxCodecTlvPacket_BufferDecode(packetBuffer, dict);
     assertTrue(success, "Failed to decode good v1 interest");
@@ -267,23 +280,23 @@ LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_DictionaryEncode_VFF)
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_Decode_V1)
 {
     PARCBufferComposer *composer = parcBufferComposer_Create();
-    PARCBuffer *packetBuffer = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), 0, sizeof(v1_interest_all_fields));
-    parcBufferComposer_PutBuffer(composer, packetBuffer);
+    PARCBuffer *interestMessage = parcBuffer_Wrap(v1_interest_all_fields, sizeof(v1_interest_all_fields), 0, sizeof(v1_interest_all_fields));
+    parcBufferComposer_PutBuffer(composer, interestMessage);
+    parcBuffer_Release(&interestMessage);
 
     // Append extraneous data to the end of the buffer to make sure the decoder terminates at the end of the CCNx message.
     PARCBuffer *padding = parcBuffer_AllocateCString("ThisShouldNeverBeParsed");
     parcBufferComposer_PutBuffer(composer, padding);
-    PARCBuffer *composedBuffer = parcBufferComposer_CreateBuffer(composer);
-    parcBuffer_Rewind(composedBuffer);
+    parcBuffer_Release(&padding);
+    PARCBuffer *packetBuffer = parcBufferComposer_CreateBuffer(composer);
+    parcBufferComposer_Release(&composer);
+    parcBuffer_Rewind(packetBuffer);
 
-    CCNxTlvDictionary *dict = ccnxCodecTlvPacket_Decode(composedBuffer);
+    CCNxTlvDictionary *dict = ccnxCodecTlvPacket_Decode(packetBuffer);
     assertNotNull(dict, "Got null dictionary decoding good packet");
 
     ccnxTlvDictionary_Release(&dict);
     parcBuffer_Release(&packetBuffer);
-    parcBuffer_Release(&padding);
-    parcBuffer_Release(&composedBuffer);
-    parcBufferComposer_Release(&composer);
 }
 
 LONGBOW_TEST_CASE(Global, ccnxCodecTlvPacket_Decode_VFF)

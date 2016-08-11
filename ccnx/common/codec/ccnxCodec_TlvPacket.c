@@ -125,6 +125,13 @@ ccnxCodecTlvPacket_BufferDecode(PARCBuffer *packetBuffer, CCNxTlvDictionary *pac
     // Determine the version from the first byte of the buffer
     uint8_t version = parcBuffer_GetAtIndex(packetBuffer, 0);
 
+    // The packetBuffer may be padded or have extraneous content after the CCNx message.
+    // Ensure that the buffer limit reflects the CCNx packet length as the decoder uses
+    // the that limit, not the packetLength from the header, to determine when to stop parsing.
+    size_t packetBufferLength = ccnxCodecTlvPacket_GetPacketLength(packetBuffer);
+    assertTrue(packetBufferLength <= parcBuffer_Remaining(packetBuffer), "Short packet buffer");
+    parcBuffer_SetLimit(packetBuffer, packetBufferLength);
+
     bool success = false;
     switch (version) {
         case CCNxTlvDictionary_SchemaVersion_V1:
