@@ -74,6 +74,7 @@
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_MessageEncoder.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_NameCodec.h>
 #include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_Types.h>
+#include <ccnx/common/codec/schema_v1/ccnxCodecSchemaV1_HashCodec.h>
 
 #include <ccnx/common/codec/ccnxCodec_TlvUtilities.h>
 

@@ -382,7 +382,7 @@ ccnxTlvDictionary_PutObject(CCNxTlvDictionary *dictionary, uint32_t key, const P
 {
     assertNotNull(dictionary, "Parameter dictionary must be non-null");
     assertNotNull(object, "Parameter object must be non-null");
-    assertTrue(key < dictionary->fastArraySize, "Parameter key %zu must be less than %zu", key, dictionary->fastArraySize);
+    assertTrue(key < dictionary->fastArraySize, "Parameter key %u must be less than %zu", key, dictionary->fastArraySize);
 
     if (dictionary->directArray[key].entryType == ENTRY_UNSET) {
         dictionary->directArray[key].entryType = ENTRY_OBJECT;
@@ -831,7 +831,7 @@ ccnxTlvDictionary_Display(const CCNxTlvDictionary *dictionary, int indent)
                                   dictionary->listSize,
                                   _ccnxTlvDictionaryTypeToString(dictionary->dictionaryType),
                                   dictionary->schemaVersion,
-                                  parcObject_GetReferenceCount((PARCObject *)dictionary));
+                                  parcObject_GetReferenceCount((PARCObject *) dictionary));
 
     parcDisplayIndented_PrintLine(indent, "    createTime %0.6f generation %u Info %p InfoFreeFunc %p\n",
                                   (dictionary->creationTime.tv_sec + dictionary->creationTime.tv_usec * 1E-6),
