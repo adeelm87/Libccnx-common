@@ -413,7 +413,7 @@ CCNxWireFormatMessage *ccnxWireFormatMessage_Acquire(const CCNxWireFormatMessage
  * Example:
  * @code
  * {
- *     CCNxWireFormat *reference = ccnxWireFormatMessage_Acquire(message);
+ *     CCNxWireFormatMessage *reference = ccnxWireFormatMessage_Acquire(message);
  *
  *     ...
  *
@@ -439,7 +439,25 @@ void ccnxWireFormatMessage_Release(CCNxWireFormatMessage **messageP);
  */
 bool ccnxWireFormatMessage_SetHopLimit(CCNxWireFormatMessage *message, uint32_t hoplimit);
 
-// WALENDO: doc
+/**
+ * Given an Interest (as a CCNxWireFormatMessage), convert it to an InterestReturn and
+ * set the return code of the InterestReturn. This does not create a new instance, but
+ * simply modifies the supplied Interest in place.
+ *
+ * @param [in] message - the Interest (as a CCNxWireFormatMessage) to convert.
+ * @param [in] returnCode - the InterestReturn code to embed in the message.
+ *
+ * Example:
+ * @code
+ * {
+ *     CCNxWireFormatMessage *interest = <...>;
+ *
+ *     CCNxWireFormatMessage *interestReturn =
+ *         ccnxWireFormatMessage_ConvertInterestToInterestReturn(interest,
+ *             CCNxInterestReturn_ReturnCode_HopLimitExceeded);
+ *
+ * }
+ * @endcode
+ */
 bool ccnxWireFormatMessage_ConvertInterestToInterestReturn(CCNxWireFormatMessage *message, uint8_t returnCode);
-
 #endif /* defined(__CCNx_Common__ccnx_WireFormatMessage__) */
