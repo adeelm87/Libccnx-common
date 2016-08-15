@@ -382,7 +382,7 @@ ccnxTlvDictionary_PutObject(CCNxTlvDictionary *dictionary, uint32_t key, const P
 {
     assertNotNull(dictionary, "Parameter dictionary must be non-null");
     assertNotNull(object, "Parameter object must be non-null");
-    assertTrue(key < dictionary->fastArraySize, "Parameter key %zu must be less than %zu", key, dictionary->fastArraySize);
+    assertTrue(key < dictionary->fastArraySize, "Parameter key %ud must be less than %zu", key, dictionary->fastArraySize);
 
     if (dictionary->directArray[key].entryType == ENTRY_UNSET) {
         dictionary->directArray[key].entryType = ENTRY_OBJECT;
