@@ -831,7 +831,7 @@ ccnxTlvDictionary_Display(const CCNxTlvDictionary *dictionary, int indent)
                                   dictionary->listSize,
                                   _ccnxTlvDictionaryTypeToString(dictionary->dictionaryType),
                                   dictionary->schemaVersion,
-                                  parcObject_GetReferenceCount((PARCObject *)dictionary));
+                                  parcObject_GetReferenceCount((PARCObject *) dictionary));
 
     parcDisplayIndented_PrintLine(indent, "    createTime %0.6f generation %u Info %p InfoFreeFunc %p\n",
                                   (dictionary->creationTime.tv_sec + dictionary->creationTime.tv_usec * 1E-6),
