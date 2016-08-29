@@ -58,4 +58,4 @@ endmacro(AddTest)
 
 
 add_subdirectory(ccnx/common)
-#add_subdirectory(documentation)
+add_subdirectory(documentation)
