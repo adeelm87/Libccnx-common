@@ -692,6 +692,10 @@ CCNxName *ccnxName_Trim(CCNxName *name, size_t numberToRemove);
  */
 CCNxName *ccnxName_ComposeNAME(const CCNxName *prefix, const char *suffix);
 
+/*
+ * The two following function declarations have been commented out because they 
+ * do not exit in ccnx_Name.c
+ */
 
 /**
  * Get the Nth segment number of the given `CCNxName`
@@ -710,7 +714,7 @@ CCNxName *ccnxName_ComposeNAME(const CCNxName *prefix, const char *suffix);
  * }
  * @endcode
  */
-uint64_t ccnxName_GetNthSegmentNumber(const CCNxName *name, size_t nthNumber);
+//uint64_t ccnxName_GetNthSegmentNumber(const CCNxName *name, size_t nthNumber);
 
 /**
  * <#One Line Description#>
@@ -728,7 +732,7 @@ uint64_t ccnxName_GetNthSegmentNumber(const CCNxName *name, size_t nthNumber);
  * }
  * @endcode
  */
-uint64_t ccnxName_GetSegmentNumber(const CCNxName *name);
+//uint64_t ccnxName_GetSegmentNumber(const CCNxName *name);
 
 /**
  * Create a new CCNxName instance composed of the given CCNxName with the parsed result of the format string appended.

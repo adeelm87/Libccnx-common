@@ -151,6 +151,7 @@ set(INTERNAL_SRCS
 	internal/ccnx_ValidationFacadeV1.c
 	internal/ccnx_WireFormatFacadeV1.c
 	internal/ccnx_WireFormatMessageInterface.c
+	internal/ccnx_TlvDictionary_wrap.c
 	)
 
 source_group(internal FILES ${INTERNAL_SRCS})
@@ -208,6 +209,9 @@ set(CORE_SRCS
 	ccnx_NameLabel.c
 	ccnx_TimeStamp.c
 	ccnx_WireFormatMessage.c
+	ccnx_Name_wrap.c
+	ccnx_Interest_wrap.c
+	ccnx_ContentObject_wrap.c
 	)
 
 source_group(core FILES ${CORE_SRCS})
@@ -236,6 +240,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
     set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS} -undefined dynamic_lookup")
 	message( "-- Set \"-undefined dynamic_lookup\" for shared libraries")
 endif()
+
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 add_library(ccnx_common         STATIC ${ALL_SRCS} ${ALL_HDRS})
 add_library(ccnx_common.shared  SHARED ${ALL_SRCS})

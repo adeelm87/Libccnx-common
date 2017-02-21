@@ -563,6 +563,7 @@ ccnxTlvDictionary_GetBuffer(const CCNxTlvDictionary *dictionary, uint32_t key)
 
     // For now return NULL for backward compatability with prior code, case 1011
     if (dictionary->directArray[key].entryType == ENTRY_BUFFER) {
+	        printf("Inside here\n");
         return dictionary->directArray[key]._entry.buffer;
     }
     return NULL;
