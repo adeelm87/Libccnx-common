@@ -153,7 +153,8 @@ typedef enum rta_tlv_schema_v1_message_fastarray {
     CCNxCodecSchemaV1TlvDictionary_MessageFastArray_HASH_GROUP = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 9,
     CCNxCodecSchemaV1TlvDictionary_MessageFastArray_DATA_POINTER = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 10,
     CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MANIFEST_POINTER = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 11,
-    CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 12
+    CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 12,
+    CCNxCodecSchemaV1TlvDictionary_MessageFastArray_END = CCNxCodecSchemaV1TlvDictionary_ValidationFastArray_END + 13
 } CCNxCodecSchemaV1TlvDictionary_MessageFastArray;
 
 /**

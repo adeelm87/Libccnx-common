@@ -196,7 +196,6 @@ CCNxInterest *ccnxInterest_Create(const CCNxName *name,
                                   const PARCBuffer *keyId,
                                   const PARCBuffer *contentObjectHash);
 
-
 /**
  * Create a new instance of `CCNxInterest` for the specified name, using dynamically allocated memory.
  *
@@ -370,6 +369,12 @@ bool ccnxInterest_SetLifetime(CCNxInterest *interest, uint32_t lifetime);
  * @see {@link ccnxInterest_SetLifetime}
  */
 uint32_t ccnxInterest_GetLifetime(const CCNxInterest *interest);
+
+bool ccnxInterest_SetMessageId(CCNxInterest *interest, uint32_t messageId);
+
+bool ccnxInterest_HasMessageId(const CCNxInterest *interest);
+
+uint32_t ccnxInterest_GetMessageId(const CCNxInterest *interest);
 
 /**
  * Assign a key ID to the specified `CCNxInterest`.

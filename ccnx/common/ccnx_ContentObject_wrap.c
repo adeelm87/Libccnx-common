@@ -578,6 +578,50 @@ SWIGEXPORT jboolean JNICALL Java_ccnx_common_CcnxContentObject_ccnxContentObject
 }
 
 
+SWIGEXPORT jboolean JNICALL Java_ccnx_common_CcnxContentObject_ccnxContentObject_1SetMessageId(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  jboolean jresult = 0 ;
+  CCNxContentObject *arg1 = (CCNxContentObject *) 0 ;
+  uint32_t arg2 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(CCNxContentObject **)&jarg1; 
+  arg2 = (uint32_t)jarg2; 
+  result = (bool)ccnxContentObject_SetMessageId(arg1,arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_ccnx_common_CcnxContentObject_ccnxContentObject_1HasMessageId(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jboolean jresult = 0 ;
+  CCNxContentObject *arg1 = (CCNxContentObject *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(CCNxContentObject **)&jarg1; 
+  result = (bool)ccnxContentObject_HasMessageId((CCNxTlvDictionary const *)arg1);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_ccnx_common_CcnxContentObject_ccnxContentObject_1GetMessageId(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  CCNxContentObject *arg1 = (CCNxContentObject *) 0 ;
+  uint32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(CCNxContentObject **)&jarg1; 
+  result = (uint32_t)ccnxContentObject_GetMessageId((CCNxTlvDictionary const *)arg1);
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT jboolean JNICALL Java_ccnx_common_CcnxContentObject_ccnxContentObject_1SetPayload(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3) {
   jboolean jresult = 0 ;
   CCNxContentObject *arg1 = (CCNxContentObject *) 0 ;

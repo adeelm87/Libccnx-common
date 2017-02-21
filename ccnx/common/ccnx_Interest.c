@@ -109,10 +109,11 @@ ccnxInterest_CreateWithImpl(const CCNxInterestInterface *impl,
     return result;
 }
 
-
 CCNxInterest *
 ccnxInterest_CreateSimple(const CCNxName *name)
 {
+    printf("Inside ccnxInterest_CreateSimple()\n");
+    fflush(stdout);
     return ccnxInterest_Create(name,
                                CCNxInterestDefault_LifetimeMilliseconds,
                                NULL,
@@ -293,6 +294,56 @@ ccnxInterest_GetLifetime(const CCNxInterest *interest)
         trapNotImplemented("ccnxInterest_GetLifetime");
     }
     return result;
+}
+
+bool
+ccnxInterest_SetMessageId(CCNxInterest *interest, uint32_t messageId)
+{
+    ccnxInterest_OptionalAssertValid(interest);
+    CCNxInterestInterface *impl = ccnxInterestInterface_GetInterface(interest);
+
+    bool result = false;
+
+    if (impl->setMessageId != NULL) {
+        result = impl->setMessageId(interest, messageId);
+    } else {
+        trapNotImplemented("ccnxInterest_SetMessageId");
+    }
+    return result;
+}
+
+bool
+ccnxInterest_HasMessageId(const CCNxInterest *interest)
+{
+    ccnxInterest_OptionalAssertValid(interest);
+    CCNxInterestInterface *impl = ccnxInterestInterface_GetInterface(interest);
+
+    bool result = false;
+
+    if (impl->hasMessageId != NULL) {
+        result = impl->hasMessageId(interest);
+    } else {
+        return false;
+    }
+
+    return result;
+}
+
+uint32_t
+ccnxInterest_GetMessageId(const CCNxInterest *interest)
+{
+    ccnxInterest_OptionalAssertValid(interest);
+    CCNxInterestInterface *impl = ccnxInterestInterface_GetInterface(interest);
+
+    if (impl->hasMessageId != NULL && !impl->hasMessageId((CCNxTlvDictionary *) interest)) {
+        trapUnexpectedState("Interest has no MessageId. Call HasMessageId() first.");
+    }
+
+    if (impl->getMessageId != NULL) {
+        return impl->getMessageId(interest);
+    } else {
+        trapNotImplemented("ccnxInterest_HasMessageId");
+    }
 }
 
 bool

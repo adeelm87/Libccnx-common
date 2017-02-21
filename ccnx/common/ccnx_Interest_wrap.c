@@ -332,6 +332,50 @@ SWIGEXPORT jlong JNICALL Java_ccnx_common_CcnxInterest_ccnxInterest_1GetLifetime
 }
 
 
+SWIGEXPORT jboolean JNICALL Java_ccnx_common_CcnxInterest_ccnxInterest_1SetMessageId(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  jboolean jresult = 0 ;
+  CCNxInterest *arg1 = (CCNxInterest *) 0 ;
+  uint32_t arg2 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(CCNxInterest **)&jarg1; 
+  arg2 = (uint32_t)jarg2; 
+  result = (bool)ccnxInterest_SetMessageId(arg1,arg2);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jboolean JNICALL Java_ccnx_common_CcnxInterest_ccnxInterest_1HasMessageId(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jboolean jresult = 0 ;
+  CCNxInterest *arg1 = (CCNxInterest *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(CCNxInterest **)&jarg1; 
+  result = (bool)ccnxInterest_HasMessageId((CCNxTlvDictionary const *)arg1);
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jlong JNICALL Java_ccnx_common_CcnxInterest_ccnxInterest_1GetMessageId(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  CCNxInterest *arg1 = (CCNxInterest *) 0 ;
+  uint32_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(CCNxInterest **)&jarg1; 
+  result = (uint32_t)ccnxInterest_GetMessageId((CCNxTlvDictionary const *)arg1);
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT jboolean JNICALL Java_ccnx_common_CcnxInterest_ccnxInterest_1SetKeyIdRestriction(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
   jboolean jresult = 0 ;
   CCNxInterest *arg1 = (CCNxInterest *) 0 ;

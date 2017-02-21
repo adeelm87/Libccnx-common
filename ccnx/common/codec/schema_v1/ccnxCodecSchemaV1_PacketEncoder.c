@@ -219,6 +219,8 @@ _encodeCPI(CCNxCodecTlvEncoder *cpiEncoder, CCNxTlvDictionary *packetDictionary)
 static ssize_t
 _encodeMessage(CCNxCodecTlvEncoder *packetEncoder, CCNxTlvDictionary *packetDictionary, CCNxCodecSchemaV1Types_PacketType *packetTypePtr)
 {
+    printf("Inside _encodeMessage()\n");
+    fflush(stdout);
     ssize_t startPosition = ccnxCodecTlvEncoder_Position(packetEncoder);
     ssize_t innerLength = -1;
 

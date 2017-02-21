@@ -227,6 +227,17 @@ _encodeContentObjectHashRestriction(CCNxCodecTlvEncoder *encoder, CCNxTlvDiction
     return length;
 }
 
+static ssize_t
+_encodeMessageId(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
+{
+    ssize_t length = 0;
+    if (ccnxTlvDictionary_IsValueInteger(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID)) {
+        uint32_t messageId = ccnxTlvDictionary_GetInteger(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID);
+        length = ccnxCodecTlvEncoder_AppendUint32(encoder, CCNxCodecSchemaV1Types_CCNxMessage_MessageId, messageId);
+    }
+
+    return length;
+}
 
 static ssize_t
 _encodeContentObject(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionary)
@@ -257,6 +268,12 @@ _encodeContentObject(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDict
         return result;
     }
     length += result;
+
+    result = _encodeMessageId(encoder, packetDictionary);
+    if (result < 0) {
+        return result;
+    }
+    length += result;    
 
     result = _encodePayload(encoder, packetDictionary);
     if (result < 0) {
@@ -290,6 +307,12 @@ _encodeInterest(CCNxCodecTlvEncoder *encoder, CCNxTlvDictionary *packetDictionar
         return result;
     }
     length += result;
+
+    result = _encodeMessageId(encoder, packetDictionary);
+    if (result < 0) {
+        return result;
+    }
+    length += result;    
 
     result = _encodePayload(encoder, packetDictionary);
     if (result < 0) {

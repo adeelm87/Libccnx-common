@@ -123,6 +123,15 @@ typedef struct ccnx_contentobject_interface {
     /** @see ccnxContentObject_HasExpiryTime */
     bool                (*hasExpiryTime)(const CCNxTlvDictionary *dict);
 
+    /** @see ccnxContentObject_SetMessageId */
+    bool                (*setMessageId)(CCNxTlvDictionary *dict, const uint32_t messageId);
+
+    /** @see ccnxContentObject_GetMessageId */
+    uint32_t            (*getMessageId)(const CCNxTlvDictionary *dict);
+
+    /** @see ccnxContentObject_HasMessageId */
+    bool                (*hasMessageId)(const CCNxTlvDictionary *dict);    
+
     /** @see ccnxContentObject_Equals */
     bool                (*equals)(const CCNxTlvDictionary *objectA, const CCNxTlvDictionary *objectB);
 

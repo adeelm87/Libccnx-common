@@ -169,6 +169,13 @@ _ccnxInterestFacadeV1_SetHopLimit(CCNxTlvDictionary *interestDictionary, uint32_
     return ccnxTlvDictionary_PutInteger(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_HOPLIMIT, hopLimit);
 }
 
+static bool
+_ccnxInterestFacadeV1_SetMessageId(CCNxTlvDictionary *interestDictionary, uint32_t messageId)
+{
+    _assertInvariants(interestDictionary);
+    return ccnxTlvDictionary_PutInteger(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID, messageId);
+}
+
 // =====================
 // Getters
 
@@ -226,6 +233,25 @@ _ccnxInterestFacadeV1_GetHopLimit(const CCNxTlvDictionary *interestDictionary)
 {
     _assertInvariants(interestDictionary);
     return _fetchUint32(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_HOPLIMIT, CCNxInterestDefault_HopLimit);
+}
+
+static bool
+_ccnxInterestFacadeV1_HasMessageId(const CCNxTlvDictionary *interestDictionary)
+{
+    if (ccnxTlvDictionary_IsValueInteger(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID)) {
+        return true;
+    }
+    return false;
+}
+
+static uint32_t
+_ccnxInterestFacadeV1_GetMessageId(const CCNxTlvDictionary *interestDictionary)
+{
+    _assertInvariants(interestDictionary);
+    if (ccnxTlvDictionary_IsValueInteger(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID)) {
+        return ccnxTlvDictionary_GetInteger(interestDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID);
+    }
+    trapUnexpectedState("The dictionary does not contain a Message ID");
 }
 
 // =====================
@@ -321,6 +347,10 @@ CCNxInterestInterface CCNxInterestFacadeV1_Implementation = {
 
     .getHopLimit                     = &_ccnxInterestFacadeV1_GetHopLimit,
     .setHopLimit                     = &_ccnxInterestFacadeV1_SetHopLimit,
+
+    .setMessageId                    = &_ccnxInterestFacadeV1_SetMessageId,
+    .getMessageId                    = &_ccnxInterestFacadeV1_GetMessageId,
+    .hasMessageId                    = &_ccnxInterestFacadeV1_HasMessageId,
 
     .getPayload                      = &_ccnxInterestFacadeV1_GetPayload,
 

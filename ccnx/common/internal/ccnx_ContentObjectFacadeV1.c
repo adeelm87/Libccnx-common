@@ -160,6 +160,24 @@ _ccnxContentObjectFacadeV1_GetExpiryTime(const CCNxTlvDictionary *packetDictiona
     trapUnexpectedState("The dictionary does not contain an Expiry Time");
 }
 
+static bool
+_ccnxContentObjectFacadeV1_HasMessageId(const CCNxTlvDictionary *packetDictionary)
+{
+    if (ccnxTlvDictionary_IsValueInteger(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID)) {
+        return true;
+    }
+    return false;
+}
+
+static uint32_t
+_ccnxContentObjectFacadeV1_GetMessageId(const CCNxTlvDictionary *packetDictionary)
+{
+    if (ccnxTlvDictionary_IsValueInteger(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID)) {
+        return ccnxTlvDictionary_GetInteger(packetDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID);
+    }
+    trapUnexpectedState("The dictionary does not contain a Message ID");
+}
+
 static PARCBuffer *
 _ccnxContentObjectFacadeV1_GetPayload(const CCNxTlvDictionary *contentObjectDictionary)
 {
@@ -218,6 +236,14 @@ static bool
 _ccnxContentObjectFacadeV1_SetExpiryTime(CCNxTlvDictionary *contentObjectDictionary, uint64_t expiryTime)
 {
     bool success = ccnxTlvDictionary_PutInteger(contentObjectDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_EXPIRY_TIME, expiryTime);
+    trapUnexpectedStateIf(!success, "Could not set integer in dictionary");
+    return success;
+}
+
+static bool
+_ccnxContentObjectFacadeV1_SetMessageId(CCNxTlvDictionary *contentObjectDictionary, uint32_t messageId)
+{
+    bool success = ccnxTlvDictionary_PutInteger(contentObjectDictionary, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID, messageId);
     trapUnexpectedStateIf(!success, "Could not set integer in dictionary");
     return success;
 }
@@ -296,6 +322,10 @@ CCNxContentObjectInterface CCNxContentObjectFacadeV1_Implementation = {
     .setExpiryTime       = &_ccnxContentObjectFacadeV1_SetExpiryTime,
     .hasExpiryTime       = &_ccnxContentObjectFacadeV1_HasExpiryTime,
 
+    .getMessageId        = &_ccnxContentObjectFacadeV1_GetMessageId,
+    .setMessageId        = &_ccnxContentObjectFacadeV1_SetMessageId,
+    .hasMessageId        = &_ccnxContentObjectFacadeV1_HasMessageId,
+    
     .toString            = &_ccnxContentObjectFacadeV1_ToString,
     .display             = &_ccnxContentObjectFacadeV1_Display,
     .equals              = &_ccnxContentObjectFacadeV1_Equals,

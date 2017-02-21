@@ -122,6 +122,15 @@ typedef struct ccnx_interest_interface {
     /** @see ccnxInterest_GetContentObjectHashRestriction */
     PARCBuffer        *(*getContentObjectHashRestriction)(const CCNxTlvDictionary *dict);
 
+    /** @see ccnxInterest_SetMessageId */
+    bool               (*setMessageId)(CCNxTlvDictionary *dict, uint32_t messageId);
+
+    /** @see ccnxInterest_GetMessageId */
+    uint32_t           (*getMessageId)(const CCNxTlvDictionary *dict);
+
+    /** @see ccnxContentObject_HasMessageId */
+    bool                (*hasMessageId)(const CCNxTlvDictionary *dict);    
+
     /** @see ccnxInterest_Equals */
     bool               (*equals)(const CCNxTlvDictionary *objectA, const CCNxTlvDictionary *objectB);
     /** @see ccnxInterest_AssertValid */

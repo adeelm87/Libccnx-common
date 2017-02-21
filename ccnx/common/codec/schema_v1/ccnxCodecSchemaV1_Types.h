@@ -137,6 +137,7 @@ typedef enum rta_tlv_schema_v1_ccnxmessage_types {
     CCNxCodecSchemaV1Types_CCNxMessage_PayloadType = 0x0005,
     CCNxCodecSchemaV1Types_CCNxMessage_ExpiryTime = 0x0006,
     CCNxCodecSchemaV1Types_CCNxMessage_HashGroup = 0x0007,
+    CCNxCodecSchemaV1Types_CCNxMessage_MessageId = 0x0008,
     CCNxCodecSchemaV1Types_CCNxMessage_EndChunkNumber = 0x0019,
 } CCNxCodecSchemaV1Types_CCNxMessage;
 

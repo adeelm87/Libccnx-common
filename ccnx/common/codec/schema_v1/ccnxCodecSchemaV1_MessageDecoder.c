@@ -151,6 +151,10 @@ _decodeType(CCNxCodecTlvDecoder *decoder, CCNxTlvDictionary *packetDictionary, u
             success = ccnxCodecTlvUtilities_PutAsInteger(decoder, packetDictionary, type, length, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_EXPIRY_TIME);
             break;
 
+        case CCNxCodecSchemaV1Types_CCNxMessage_MessageId:
+            success = ccnxCodecTlvUtilities_PutAsInteger(decoder, packetDictionary, type, length, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_MESSAGEID);
+            break;	    
+
         case CCNxCodecSchemaV1Types_CCNxMessage_EndChunkNumber:
             success = ccnxCodecTlvUtilities_PutAsInteger(decoder, packetDictionary, type, length, CCNxCodecSchemaV1TlvDictionary_MessageFastArray_ENDSEGMENT);
             break;

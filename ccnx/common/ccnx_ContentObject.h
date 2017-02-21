@@ -642,6 +642,12 @@ bool ccnxContentObject_SetExpiryTime(CCNxContentObject *contentObject, const uin
  */
 bool ccnxContentObject_HasExpiryTime(const CCNxContentObject *contentObject);
 
+bool ccnxContentObject_SetMessageId(CCNxContentObject *contentObject, const uint32_t messageId);
+
+bool ccnxContentObject_HasMessageId(const CCNxContentObject *contentObject);
+
+uint32_t ccnxContentObject_GetMessageId(const CCNxContentObject *contentObject);
+
 /**
  * Set a payload on the specified `CCnxContentObject` instance.
  *

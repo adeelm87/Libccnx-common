@@ -271,6 +271,56 @@ ccnxContentObject_GetExpiryTime(const CCNxContentObject *contentObject)
 }
 
 bool
+ccnxContentObject_SetMessageId(CCNxContentObject *contentObject, const uint32_t messageId)
+{
+    bool result = false;
+
+    ccnxContentObject_OptionalAssertValid(contentObject);
+    CCNxContentObjectInterface *impl = ccnxContentObjectInterface_GetInterface(contentObject);
+
+    if (impl->setMessageId != NULL) {
+        result = impl->setMessageId(contentObject, messageId);
+    } else {
+        trapNotImplemented("ccnxContentObject_SetMessageId");
+    }
+    return result;
+}
+
+bool
+ccnxContentObject_HasMessageId(const CCNxContentObject *contentObject)
+{
+    ccnxContentObject_OptionalAssertValid(contentObject);
+    CCNxContentObjectInterface *impl = ccnxContentObjectInterface_GetInterface(contentObject);
+
+    bool result = false;
+
+    if (impl->hasMessageId != NULL) {
+        result = impl->hasMessageId(contentObject);
+    } else {
+        return false;
+    }
+
+    return result;
+}
+
+uint32_t
+ccnxContentObject_GetMessageId(const CCNxContentObject *contentObject)
+{
+    ccnxContentObject_OptionalAssertValid(contentObject);
+    CCNxContentObjectInterface *impl = ccnxContentObjectInterface_GetInterface(contentObject);
+
+    if (impl->hasMessageId != NULL && !impl->hasMessageId((CCNxTlvDictionary *) contentObject)) {
+        trapUnexpectedState("ContentObject has no MessageId. Call HasMessageId() first.");
+    }
+
+    if (impl->getMessageId != NULL) {
+        return impl->getMessageId(contentObject);
+    } else {
+        trapNotImplemented("ccnxContentObject_HasMessageId");
+    }
+}
+
+bool
 ccnxContentObject_SetFinalChunkNumber(CCNxContentObject *contentObject, const uint64_t finalChunkNumber)
 {
     ccnxContentObject_OptionalAssertValid(contentObject);
