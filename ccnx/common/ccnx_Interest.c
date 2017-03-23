@@ -112,7 +112,6 @@ ccnxInterest_CreateWithImpl(const CCNxInterestInterface *impl,
 CCNxInterest *
 ccnxInterest_CreateSimple(const CCNxName *name)
 {
-    printf("Inside ccnxInterest_CreateSimple()\n");
     fflush(stdout);
     return ccnxInterest_Create(name,
                                CCNxInterestDefault_LifetimeMilliseconds,
